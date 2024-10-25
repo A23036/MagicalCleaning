@@ -12,6 +12,9 @@ Camera::Camera()
 	viewType = 0;
 	changeTime = CHANGE_TIME_LIMIT; // 切り替えない
 	rotationY = 0.0f;
+
+	prevPlayerPos = VECTOR3(0, 0, 0);	// プレイヤーの前回位置
+	autoRotateSpeed = 0.05f;			// カメラの自動回転速度
 }
 
 Camera::~Camera()
@@ -21,7 +24,7 @@ Camera::~Camera()
 
 void Camera::Update()
 {
-	/*
+	/* デバッグに使うかもしれないのでコメントアウト
 	// 二つの視点を'L'キーによって切り替える
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_L)) {
 		changePosStart = CameraPos[viewType];
@@ -38,10 +41,15 @@ void Camera::Update()
 	// プレイヤーの行列を求める
 	Player* player = ObjectManager::FindGameObject<Player>();
 
+	// プレイヤーの位置を取得
+	VECTOR3 playerPos = player->Position();
+
 	MATRIX4X4 rotY = XMMatrixRotationY(rotationY);
 	MATRIX4X4 trans = XMMatrixTranslation(player->Position().x, player->Position().y, player->Position().z);
 	MATRIX4X4 m = rotY * trans;
 
+	// 2024.10.12 カメラ回転リセット↓
+	
 	// 左SHIFTキーが押されたらカメラをプレイヤーの後方に移動
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_LSHIFT)) {
 		//プレイヤーの回転を保存
@@ -54,6 +62,7 @@ void Camera::Update()
 		changePosGoal = CameraPos[viewType];
 		changeLookGoal = LookPos[viewType];
 	}
+	// 2024.10.12 カメラ回転リセット↑
 
 	// プレイヤーが回転・移動してない時のカメラ位置に
 	// プレイヤーの回転・移動行列を掛けると、
@@ -87,6 +96,56 @@ void Camera::Update()
 		}
 	}
 	transform.position = end;
+
+	//2024.10.25 カメラ自動回転処理↓
+
+	// プレイヤーの移動方向を計算
+	VECTOR3 moveDir = playerPos - prevPlayerPos;
+	moveDir.y = 0.0f;	// 垂直方向の動きを無視
+	moveDir = XMVector3Normalize(moveDir);
+
+	if (prevPlayerPos != VECTOR3(0, 0, 0) && moveDir.Length() != 0)
+	{
+		MATRIX4X4 rotY = XMMatrixRotationY(rotationY);	// カメラの回転量
+		VECTOR3 rightDir = VECTOR3(1, 0, 0) * rotY;		// カメラから見て右方向のベクトル
+
+		float dotVal = dot(moveDir, rightDir); // 内積結果 0:正面 / ～1.0:右移動 / -1.0～:左移動 
+
+		// プレイヤーの後ろにカメラを回り込ませる処理
+		float targetRotationY = rotationY;
+
+		if (dotVal > 0.1) // プレイヤーがカメラの右側にいる
+		{
+			// 緩やかに右に回転させる
+			targetRotationY += autoRotateSpeed;
+		}
+		else if (dotVal < -0.1) // プレイヤーがカメラの左側にいる
+		{
+			// 緩やかに左に回転させる
+			targetRotationY -= autoRotateSpeed;
+		}
+
+		// プレイヤーが斜め前にいる場合は回転を少し抑える
+		float forwardDot = dot(moveDir, VECTOR3(0, 0, 1) * rotY); // 正面方向との内積
+		if (forwardDot > 0.0f) // プレイヤーがカメラの前にいる場合
+		{
+			float adjustment = 1.0f - forwardDot; // 前にいるほど回転を抑える
+			targetRotationY = rotationY + (targetRotationY - rotationY) * adjustment;
+		}
+
+		// 回転量を更新
+		rotationY = targetRotationY;
+
+		ImGui::SetNextWindowPos(ImVec2(0, 160));
+		ImGui::SetNextWindowSize(ImVec2(200, 60));
+		ImGui::Begin("Dot");
+		ImGui::InputFloat("dot", &dotVal);
+		ImGui::End();
+	}
+	//2024.10.25 カメラ自動回転処理↑
+
+	// プレイヤーの位置を保存
+	prevPlayerPos = playerPos;
 }
 
 void Camera::Draw()
