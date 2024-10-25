@@ -81,22 +81,6 @@ void Camera::Update()
 		lookPosition = look;
 	}
 
-	// カメラが壁にめり込まないようにする
-	VECTOR3 start = player->Position();
-	start.y = 1.0;
-	VECTOR3 end = transform.position;
-	std::list<Object3D*> objects = ObjectManager::FindGameObjects<Object3D>();
-	for (auto g : objects) {
-		VECTOR3 hit;
-		if (g->HitLineToMesh(start, end, &hit)) {
-			VECTOR3 move = player->Position() - transform.position; // 前に出す方向のベクトルを作る
-			VECTOR3 push = XMVector3Normalize(move) * 0.1; // そのベクトルの長さを0.1にする
-			hit += push;
-			end = hit;
-		}
-	}
-	transform.position = end;
-
 	//2024.10.25 カメラ自動回転処理↓
 
 	// プレイヤーの移動方向を計算
@@ -143,6 +127,23 @@ void Camera::Update()
 		ImGui::End();
 	}
 	//2024.10.25 カメラ自動回転処理↑
+
+
+	// カメラが壁にめり込まないようにする
+	VECTOR3 start = player->Position();
+	start.y = 1.0;
+	VECTOR3 end = transform.position;
+	std::list<Object3D*> objects = ObjectManager::FindGameObjects<Object3D>();
+	for (auto g : objects) {
+		VECTOR3 hit;
+		if (g->HitLineToMesh(start, end, &hit)) {
+			VECTOR3 move = player->Position() - transform.position; // 前に出す方向のベクトルを作る
+			VECTOR3 push = XMVector3Normalize(move) * 0.1; // そのベクトルの長さを0.1にする
+			hit += push;
+			end = hit;
+		}
+	}
+	transform.position = end;
 
 	// プレイヤーの位置を保存
 	prevPlayerPos = playerPos;

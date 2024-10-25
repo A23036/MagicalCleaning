@@ -255,9 +255,12 @@ void Player::UpdateOnGround()
 void Player::UpdateJump()
 {
 	Stage* st = ObjectManager::FindGameObject<Stage>();
+	//Stage* cam = ObjectManager::FindGameObject<>();
 	VECTOR3 bufPos = transform.position;
 	transform.position.y += speedY;
-	speedY -= Gravity;
+	speedY -= Gravity;	// 重力
+
+	
 	if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_W)) {
 		// 行列でやる場合
 		VECTOR3 forward = VECTOR3(0, 0, MoveSpeed); // 回転してない時の移動量
@@ -268,10 +271,10 @@ void Player::UpdateJump()
 	}
 	else if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_S)) {
 		// 行列でやる場合
-		VECTOR3 forward = VECTOR3(0, 0, MoveSpeed); // 回転してない時の移動量
+		VECTOR3 forward = VECTOR3(0, 0, -MoveSpeed); // 回転してない時の移動量
 		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
 		VECTOR3 move = forward * rotY; // キャラの向いてる方への移動量
-		transform.position -= move;
+		transform.position += move;
 		animator->MergePlay(aRun);
 	}
 	else {
@@ -283,6 +286,7 @@ void Player::UpdateJump()
 	if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_D)) {
 		transform.rotation.y += RotationSpeed / 180.0f * XM_PI;
 	}
+
 	if (st->IsLandBlock(transform.position)) {
 		// ジャンプ終了
 		state = sOnGround;
