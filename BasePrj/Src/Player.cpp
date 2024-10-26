@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Camera.h"
 #include "Dust.h"
+#include <dinput.h>
 
 namespace { // このcpp以外では使えない
 	static const float Gravity = 0.005f; // 重力加速度(正の値)
@@ -205,36 +206,61 @@ void Player::addMP(int n)
 void Player::UpdateOnGround()
 {
 	auto di = GameDevice()->m_pDI;
+	//int ix = di->GetJoyState().lX;	// 右:1000 / 左:-1000
+	//int iy = di->GetJoyState().lY;	// 下:1000 / 上:-1000
+
+	//ImGui::SetNextWindowPos(ImVec2(0, 60));
+	//ImGui::SetNextWindowSize(ImVec2(100, 100));
+	//ImGui::Begin("Joystick");
+	//ImGui::InputInt("IX", &ix);
+	//ImGui::InputInt("IY", &iy);
+	//ImGui::End();
+
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	if (!(st->IsLandBlock(transform.position))) {
 		// 空中
 		state = sJump;
+		return; //この下の処理は行わない
 	}
-	if (di->CheckKey(KD_DAT, DIK_W)) {
-		// 行列でやる場合
-		VECTOR3 forward = VECTOR3(0, 0, MoveSpeed); // 回転してない時の移動量
-		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-		VECTOR3 move = forward * rotY; // キャラの向いてる方への移動量
-		transform.position += move;
+	 
+	// 2024.10.26 プレイヤー操作をコントローラーに対応↓
+	
+	// コントローラースティックの入力を取得
+	float ix = di->GetJoyState().lX / 1000.0f; // 正規化して -1.0 ～ 1.0 の範囲にする
+	float iy = di->GetJoyState().lY / 1000.0f; // 正規化して -1.0 ～ 1.0 の範囲にする
+	
+	// スティックが入力されているか確認
+	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
+		// 入力に基づいて移動方向を設定
+		VECTOR3 inputDirection = VECTOR3(ix, 0, -iy); // Z軸方向は反転
+
+		// カメラのY軸回転を取得
+		Camera* camera = ObjectManager::FindGameObject<Camera>();
+		float cameraYRotation = camera->GetRotY();
+
+		// カメラの回転に基づく移動ベクトルの計算
+		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
+		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
+		moveDirection = XMVector3Normalize(moveDirection) * MoveSpeed * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+
+		// 移動の適用
+		transform.position += moveDirection;
+
+		// プレイヤーの回転をカメラ基準で方向を向かせる
+		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
+
+		// 走行アニメーションを再生
 		animator->MergePlay(aRun);
-	}
-	else if (di->CheckKey(KD_DAT, DIK_S)) {
-		// 行列でやる場合
-		VECTOR3 forward = VECTOR3(0, 0, MoveSpeed); // 回転してない時の移動量
-		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-		VECTOR3 move = forward * rotY; // キャラの向いてる方への移動量
-		transform.position -= move;
-		animator->MergePlay(aRun);
+
+		//走行速度に応じたアニメーションスピードを設定
+		animator->SetPlaySpeed(sqrt(ix * ix + iy * iy));
 	}
 	else {
+		// スティックが傾いていない場合は待機アニメーションを再生
 		animator->MergePlay(aIdle);
 	}
-	if (di->CheckKey(KD_DAT, DIK_A)) {
-		transform.rotation.y -= RotationSpeed / 180.0f * XM_PI;
-	}
-	if (di->CheckKey(KD_DAT, DIK_D)) {
-		transform.rotation.y += RotationSpeed / 180.0f * XM_PI;
-	}
+	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
+
 	if (di->CheckKey(KD_TRG, DIK_SPACE)) {
 		speedY = JumpPower;
 		state = sJump;
