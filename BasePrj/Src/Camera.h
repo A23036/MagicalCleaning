@@ -7,12 +7,13 @@ public:
 	~Camera();
 	void Update() override;
 	void Draw() override;
+	float GetRotY() { return rotationY; };
 
 private:
 	VECTOR3 lookPosition;
 
 	int viewType;			// 視点切り替えの番号
-	float rotationY;		
+	float rotationY;
 	
 	float changeTime;		// 視点切り替え時間を数える
 	VECTOR3 changePosStart; // 視点移動の開始点
