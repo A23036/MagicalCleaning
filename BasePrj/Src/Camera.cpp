@@ -51,7 +51,8 @@ void Camera::Update()
 	// 2024.10.12 カメラ回転リセット↓
 	
 	// 左SHIFTキーが押されたらカメラをプレイヤーの後方に移動
-	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_LSHIFT)) {
+	auto di = GameDevice()->m_pDI;
+	if (di->CheckKey(KD_TRG, DIK_LSHIFT)  || di->CheckJoy(KD_TRG, DIJ_Y)) {
 		//プレイヤーの回転を保存
 		rotationY = player->Rotation().y;
 
