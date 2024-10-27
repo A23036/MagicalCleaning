@@ -118,6 +118,28 @@ void Player::Update()
 	ImGui::InputFloat("Z", &transform.position.z);
 	ImGui::End();
 	
+	// 入力ボタン確認
+	ImGui::SetNextWindowPos(ImVec2(0, 220));
+	ImGui::SetNextWindowSize(ImVec2(200, 120));
+	ImGui::Begin("CheckJoy");
+	auto di = GameDevice()->m_pDI;
+	auto* pdi = GameDevice()->m_pDI;
+	DIJOYSTATE2 joyState = pdi->GetJoyState();
+	for (int i = 0; i < 32; i++)
+	{
+		// 各ボタンの押下状態を確認
+		if (joyState.rgbButtons[i] & 0x80) // ボタン i が押されている場合
+		{
+			ImGui::Text("Button %d is pressed", i); // ボタン番号を表示
+		}
+	}
+	float rx = di->GetJoyState().lRx;
+	float ry = di->GetJoyState().lRy;
+	float rz = di->GetJoyState().lRz;
+	ImGui::InputFloat("rX", &rx);
+	ImGui::InputFloat("rY", &ry);
+	ImGui::InputFloat("rZ", &rz);
+	ImGui::End();
 
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
@@ -226,8 +248,9 @@ void Player::UpdateOnGround()
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↓
 	
 	// コントローラースティックの入力を取得
-	float ix = di->GetJoyState().lX / 1000.0f; // 正規化して -1.0 ～ 1.0 の範囲にする
-	float iy = di->GetJoyState().lY / 1000.0f; // 正規化して -1.0 ～ 1.0 の範囲にする
+	// 正規化して -1.0～1.0 の範囲にする
+	float ix = di->GetJoyState().lX / 1000.0f; 
+	float iy = di->GetJoyState().lY / 1000.0f;
 	
 	// スティックが入力されているか確認
 	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
@@ -261,11 +284,11 @@ void Player::UpdateOnGround()
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
-	if (di->CheckKey(KD_TRG, DIK_SPACE)) {
+	if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, DIJ_A)) {
 		speedY = JumpPower;
 		state = sJump;
 	}
-	if (di->CheckKey(KD_TRG, DIK_N)) { //攻撃ボタン
+	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, DIJ_X)) { //攻撃ボタン
 		animator->MergePlay(aAttack1);
 		animator->SetPlaySpeed(2.5);
 		state = sAttack1;
@@ -275,42 +298,51 @@ void Player::UpdateOnGround()
 		state = sAttack2;
 	}
 
+	
 }
 
 
 void Player::UpdateJump()
 {
 	Stage* st = ObjectManager::FindGameObject<Stage>();
-	//Stage* cam = ObjectManager::FindGameObject<>();
-	VECTOR3 bufPos = transform.position;
 	transform.position.y += speedY;
 	speedY -= Gravity;	// 重力
 
-	
-	if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_W)) {
-		// 行列でやる場合
-		VECTOR3 forward = VECTOR3(0, 0, MoveSpeed); // 回転してない時の移動量
-		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-		VECTOR3 move = forward * rotY; // キャラの向いてる方への移動量
-		transform.position += move;
+	auto di = GameDevice()->m_pDI;
+	// コントローラースティックの入力を取得
+	// 正規化して -1.0～1.0 の範囲にする
+	float ix = di->GetJoyState().lX / 1000.0f;
+	float iy = di->GetJoyState().lY / 1000.0f;
+
+	// スティックが入力されているか確認
+	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
+		// 入力に基づいて移動方向を設定
+		VECTOR3 inputDirection = VECTOR3(ix, 0, -iy); // Z軸方向は反転
+
+		// カメラのY軸回転を取得
+		Camera* camera = ObjectManager::FindGameObject<Camera>();
+		float cameraYRotation = camera->GetRotY();
+
+		// カメラの回転に基づく移動ベクトルの計算
+		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
+		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
+		moveDirection = XMVector3Normalize(moveDirection) * MoveSpeed * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+
+		// 移動の適用
+		transform.position += moveDirection;
+
+		// プレイヤーの回転をカメラ基準で方向を向かせる
+		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
+
+		// 走行アニメーションを再生
 		animator->MergePlay(aRun);
-	}
-	else if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_S)) {
-		// 行列でやる場合
-		VECTOR3 forward = VECTOR3(0, 0, -MoveSpeed); // 回転してない時の移動量
-		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-		VECTOR3 move = forward * rotY; // キャラの向いてる方への移動量
-		transform.position += move;
-		animator->MergePlay(aRun);
+
+		//走行速度に応じたアニメーションスピードを設定
+		animator->SetPlaySpeed(sqrt(ix * ix + iy * iy));
 	}
 	else {
+		// スティックが傾いていない場合は待機アニメーションを再生
 		animator->MergePlay(aIdle);
-	}
-	if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_A)) {
-		transform.rotation.y -= RotationSpeed / 180.0f * XM_PI;
-	}
-	if (GameDevice()->m_pDI->CheckKey(KD_DAT, DIK_D)) {
-		transform.rotation.y += RotationSpeed / 180.0f * XM_PI;
 	}
 
 	if (st->IsLandBlock(transform.position)) {
