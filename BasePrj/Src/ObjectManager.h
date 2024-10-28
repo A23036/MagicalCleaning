@@ -166,4 +166,25 @@ namespace ObjectManager {
 	/// <param name="obj">GameObjectのインスタンス</param>
 	/// <returns>存在すれtrue</returns>
 	bool IsExist(GameObject* obj);
+
+	/// <summary>
+	/// Drawに視点からの距離の２乗を設定する
+	/// </summary>
+	/// <param name="obj">指定のオブジェクト</param>
+	/// <param name="distQIn">距離の２乗</param>
+	/// <param name="idx">要素番号</param>
+	void SetEyeDist(GameObject* obj, const float& distQIn, const int idx);
+
+
+	/// <summary>
+	/// Drawに描画回数を設定する前ページのdrawTimesに値を設定する
+	/// </summary>
+	/// <param name="times">描画回数</param>
+	void SetDrawTimes(int times);
+
+	/// <summary>
+	/// 現在の描画回数を返す。前ページのdrawCounterの値を返す
+	/// </summary>
+	/// <returns></returns>
+	int DrawCounter();
 };

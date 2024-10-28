@@ -259,7 +259,7 @@ void Player::UpdateOnGround()
 
 		// カメラのY軸回転を取得
 		Camera* camera = ObjectManager::FindGameObject<Camera>();
-		float cameraYRotation = camera->GetRotY();
+		float cameraYRotation = camera->GetRotY(0);
 
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
@@ -321,7 +321,7 @@ void Player::UpdateJump()
 
 		// カメラのY軸回転を取得
 		Camera* camera = ObjectManager::FindGameObject<Camera>();
-		float cameraYRotation = camera->GetRotY();
+		float cameraYRotation = camera->GetRotY(0);
 
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);

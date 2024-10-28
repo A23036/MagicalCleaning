@@ -13,16 +13,22 @@ namespace {
 		bool active;
 		UpdateObject() : object(nullptr), initialized(false), destroyMe(false), dontDestroy(false), priority(0), active(true) {}
 	};
+	const int distQNum = 4; // 画面分割最大数 
 	struct DrawObject {
 		GameObject* object;
 		int order;
+		float distQ[distQNum]; // 視点からの距離の２乗[画面分割最大分] 
 		bool visible;
-		DrawObject() : object(nullptr), order(0), visible(true) {}
+		DrawObject() : object(nullptr), order(0), visible(true) {
+			for (int i = 0; i < distQNum; i++) distQ[i] = 0;
+		}
 	};
 	std::list<UpdateObject> updateObjects;
 	std::list<DrawObject> drawObjects;
 	bool needSortUpdate;
 	bool needSortDraw;
+	int drawTimes = 1; // 描画回数(画面分割数と同じ) 
+	int drawCounter; // 描画カウンター（何画面目の描画か） 
 };
 
 void deleteDrawObject(GameObject* obj)
@@ -69,13 +75,20 @@ void ObjectManager::Update()
 
 void ObjectManager::Draw()
 {
-	if (needSortDraw) {
-		drawObjects.sort([](DrawObject& a, DrawObject& b) {return a.order > b.order; });
-		needSortDraw = false;
-	}
-	for (DrawObject node : drawObjects) {
-		if (node.visible) {
-			node.object->Draw();
+	// drawTimes回、描画処理を行う
+	for (drawCounter = 0; drawCounter < drawTimes; drawCounter++)//drawTimes回数描画処理をする 
+	{
+		if (needSortDraw) {
+			// ソート処理 キー１:優先度の降順 キー２:視点からの距離の降順
+			drawObjects.sort([](DrawObject& a, DrawObject& b)
+				{return a.order > b.order || (a.order == b.order &&
+					a.distQ[drawCounter] > b.distQ[drawCounter]); });
+			needSortDraw = false;
+		}
+		for (DrawObject node : drawObjects) {
+			if (node.visible) {
+				node.object->Draw();
+			}
 		}
 	}
 }
@@ -217,4 +230,24 @@ bool ObjectManager::IsExist(GameObject* obj)
 		}
 	}
 	return false;
+}
+
+void ObjectManager::SetEyeDist(GameObject* obj, const float& distQIn, const int idx)
+{
+	for (DrawObject& od : drawObjects) {
+		if (od.object == obj && od.visible) {
+			od.distQ[idx] = distQIn;
+		}
+	}
+	needSortDraw = true;
+}
+
+void ObjectManager::SetDrawTimes(int times)
+{
+	drawTimes = times;
+}
+
+int ObjectManager::DrawCounter()
+{
+	return drawCounter;
 }

@@ -316,6 +316,8 @@
     <ClInclude Include="Src\SceneFactory.h" />
     <ClInclude Include="Src\SceneManager.h" />
     <ClInclude Include="Src\Shader.h" />
+    <ClInclude Include="Src\SplitScreen.h" />
+    <ClInclude Include="Src\SplitScreenLastDraw.h" />
     <ClInclude Include="Src\Sprite3D.h" />
     <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\StageEdit.h" />
@@ -358,6 +360,8 @@
     <ClCompile Include="Src\SceneFactory.cpp" />
     <ClCompile Include="Src\SceneManager.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
+    <ClCompile Include="Src\SplitScreen.cpp" />
+    <ClCompile Include="Src\SplitScreenLastDraw.cpp" />
     <ClCompile Include="Src\Sprite3D.cpp" />
     <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\StageEdit.cpp" />

@@ -4,9 +4,14 @@
 #include "TitleScene.h"
 #include "PlayScene.h"
 #include "EditScene.h"
+#include "SplitScreen.h"
 
 SceneBase* SceneFactory::CreateFirst()
 {
+	SplitScreen* ss = SingleInstantiate <SplitScreen>();	// SplitScreenは全ての最初に作成される。一つしか作らない。NoDestroy。
+	ss->SetSingleScreen();
+	//SingleInstantiate <DataCarrier>();	// DataCarrierは全ての最初に作成される。一つしか作らない。NoDestroy。
+
 	return new TitleScene();
 	return nullptr;
 }
@@ -14,12 +19,15 @@ SceneBase* SceneFactory::CreateFirst()
 SceneBase * SceneFactory::Create(const std::string & name)
 {
 	if (name == "TitleScene") {
+		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
 		return new TitleScene();
 	}
 	else if (name == "PlayScene") {
+		ObjectManager::FindGameObject<SplitScreen>()->SetMultiScreen();
 		return new PlayScene();
 	}
 	else if (name == "EditScene") {
+		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
 		return new EditScene();
 	}
 	assert(false);
