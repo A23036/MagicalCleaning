@@ -269,6 +269,10 @@ void CMain::MessageLoop()
 			QueryPerformanceCounter(&StartTime);		// ループ開始時間
 		}
 		m_pGMain->Draw();
+
+		// ｆｐｓを表示
+		DispFps();
+
 	}
 #endif
 #if 0	
