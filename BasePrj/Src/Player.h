@@ -13,12 +13,15 @@ public:
 	SphereCollider Collider() override;
 
 	int getMP() { return MP; };
+	int getPlayerNum() { return playerNum; };
 	void addMP(int n);
+	void setPlayerNum(int n) { playerNum = n; };
 
 private:
+	int playerNum;
 	int MP;
 
-	bool doneAtk;
+	bool doneAtkAnim;
 
 	int moveSpeed;	//ˆÚ“®‘¬“x
 	int	jumpNum;	//ƒWƒƒƒ“ƒv‰ñ”
@@ -32,6 +35,8 @@ private:
 	enum AnimID {
 		aIdle = 0,
 		aRun = 1,
+		aWalk,
+		aJump,
 		aAttack1,
 		aAttack2,
 		aAttack3,

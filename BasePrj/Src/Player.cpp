@@ -9,7 +9,7 @@ namespace { // このcpp以外では使えない
 	static const float Gravity = 0.005f; // 重力加速度(正の値)
 	static const float JumpPower = 0.1f;
 	static const float RotationSpeed = 3.0f; // 回転速度(度)
-	static const float MoveSpeed = 0.1f;
+	static const float MoveSpeed = 0.05f;
 };
 
 Player::Player()
@@ -17,15 +17,22 @@ Player::Player()
 	animator = new Animator(); // インスタンスを作成
 
 	mesh = new CFbxMesh();
-	//ToDo: モデル変更
-	//mesh->Load("Data/Player/witch.mesh");
-	//mesh->LoadAnimation(aIdle, "Data/Player/witch_idle.anmx", true);
-	mesh->Load("Data/Player/PlayerChara.mesh");
-	mesh->LoadAnimation(aIdle, "Data/Player/Idle.anmx", true);
-	mesh->LoadAnimation(aRun, "Data/Player/Run.anmx", true);
-	mesh->LoadAnimation(aAttack1, "Data/Player/attack1.anmx", false);
-	mesh->LoadAnimation(aAttack2, "Data/Player/attack2.anmx", false);
-	mesh->LoadAnimation(aAttack3, "Data/Player/attack3.anmx", false);
+
+	//キャラクターモデル設定
+	mesh->Load("Data/Player2/witch.mesh");	
+	mesh->LoadAnimation(aIdle, "Data/Player2/idle.anmx", true);
+	mesh->LoadAnimation(aRun, "Data/Player2/run.anmx", true);
+	mesh->LoadAnimation(aWalk, "Data/Player2/walk.anmx", true);
+	mesh->LoadAnimation(aJump, "Data/Player2/jump.anmx", false);
+	mesh->LoadAnimation(aAttack1, "Data/Player2/attack1.anmx", false);
+	mesh->LoadAnimation(aAttack2, "Data/Player2/attack2.anmx", false);
+	mesh->LoadAnimation(aAttack3, "Data/Player2/attack3.anmx", false);
+	//mesh->Load("Data/Player/PlayerChara.mesh");
+	//mesh->LoadAnimation(aIdle, "Data/Player/Idle.anmx", true);
+	//mesh->LoadAnimation(aRun, "Data/Player/Run.anmx", true);
+	//mesh->LoadAnimation(aAttack1, "Data/Player/attack1.anmx", false);
+	//mesh->LoadAnimation(aAttack2, "Data/Player/attack2.anmx", false);
+	//mesh->LoadAnimation(aAttack3, "Data/Player/attack3.anmx", false);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -36,13 +43,15 @@ Player::Player()
 	state = sOnGround;
 	speedY = 0;
 	MP = 0;
-	doneAtk = false;
+	doneAtkAnim = false;
 
 	moveSpeed	= 1;
 	jumpNum		= 1;
 	atkSpeed	= 1;
 	atkRange	= 1;
 	carWeight	= 1;
+
+	playerNum = 0;
 }
 
 Player::~Player()
@@ -63,7 +72,7 @@ void Player::Update()
 
 	switch (state) {
 	case sOnGround:
-		UpdateOnGround();
+		UpdateOnGround(); 
 		break;
 	case sJump:
 		UpdateJump();
@@ -103,13 +112,13 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-
-	ImGui::SetNextWindowPos(ImVec2(100, 0));
-	ImGui::SetNextWindowSize(ImVec2(180, 60));
-	ImGui::Begin("JumpSpeed");
-	ImGui::InputFloat("speedY", &speedY);
-	ImGui::End();
 	
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(100, 100));
+	ImGui::Begin("PlayerNum");
+	ImGui::InputInt("X", &playerNum);
+	ImGui::End();
+
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
 	ImGui::SetNextWindowSize(ImVec2(100, 100));
 	ImGui::Begin("PlayerPos");
@@ -124,7 +133,7 @@ void Player::Update()
 	ImGui::Begin("CheckJoy");
 	auto di = GameDevice()->m_pDI;
 	auto* pdi = GameDevice()->m_pDI;
-	DIJOYSTATE2 joyState = pdi->GetJoyState();
+	DIJOYSTATE2 joyState = pdi->GetJoyState(playerNum);
 	for (int i = 0; i < 32; i++)
 	{
 		// 各ボタンの押下状態を確認
@@ -198,17 +207,18 @@ void Player::Update()
 void Player::Draw()
 {
 	Object3D::Draw(); // 継承元の関数を呼ぶ
-
-	//MATRIX4X4 tip = XMMatrixRotationRollPitchYawFromVector(VECTOR3(-33, 82, 0) * DegToRad);
-	//VECTOR3 tipPos = VECTOR3(0, 0, 1.2f) * tip;
+	/*
+	MATRIX4X4 tip = XMMatrixRotationRollPitchYawFromVector(VECTOR3(-33, 82, 0) * DegToRad);
+	VECTOR3 tipPos = VECTOR3(0, 0, 1.2f) * tip;
 	VECTOR3 tipPos = VECTOR3(0.9966, 0.6536, 0.140);
 	MATRIX4X4 mat = transform.matrix();// 世界(ワールド)の中で、プレイヤーの位置と向き
 	MATRIX4X4 bone = mesh->GetFrameMatrices(34); // プレイヤーの原点からの手首の位置(34は手首)
 	VECTOR3 start = VECTOR3(0, 0, 0) * bone * mat;
 	VECTOR3 end = tipPos * bone * mat;
-
+	
 	CSprite spr;
 	spr.DrawLine3D(start, end, RGB(255, 0, 0));
+	*/
 }
 
 SphereCollider Player::Collider()
@@ -227,16 +237,18 @@ void Player::addMP(int n)
 
 void Player::UpdateOnGround()
 {
+	
 	auto di = GameDevice()->m_pDI;
-	//int ix = di->GetJoyState().lX;	// 右:1000 / 左:-1000
-	//int iy = di->GetJoyState().lY;	// 下:1000 / 上:-1000
+	
+	int x = di->GetJoyState(playerNum).lX;	// 右:1000 / 左:-1000
+	int y = di->GetJoyState(playerNum).lY;	// 下:1000 / 上:-1000
 
-	//ImGui::SetNextWindowPos(ImVec2(0, 60));
-	//ImGui::SetNextWindowSize(ImVec2(100, 100));
-	//ImGui::Begin("Joystick");
-	//ImGui::InputInt("IX", &ix);
-	//ImGui::InputInt("IY", &iy);
-	//ImGui::End();
+	ImGui::SetNextWindowPos(ImVec2(0, 300));
+	ImGui::SetNextWindowSize(ImVec2(200, 200));
+	ImGui::Begin("Joystick");
+	ImGui::InputInt("IX", &x);
+	ImGui::InputInt("IY", &y);
+	ImGui::End();
 
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	if (!(st->IsLandBlock(transform.position))) {
@@ -249,8 +261,8 @@ void Player::UpdateOnGround()
 	
 	// コントローラースティックの入力を取得
 	// 正規化して -1.0～1.0 の範囲にする
-	float ix = di->GetJoyState().lX / 1000.0f; 
-	float iy = di->GetJoyState().lY / 1000.0f;
+	float ix = di->GetJoyState(playerNum).lX / 1000.0f;
+	float iy = di->GetJoyState(playerNum).lY / 1000.0f;
 	
 	// スティックが入力されているか確認
 	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
@@ -259,7 +271,7 @@ void Player::UpdateOnGround()
 
 		// カメラのY軸回転を取得
 		Camera* camera = ObjectManager::FindGameObject<Camera>();
-		float cameraYRotation = camera->GetRotY(0);
+		float cameraYRotation = camera->GetRotY(playerNum);
 
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
@@ -272,11 +284,11 @@ void Player::UpdateOnGround()
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
 
-		// 走行アニメーションを再生
-		animator->MergePlay(aRun);
-
 		//走行速度に応じたアニメーションスピードを設定
 		animator->SetPlaySpeed(sqrt(ix * ix + iy * iy));
+		
+		// 走行アニメーションを再生
+		animator->MergePlay(aRun);
 	}
 	else {
 		// スティックが傾いていない場合は待機アニメーションを再生
@@ -284,13 +296,15 @@ void Player::UpdateOnGround()
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
-	if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, DIJ_A)) {
+	if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum)) {
 		speedY = JumpPower;
 		state = sJump;
+		animator->SetPlaySpeed(1.0f);
+		animator->MergePlay(aJump);
 	}
-	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, DIJ_X)) { //攻撃ボタン
+	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃ボタン
 		animator->MergePlay(aAttack1);
-		animator->SetPlaySpeed(2.5);
+		animator->SetPlaySpeed(1.0f);
 		state = sAttack1;
 	}
 	if (di->CheckKey(KD_TRG, DIK_M)) { //攻撃ボタン
@@ -311,8 +325,8 @@ void Player::UpdateJump()
 	auto di = GameDevice()->m_pDI;
 	// コントローラースティックの入力を取得
 	// 正規化して -1.0～1.0 の範囲にする
-	float ix = di->GetJoyState().lX / 1000.0f;
-	float iy = di->GetJoyState().lY / 1000.0f;
+	float ix = di->GetJoyState(playerNum).lX / 1000.0f;
+	float iy = di->GetJoyState(playerNum).lY / 1000.0f;
 
 	// スティックが入力されているか確認
 	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
@@ -321,7 +335,7 @@ void Player::UpdateJump()
 
 		// カメラのY軸回転を取得
 		Camera* camera = ObjectManager::FindGameObject<Camera>();
-		float cameraYRotation = camera->GetRotY(0);
+		float cameraYRotation = camera->GetRotY(playerNum);
 
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
@@ -334,15 +348,6 @@ void Player::UpdateJump()
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
 
-		// 走行アニメーションを再生
-		animator->MergePlay(aRun);
-
-		//走行速度に応じたアニメーションスピードを設定
-		animator->SetPlaySpeed(sqrt(ix * ix + iy * iy));
-	}
-	else {
-		// スティックが傾いていない場合は待機アニメーションを再生
-		animator->MergePlay(aIdle);
 	}
 
 	if (st->IsLandBlock(transform.position)) {
@@ -374,8 +379,8 @@ void Player::UpdateAttack1()
 		}
 	}*/
 	
-	if (!doneAtk && animator->CurrentFrame() == 40) { //攻撃のヒットしたタイミング
-		doneAtk = true;
+	if (!doneAtkAnim && animator->CurrentFrame() == 40) { //攻撃のヒットしたタイミング
+		doneAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
@@ -396,8 +401,8 @@ void Player::UpdateAttack1()
 	if (animator->Finished())
 	{
 		//攻撃アニメーションの終了
-		doneAtk = false;
-		animator->SetPlaySpeed(1.0);
+		doneAtkAnim = false;
+		animator->SetPlaySpeed(1.0f);
 		state = sOnGround;
 	}
 
@@ -405,6 +410,7 @@ void Player::UpdateAttack1()
 
 void Player::UpdateAttack2()
 {
+	/*
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	VECTOR3 tipPos = VECTOR3(0.9966, 0.6536, 0.140);
@@ -423,7 +429,7 @@ void Player::UpdateAttack2()
 			//攻撃アニメーションの終了
 			state = sOnGround;
 		}
-	}
+	}*/
 }
 
 void Player::UpdateAttack3()
