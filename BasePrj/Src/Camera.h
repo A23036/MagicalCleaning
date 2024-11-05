@@ -3,6 +3,11 @@
 #include "SplitScreen.h"
 
 using namespace std;
+
+namespace {
+	static const int MAXPLAYER = 4;
+}
+
 class Camera : public Object3D {
 public:
 	Camera();
@@ -23,15 +28,15 @@ private:
 	VECTOR3 lookPosition;
 
 	int viewType;			// 視点切り替えの番号
-	vector<float> rotationY;
+	float rotationY[MAXPLAYER];
 	
-	vector<float> changeTime;		// 視点切り替え時間を数える
-	vector<VECTOR3> changePosStart; // 視点移動の開始点
-	vector<VECTOR3> changePosGoal;	// 視点移動の終了点
-	vector<VECTOR3> changeLookStart;// 注視点移動の開始点
-	vector<VECTOR3> changeLookGoal;	// 注視点移動の終了点
+	float changeTime[MAXPLAYER];		// 視点切り替え時間を数える
+	VECTOR3 changePosStart[MAXPLAYER]; // 視点移動の開始点
+	VECTOR3 changePosGoal[MAXPLAYER];	// 視点移動の終了点
+	VECTOR3 changeLookStart[MAXPLAYER];// 注視点移動の開始点
+	VECTOR3 changeLookGoal[MAXPLAYER];	// 注視点移動の終了点
 
-	vector<VECTOR3> prevPlayerPos;	// プレイヤーの前回位置
+	VECTOR3 prevPlayerPos[MAXPLAYER];	// プレイヤーの前回位置
 	float autoRotateSpeed;	// カメラの自動回転速度
 
 	vector<MATRIX4X4>  view;

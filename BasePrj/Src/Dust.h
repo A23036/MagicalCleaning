@@ -17,6 +17,7 @@ private:
 	int maxHp;
 	int hp;
 	int dustNum;
+
 	enum DustID {
 		Small = 0,
 		Midium,

@@ -4,7 +4,7 @@
 
 Dust::Dust(int number, VECTOR3 pos)
 {
-	SetTag("DUST");
+	SetTag("STAGEOBJ");
 	mesh = new CFbxMesh();
 	mesh->Load("data/models/boxWooden.mesh");
 	transform.position = pos;
@@ -44,8 +44,10 @@ void Dust::Update()
 	}
 	if (hp <= 0)
 	{
-		pl->addMP(maxHp);
+		pl->addWeight(maxHp);
 		DestroyMe();
+		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
+		new Dust(dustNum,pos);
 	}
 }
 
@@ -74,5 +76,7 @@ SphereCollider Dust::Collider(int n)
 
 void Dust::AddDamage(int damage)
 {
+	Player* pl = ObjectManager::FindGameObject<Player>();
+	pl->addWeight(1);
 	hp -= damage;
 }

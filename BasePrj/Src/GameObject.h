@@ -80,6 +80,8 @@ public:
 	/// <returns>同じであればtrue</returns>
 	bool IsTag(std::string _tag) const { return tag == _tag; }
 
+	//string GetTag() { return tag; };
+
 	/// <summary>
 	/// 親のオブジェクトを返す
 	/// </summary>

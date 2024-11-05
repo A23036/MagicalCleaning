@@ -39,9 +39,6 @@
     <Filter Include="ソース ファイル\04_ImGUI">
       <UniqueIdentifier>{7c62f635-58ea-4305-be25-e23f3444c559}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\06_共通">
-      <UniqueIdentifier>{ef79b2b1-d77c-4e0f-ba34-50e4c05a169f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\07_TitleScene">
       <UniqueIdentifier>{23c29058-2579-4bf4-a411-46e295d6a90a}</UniqueIdentifier>
     </Filter>
@@ -57,8 +54,14 @@
     <Filter Include="ソース ファイル\05_フレームワーク">
       <UniqueIdentifier>{2f52e50e-6224-4dbf-a930-01f696385c5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\10_SprlitScreen">
+    <Filter Include="ソース ファイル\06_共通">
+      <UniqueIdentifier>{ef79b2b1-d77c-4e0f-ba34-50e4c05a169f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\11_SprlitScreen">
       <UniqueIdentifier>{b8f246d9-9f11-407e-bb07-d524ea6d469d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\10_SelectScene">
+      <UniqueIdentifier>{5214ba3c-6035-4968-9445-b55e6e931963}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -313,10 +316,16 @@
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\SplitScreen.h">
-      <Filter>ソース ファイル\10_SprlitScreen</Filter>
+      <Filter>ソース ファイル\11_SprlitScreen</Filter>
     </ClInclude>
     <ClInclude Include="Src\SplitScreenLastDraw.h">
-      <Filter>ソース ファイル\10_SprlitScreen</Filter>
+      <Filter>ソース ファイル\11_SprlitScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SelectScene.h">
+      <Filter>ソース ファイル\10_SelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DustBox.h">
+      <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -441,10 +450,16 @@
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\SplitScreen.cpp">
-      <Filter>ソース ファイル\10_SprlitScreen</Filter>
+      <Filter>ソース ファイル\11_SprlitScreen</Filter>
     </ClCompile>
     <ClCompile Include="Src\SplitScreenLastDraw.cpp">
-      <Filter>ソース ファイル\10_SprlitScreen</Filter>
+      <Filter>ソース ファイル\11_SprlitScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SelectScene.cpp">
+      <Filter>ソース ファイル\10_SelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DustBox.cpp">
+      <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

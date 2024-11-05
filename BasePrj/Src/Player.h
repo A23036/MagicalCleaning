@@ -3,6 +3,18 @@
 #include "Object3D.h"
 #include "Animator.h"
 
+class Broom : public Object3D {
+public:
+	Broom(Object3D* parentModel);
+	~Broom();
+	void Update() override;
+	void Draw() override;
+	void SetPos(MATRIX4X4 m);
+private:
+	Object3D* parent;
+	MATRIX4X4 mat;
+};
+
 class Player : public Object3D {
 public:
 	Player();
@@ -12,14 +24,19 @@ public:
 
 	SphereCollider Collider() override;
 
-	int getMP() { return MP; };
+	int getMP() { return mp; };
+	int getWeight() { return weight; };
 	int getPlayerNum() { return playerNum; };
+	int getPlayerState() { return state; };
 	void addMP(int n);
+	void addWeight(int n);
 	void setPlayerNum(int n) { playerNum = n; };
 
 private:
 	int playerNum;
-	int MP;
+	int mp;
+	int weight;
+
 
 	bool doneAtkAnim;
 
@@ -51,6 +68,7 @@ private:
 	};
 
 	State state;
+
 	void UpdateOnGround();
 	void UpdateJump();
 	void UpdateAttack1();
@@ -58,4 +76,8 @@ private:
 	void UpdateAttack3();
 
 	int anmFrame; // アニメーションのフレームを数える
+
+	Broom* child;
 };
+
+

@@ -3,6 +3,7 @@
 #include "BlockFileName.h"
 #include "Player.h"
 #include "Coin.h"
+#include "DustBox.h"
 
 Stage::Stage(int stageNumber)
 {
@@ -68,6 +69,20 @@ void Stage::Load(int n)
 				if (d == boxID::CHAR01) {
 					Player* p = new Player();
 					p->SetPosition(x, map.size(), -(int)m2.size());
+					p->SetTag("Player1");
+					p->setPlayerNum(0);
+					d = -1;
+				}
+				else if (d == boxID::CHAR02) {
+					Player* p = new Player();
+					p->SetPosition(x, map.size(), -(int)m2.size());
+					p->SetTag("Player2");
+					p->setPlayerNum(1);
+					d = -1;
+				}
+				else if (d == boxID::CHEST_A) {
+					DustBox* b = new DustBox();
+					b->SetPosition(x, map.size(), -(int)m2.size());
 					d = -1;
 				}
 				else if (d == boxID::COIN) {

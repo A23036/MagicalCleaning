@@ -13,8 +13,8 @@ void TitleScene::Update()
 {
 	// 2024.10.27 コードの可読性向上とコントローラー入力対応
 	auto di = GameDevice()->m_pDI;
-	if (di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG,DIJ_B)) {
-		SceneManager::ChangeScene("PlayScene");
+	if (di->CheckKey(KD_TRG, DIK_S) || di->CheckJoy(KD_TRG,DIJ_B)) {
+		SceneManager::ChangeScene("SelectScene");
 	}
 	if (di->CheckKey(KD_TRG, DIK_E)) {
 		SceneManager::ChangeScene("EditScene");

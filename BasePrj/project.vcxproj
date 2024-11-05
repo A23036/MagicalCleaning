@@ -295,6 +295,7 @@
     <ClInclude Include="Src\Displace.h" />
     <ClInclude Include="Src\DisplayInfo.h" />
     <ClInclude Include="Src\Dust.h" />
+    <ClInclude Include="Src\DustBox.h" />
     <ClInclude Include="Src\EditScene.h" />
     <ClInclude Include="Src\FbxMesh.h" />
     <ClInclude Include="Src\GameMain.h" />
@@ -315,6 +316,7 @@
     <ClInclude Include="Src\SceneBase.h" />
     <ClInclude Include="Src\SceneFactory.h" />
     <ClInclude Include="Src\SceneManager.h" />
+    <ClInclude Include="Src\SelectScene.h" />
     <ClInclude Include="Src\Shader.h" />
     <ClInclude Include="Src\SplitScreen.h" />
     <ClInclude Include="Src\SplitScreenLastDraw.h" />
@@ -342,6 +344,7 @@
     <ClCompile Include="Src\Displace.cpp" />
     <ClCompile Include="Src\DisplayInfo.cpp" />
     <ClCompile Include="Src\Dust.cpp" />
+    <ClCompile Include="Src\DustBox.cpp" />
     <ClCompile Include="Src\EditScene.cpp" />
     <ClCompile Include="Src\FbxMesh.cpp" />
     <ClCompile Include="Src\GameMain.cpp" />
@@ -359,6 +362,7 @@
     <ClCompile Include="Src\SceneBase.cpp" />
     <ClCompile Include="Src\SceneFactory.cpp" />
     <ClCompile Include="Src\SceneManager.cpp" />
+    <ClCompile Include="Src\SelectScene.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
     <ClCompile Include="Src\SplitScreen.cpp" />
     <ClCompile Include="Src\SplitScreenLastDraw.cpp" />

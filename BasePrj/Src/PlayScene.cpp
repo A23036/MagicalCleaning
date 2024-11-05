@@ -6,7 +6,7 @@
 
 PlayScene::PlayScene()
 {
-	new Stage(4);
+	new Stage(3);
 	Instantiate<Camera>();
 	Instantiate<DisplayInfo>();
 	new Dust(0,VECTOR3(5,5,-5));
@@ -27,5 +27,5 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-	GameDevice()->m_pFont->Draw(400, 15, _T("PLAY SCENE"), 16, RGB(255, 0, 0));	
+	GameDevice()->m_pFont->Draw(700, 15, _T("PLAY SCENE"), 16, RGB(255, 0, 0));	
 }

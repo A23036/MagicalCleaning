@@ -5,6 +5,7 @@
 #include "PlayScene.h"
 #include "EditScene.h"
 #include "SplitScreen.h"
+#include "SelectScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
 {
@@ -29,6 +30,10 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	else if (name == "EditScene") {
 		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
 		return new EditScene();
+	}
+	else if (name == "SelectScene") {
+		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
+		return new SelectScene();
 	}
 	assert(false);
 	return nullptr;

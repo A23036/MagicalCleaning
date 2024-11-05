@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Camera.h"
 #include "Dust.h"
+#include "DustBox.h"
 #include <dinput.h>
 
 namespace { // このcpp以外では使えない
@@ -14,6 +15,9 @@ namespace { // このcpp以外では使えない
 
 Player::Player()
 {
+	// プレイヤーの持つ箒の生成
+	child = new Broom(this);
+
 	animator = new Animator(); // インスタンスを作成
 
 	mesh = new CFbxMesh();
@@ -37,12 +41,13 @@ Player::Player()
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
 	animator->SetPlaySpeed(1.0f);
-
+	
 	transform.position = VECTOR3(0, 0, 0);
 	transform.rotation = VECTOR3(0, 0, 0);
 	state = sOnGround;
 	speedY = 0;
-	MP = 0;
+	mp = 0;
+	weight = 0;
 	doneAtkAnim = false;
 
 	moveSpeed	= 1;
@@ -68,11 +73,22 @@ Player::~Player()
 
 void Player::Update()
 {
+	// 箒の位置情報更新
+	MATRIX4X4 bone;
+	if (state != 3) {
+		bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
+	}
+	else {
+		bone = mesh->GetFrameMatrices(19);// プレイヤーの原点からの右手の位置(0は右手)
+	}
+	
+	child->SetPos(bone);
+
 	animator->Update(); // 毎フレーム、Updateを呼ぶ
 
 	switch (state) {
 	case sOnGround:
-		UpdateOnGround(); 
+		UpdateOnGround();
 		break;
 	case sJump:
 		UpdateJump();
@@ -139,17 +155,18 @@ void Player::Update()
 		// 各ボタンの押下状態を確認
 		if (joyState.rgbButtons[i] & 0x80) // ボタン i が押されている場合
 		{
-			ImGui::Text("Button %d is pressed", i); // ボタン番号を表示
+			ImGui::Text("%dP : Button %d is pressed", playerNum,i); // ボタン番号を表示
 		}
 	}
+	
 	float rx = di->GetJoyState().lRx;
 	float ry = di->GetJoyState().lRy;
 	float rz = di->GetJoyState().lRz;
-	ImGui::InputFloat("rX", &rx);
-	ImGui::InputFloat("rY", &ry);
-	ImGui::InputFloat("rZ", &rz);
+	//ImGui::InputFloat("rX", &rx);
+	//ImGui::InputFloat("rY", &ry);
+	//ImGui::InputFloat("rZ", &rz);
 	ImGui::End();
-
+	
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
@@ -171,24 +188,13 @@ void Player::Update()
 		}
 	}
 	
-
-	// Dancerにめり込まないようにする
+	// DustBoxにめり込まないようにする
 	// 自分の座標は、transform.position
-	// Dancerの座標を知る
-	//std::list<Dancer*> dancers =
-	//	ObjectManager::FindGameObjects<Dancer>();
-	// ①イテレーター版
-	//for (std::list<Dancer*>::iterator itr = dancers.begin();
-	//				itr != dancers.end(); itr++) {
-	//	Dancer* dancer = *itr;
-	// ②イテレータの変更
-	//for (auto itr = dancers.begin(); itr != dancers.end(); itr++) {
-	//	Dancer* dancer = *itr;
-	// ③for(:)で回す
-	/*
-	for (Dancer* dancer : dancers) {
-		// 以上３バージョン
-		SphereCollider tCol = dancer->Collider();
+	// DustBoxの座標を知る
+	std::list<DustBox*> boxs = ObjectManager::FindGameObjects<DustBox>();
+
+	for (DustBox* box : boxs) {
+		SphereCollider tCol = box->Collider();
 		SphereCollider pCol = Collider();
 		VECTOR3 pushVec = pCol.center - tCol.center;
 		float rSum = pCol.radius + tCol.radius;
@@ -197,11 +203,32 @@ void Player::Update()
 			// 押し出す方向はpushVec
 			// 押し出す長さを求める
 			float pushLen = rSum - pushVec.Length();
+			pushVec.y = 0.0f; // y軸方向の押し返しを無効にする(地面に埋まったり浮いたりするため)
 			pushVec = XMVector3Normalize(pushVec); // pushVecの長さを１にする
 			transform.position += pushVec * pushLen;
 		}
 	}
-	*/
+
+	// playerにめり込まないようにする
+	// 自分の座標は、transform.position
+	// playerの座標を知る
+	std::list<Player*> players = ObjectManager::FindGameObjects<Player>();
+
+	for (Player* player : players) {
+		SphereCollider tCol = player->Collider();
+		SphereCollider pCol = Collider();
+		VECTOR3 pushVec = pCol.center - tCol.center;
+		float rSum = pCol.radius + tCol.radius;
+		if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+			// 当たってる
+			// 押し出す方向はpushVec
+			// 押し出す長さを求める
+			float pushLen = rSum - pushVec.Length();
+			pushVec.y = 0.0f; // y軸方向の押し返しを無効にする(地面に埋まったり浮いたりするため)
+			pushVec = XMVector3Normalize(pushVec); // pushVecの長さを１にする
+			transform.position += pushVec * pushLen;
+		}
+	}
 }
 	
 void Player::Draw()
@@ -231,9 +258,13 @@ SphereCollider Player::Collider()
 
 void Player::addMP(int n)
 {
-	MP += n;
+	mp += n;
 }
 
+void Player::addWeight(int n)
+{
+	weight += n;
+}
 
 void Player::UpdateOnGround()
 {
@@ -242,14 +273,14 @@ void Player::UpdateOnGround()
 	
 	int x = di->GetJoyState(playerNum).lX;	// 右:1000 / 左:-1000
 	int y = di->GetJoyState(playerNum).lY;	// 下:1000 / 上:-1000
-
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 300));
 	ImGui::SetNextWindowSize(ImVec2(200, 200));
 	ImGui::Begin("Joystick");
 	ImGui::InputInt("IX", &x);
 	ImGui::InputInt("IY", &y);
 	ImGui::End();
-
+	*/
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	if (!(st->IsLandBlock(transform.position))) {
 		// 空中
@@ -292,6 +323,7 @@ void Player::UpdateOnGround()
 	}
 	else {
 		// スティックが傾いていない場合は待機アニメーションを再生
+		animator->SetPlaySpeed(1.0f);
 		animator->MergePlay(aIdle);
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
@@ -307,8 +339,9 @@ void Player::UpdateOnGround()
 		animator->SetPlaySpeed(1.0f);
 		state = sAttack1;
 	}
-	if (di->CheckKey(KD_TRG, DIK_M)) { //攻撃ボタン
+	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 1, playerNum)) { //攻撃ボタン
 		animator->MergePlay(aAttack2);
+		animator->SetPlaySpeed(1.0f);
 		state = sAttack2;
 	}
 
@@ -360,26 +393,8 @@ void Player::UpdateAttack1()
 {	
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
-	/*
-	VECTOR3 tipPos = VECTOR3(0.9966, 0.6536, 0.140);
-	MATRIX4X4 mat = transform.matrix();// 世界(ワールド)の中で、プレイヤーの位置と向き
-	MATRIX4X4 bone = mesh->GetFrameMatrices(34); // プレイヤーの原点からの手首の位置(34は手首)
-	VECTOR3 start = VECTOR3(0, 0, 0) * bone * mat;
-	VECTOR3 end = tipPos * bone * mat;
 	
-	for (Dust* d : dusts)
-	{
-		if (d->HitLineToMesh(start, end)) {
-			d->AddDamage(1); //ゴミに当てた
-		}
-		if (animator->Finished())
-		{
-			//攻撃アニメーションの終了
-			state = sOnGround;
-		}
-	}*/
-	
-	if (!doneAtkAnim && animator->CurrentFrame() == 40) { //攻撃のヒットしたタイミング
+	if (!doneAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
 		doneAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
@@ -430,8 +445,84 @@ void Player::UpdateAttack2()
 			state = sOnGround;
 		}
 	}*/
+
+	// ゴミに攻撃を当てる
+	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
+
+	if (!doneAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
+		doneAtkAnim = true;
+		for (Dust* d : dusts) {
+			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
+			SphereCollider atkCol = Collider();			//攻撃判定の球
+			VECTOR3 forward = VECTOR3(0, 0.5f, 1.0f); // 回転してない時の移動量
+			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
+			forward = forward * rotY; // キャラの向いてる方への移動量
+			atkCol.center = transform.position + forward; //攻撃判定の球を作る
+			atkCol.radius = 1.0f;
+			VECTOR3 pushVec = atkCol.center - dCol.center;
+			float rSum = atkCol.radius + dCol.radius;
+			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+				// 当たってる
+				d->AddDamage(1); //ダメージを与える
+			}
+		}
+	}
+
+	if (animator->Finished())
+	{
+		//攻撃アニメーションの終了
+		doneAtkAnim = false;
+		animator->SetPlaySpeed(1.0f);
+		state = sOnGround;
+	}
 }
 
 void Player::UpdateAttack3()
 {
+}
+
+//　プレイヤーの持つ箒
+Broom::Broom(Object3D* parentModel)
+{
+	parent = parentModel;
+//	transform.SetParent(parent); // tansformにも親を教える
+
+	mesh = new CFbxMesh();
+	mesh->Load("data/Player2/weapon/broom.mesh");
+	
+	transform.position = VECTOR3(0, 0, 0);
+}
+
+Broom::~Broom()
+{
+}
+
+void Broom::Update()
+{
+	Player* pl = ObjectManager::FindGameObject<Player>();
+
+	// 状態ごとの角度変更
+	switch (pl->getPlayerState()) {
+	case 0:
+	case 1:
+		transform.position = VECTOR3(0, 0, 0);
+		transform.rotation = VECTOR3(0, 0, -70);
+		break;
+	case 2:
+	case 3:
+	default:
+		transform.position = VECTOR3(0, 0, 0);
+		transform.rotation = VECTOR3(0, 0, 0);
+		break;
+	}
+}
+
+void Broom::Draw()
+{
+	mesh->Render(transform.matrix() * mat * parent->Matrix());
+}
+
+void Broom::SetPos(MATRIX4X4 m)
+{
+	mat = m;
 }

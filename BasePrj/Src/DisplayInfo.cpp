@@ -29,8 +29,8 @@ void DisplayInfo::Draw()
 	//MP•\Ž¦
 	Player* pl = ObjectManager::FindGameObject<Player>();
 	char str[64]; //•¶Žš—ñ‚ð—pˆÓ
-	sprintf_s<64>(str, "MP: %4d", pl->getMP());
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 , 20, str, 50, RGB(255, 255, 255));
+	sprintf_s<64>(str, "Weight: %4d", pl->getWeight());
+	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 255, 255));
 
 	/*
 	float h = 0;

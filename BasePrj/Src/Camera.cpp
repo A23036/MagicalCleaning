@@ -15,23 +15,26 @@ Camera::Camera()
 	autoRotateSpeed = 0.05f;			// カメラの自動回転速度
 
 	ssObj = ObjectManager::FindGameObject<SplitScreen>();
+	
 	while (view.size() < ssObj->MultiSize())
 	{
 		MATRIX4X4 m = XMMatrixIdentity();
-		view.emplace_back(m);
+		view.emplace_back(m);                                                                         
 		VECTOR3 v = VECTOR3(0, 0, 0);
 		eyePt.emplace_back(v);
 		lookatPt.emplace_back(v);
 	}
 
-	// すべての要素を0に設定
-	rotationY.assign(ssObj->MultiSize(), 0.0f);
-	prevPlayerPos.assign(ssObj->MultiSize(), VECTOR3(0, 0, 0));
-	changeTime.assign(ssObj->MultiSize(),CHANGE_TIME_LIMIT);
-	changePosStart.assign(ssObj->MultiSize(), VECTOR3(0, 0, 0));
-	changePosGoal.assign(ssObj->MultiSize(), VECTOR3(0, 0, 0));
-	changeLookStart.assign(ssObj->MultiSize(), VECTOR3(0, 0, 0));
-	changeLookGoal.assign(ssObj->MultiSize(), VECTOR3(0, 0, 0));
+	// 配列要素の初期化
+	for (int i = 0; i < MAXPLAYER; i++) {
+		rotationY[i] = 0.0f;
+		prevPlayerPos[i] = VECTOR3(0, 0, 0);
+		changeTime[i] = CHANGE_TIME_LIMIT;
+		changePosStart[i]	= VECTOR3(0, 0, 0);
+		changePosGoal[i]	= VECTOR3(0, 0, 0);
+		changeLookStart[i]	= VECTOR3(0, 0, 0);
+		changeLookGoal[i]	= VECTOR3(0, 0, 0);
+	}
 }
 
 Camera::~Camera()
@@ -86,8 +89,8 @@ void Camera::Update()
 			{
 			case 0:
 				{
-					// 画面0はPlayer視点
-					Player* pc = ObjectManager::FindGameObject<Player>();
+					// 画面0はPlayer1視点
+					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player1");
 					if (pc != nullptr)
 					{
 						updateCamera(i, pc->Position(), pc->Rotation());
@@ -100,19 +103,15 @@ void Camera::Update()
 
 			case 1:
 				{
-					// 画面1は原点視点
-					updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
-					/*
-					// 画面1はEnemyRS視点
-					EnemyRS* enm = ObjectManager::FindGameObject<EnemyRS>();
-					if (enm != nullptr && enm->Mesh() != nullptr)
+					// 画面1はPlayer2視点
+					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player2");
+					if (pc != nullptr)
 					{
-						updateCamera(i, enm->Position(), enm->Rotation());
+						updateCamera(i, pc->Position(), pc->Rotation());
 					}
 					else {
 						updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
 					}
-					*/
 				}
 				break;
 
@@ -192,18 +191,16 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 	// 左SHIFTキーが押されたらカメラをプレイヤーの後方に移動
 	auto di = GameDevice()->m_pDI;
-	if (di->CheckKey(KD_TRG, DIK_LSHIFT) || di->CheckJoy(KD_TRG, DIJ_Y)) {
-		if (counter == 0) {
-			//プレイヤーの回転を保存
-			rotationY[counter] = rot.y;
+	if (di->CheckKey(KD_TRG, DIK_LSHIFT) || di->CheckJoy(KD_TRG, DIJ_Y,counter)) {
+		//プレイヤーの回転を保存
+		rotationY[counter] = rot.y;
 
-			changeTime[counter] = 0.0f;
+		changeTime[counter] = 0.0f;
 
-			changePosStart[counter] = eyePt[counter];
-			changeLookStart[counter] = lookatPt[counter];
-			changePosGoal[counter] = CameraPos[viewType];
-			changeLookGoal[counter] = LookPos[viewType];
-		}
+		changePosStart[counter] = eyePt[counter];
+		changeLookStart[counter] = lookatPt[counter];
+		changePosGoal[counter] = CameraPos[viewType];
+		changeLookGoal[counter] = LookPos[viewType];
 		
 	}
 	// 2024.10.12 カメラ回転リセット↑
