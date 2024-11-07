@@ -6,7 +6,7 @@
 
 PlayScene::PlayScene()
 {
-	new Stage(3);
+	new Stage(5);
 	Instantiate<Camera>();
 	Instantiate<DisplayInfo>();
 	new Dust(0,VECTOR3(5,5,-5));

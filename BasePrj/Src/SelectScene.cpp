@@ -19,5 +19,8 @@ void SelectScene::Update()
 
 void SelectScene::Draw()
 {
+	TCHAR str[256];
+
 	GameDevice()->m_pFont->Draw(400, 15, _T("SELECT SCENE"), 16, RGB(255, 0, 0));
+	
 }

@@ -23,6 +23,13 @@ Player::Player()
 	mesh = new CFbxMesh();
 
 	//キャラクターモデル設定
+	/*
+	for (const std::string& f : files) {
+		CFbxMesh* m = new CFbxMesh();
+		std::string folder = "data/models/"; // 一旦C++の文字列にする
+		m->Load((folder + f + ".mesh").c_str()); // +で文字列をつなげることができる
+		meshes.push_back(m);
+	}*/
 	mesh->Load("Data/Player2/witch.mesh");	
 	mesh->LoadAnimation(aIdle, "Data/Player2/idle.anmx", true);
 	mesh->LoadAnimation(aRun, "Data/Player2/run.anmx", true);
@@ -337,6 +344,7 @@ void Player::UpdateOnGround()
 	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃ボタン
 		animator->MergePlay(aAttack1);
 		animator->SetPlaySpeed(1.0f);
+		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
 	}
 	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 1, playerNum)) { //攻撃ボタン
@@ -416,6 +424,7 @@ void Player::UpdateAttack1()
 		//攻撃アニメーションの終了
 		doneAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
+		transform.rotation.y -= 15 * DegToRad; //回転を戻す
 		state = sOnGround;
 	}
 

@@ -53,7 +53,7 @@ void Stage::Draw()
 		for (int z = 0; z < map[y].size(); z++) {
 			for (int x = 0; x < map[y][z].size(); x++) {
 				VECTOR3 dist = pos - VECTOR3(x, y, -z);
-				if (dist.LengthSquare() >= 300) //“Á’è‚Ì”ÍˆÍ“à‚¾‚¯•`‰æ
+				if (dist.LengthSquare() >= 400) //“Á’è‚Ì”ÍˆÍ“à‚¾‚¯•`‰æ
 						continue;
 				int chip = map[y][z][x];
 				if (chip >= 0) { // •‰‚ÌŽž‚ÍŒŠ
@@ -67,7 +67,7 @@ void Stage::Draw()
 void Stage::Load(int n)
 {
 	char name[64];
-	sprintf_s<64>(name, "data/Stage%02d.csv", n);
+	sprintf_s<64>(name, "data/stage/Stage%02d.csv", n);
 
 	SAFE_DELETE(csv);
 	csv = new CsvReader(name);

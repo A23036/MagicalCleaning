@@ -148,7 +148,7 @@ void StageEdit::Draw()
 void StageEdit::Save(int n)
 {
 	char name[64];
-	sprintf_s<64>(name, "data/Stage%02d.csv", n);
+	sprintf_s<64>(name, "data/stage/Stage%02d.csv", n);
 	// ファイルを開く
 	std::ofstream ofs(name); // 引数にファイル名
 	// データを書く
@@ -172,7 +172,7 @@ void StageEdit::Save(int n)
 void StageEdit::Load(int n)
 {
 	char name[64];
-	sprintf_s<64>(name, "data/Stage%02d.csv", n);
+	sprintf_s<64>(name, "data/stage/Stage%02d.csv", n);
 
 	CsvReader* csv = new CsvReader(name);
 	map.clear();
