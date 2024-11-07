@@ -73,6 +73,22 @@ void StageEdit::Update()
 			map[cursorY][cursorZ][cursorX] = -1;
 		}
 	}
+	if (di->CheckKey(KD_TRG, DIK_UP)) {
+		map[cursorY][cursorZ][cursorX] = CHAR01;
+	}
+	if (di->CheckKey(KD_TRG, DIK_LEFT)) {
+		map[cursorY][cursorZ][cursorX] = CHAR02;
+	}
+	if (di->CheckKey(KD_TRG, DIK_DOWN)) {
+		map[cursorY][cursorZ][cursorX] = CHAR03;
+	}
+	if (di->CheckKey(KD_TRG, DIK_RIGHT)) {
+		map[cursorY][cursorZ][cursorX] = CHAR04;
+	}
+	if (di->CheckKey(KD_TRG, DIK_RCONTROL) || di->CheckKey(KD_TRG, DIK_LCONTROL)) {
+		map[cursorY][cursorZ][cursorX] = -1;
+	}
+
 
 //	if (di->CheckKey(KD_TRG, DIK_O)) {
 //		Save();
@@ -95,12 +111,18 @@ void StageEdit::Update()
 	if (ImGui::Button("CREATE")) {
 		Create(xsize, ysize, zsize);
 	}
-	ImGui::End();
 
+	//åªç›ÇÃÉ}ÉbÉvèÓïÒ
+	int x = map[0][0].size();
+	int y = map.size();
+	int z = map[0].size();
+	ImGui::InputInt("curX", &x);
+	ImGui::InputInt("curY", &y);
+	ImGui::InputInt("curZ", &z);
 //	ImGui::Begin("CURSOR");
 //	ImGui::InputInt("X", &cursorX);
 //	ImGui::InputInt("Z", &cursorZ);
-//	ImGui::End();
+	ImGui::End();
 }
 
 void StageEdit::Draw()
@@ -179,7 +201,7 @@ void StageEdit::Load(int n)
 void StageEdit::Create(int xsize, int ysize, int zsize)
 {
 	map.clear();
-	for (int y = 0; y < zsize; y++) {
+	for (int y = 0; y < ysize; y++) {
 		vector<vector<int>> m2;
 		for (int z = 0; z < zsize; z++) {
 			vector<int> m;
