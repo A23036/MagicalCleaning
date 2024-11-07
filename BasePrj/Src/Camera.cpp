@@ -179,7 +179,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 		changeLookGoal = LookPos[viewType];
 		changeTime = 0.0f;
 	}*/
-
+	
 	// プレイヤーの位置を取得
 	VECTOR3 playerPos = pos;
 
@@ -288,7 +288,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 	// プレイヤーの位置を保存
 	prevPlayerPos[counter] = playerPos;
-
+	
 	// ------------------------------------------------------------------
 	// カメラ座標を配列に設定する
 	eyePt[counter] = transform.position;   // カメラ座標

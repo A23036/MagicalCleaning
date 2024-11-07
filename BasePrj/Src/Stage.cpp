@@ -30,13 +30,31 @@ Stage::~Stage()
 
 void Stage::Update()
 {
+	//現在のマップ情報
+	ImGui::Begin("mapsize");
+	int x = map.size();
+	int y = map[0].size();
+	int z = map[0][0].size();
+	ImGui::InputInt("X", &x);
+	ImGui::InputInt("Y", &y);
+	ImGui::InputInt("Z", &z);
+	ImGui::End();
 }
 
 void Stage::Draw()
 {
+	// 画面ごとにプレイヤー周辺のみマップ描画
+	int num = ObjectManager::DrawCounter() + 1; 
+	std::string s = "Player" + std::to_string(num);
+	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
+	VECTOR3 pos = pl->Position();
+
 	for (int y = 0; y < map.size(); y++) {
 		for (int z = 0; z < map[y].size(); z++) {
 			for (int x = 0; x < map[y][z].size(); x++) {
+				VECTOR3 dist = pos - VECTOR3(x, y, -z);
+				if (dist.LengthSquare() >= 300) //特定の範囲内だけ描画
+						continue;
 				int chip = map[y][z][x];
 				if (chip >= 0) { // 負の時は穴
 					meshes[chip]->Render(XMMatrixTranslation(x, y, -z));
@@ -78,6 +96,20 @@ void Stage::Load(int n)
 					p->SetPosition(x, map.size(), -(int)m2.size());
 					p->SetTag("Player2");
 					p->setPlayerNum(1);
+					d = -1;
+				}
+				else if (d == boxID::CHAR03) {
+					Player* p = new Player();
+					p->SetPosition(x, map.size(), -(int)m2.size());
+					p->SetTag("Player3");
+					p->setPlayerNum(2);
+					d = -1;
+				}
+				else if (d == boxID::CHAR04) {
+					Player* p = new Player();
+					p->SetPosition(x, map.size(), -(int)m2.size());
+					p->SetTag("Player4");
+					p->setPlayerNum(3);
 					d = -1;
 				}
 				else if (d == boxID::CHEST_A) {
@@ -139,63 +171,61 @@ bool Stage::HitSphere(const SphereCollider& coll, VECTOR3* out)
 	VECTOR3 pushVec = VECTOR3(0, 0, 0);
 	VECTOR3 pushVecCorner = VECTOR3(0, 0, 0);
 	bool pushed = false;
-	bool pushedCorner = false;
-
 	for (int y = 0; y < map.size(); y++) {
 		for (int z = 0; z < map[y].size(); z++) {
 			for (int x = 0; x < map[y][z].size(); x++) {
 				if (map[y][z][x] >= 0) {
-					// マップの座標に基づく変換行列を作成
+					VECTOR3 dist = coll.center - VECTOR3(x, y, -z);
+					if (dist.LengthSquare() >= (coll.radius + 1.5f) * (coll.radius + 1.5f))
+						continue;
 					MATRIX4X4 mat = XMMatrixTranslation(x, y, -z);
-
-					// 衝突判定を行う
 					std::list<MeshCollider::CollInfo> meshes = boxCollider->CheckCollisionSphereList(mat, coll.center, coll.radius);
-
-					// 衝突したすべてのメッシュに対して処理を行う
 					for (const MeshCollider::CollInfo& m : meshes) {
 						VECTOR3 move = coll.center - m.hitPosition;
-						float len = move.Length(); // 当たった点から中心への距離
-
-						if (len < coll.radius) {
-							move = move * ((coll.radius - len) / len);
-							VECTOR3 push = m.normal * Dot(move, m.normal); // 押し返しベクトルを計算
-
-							// 押し返しベクトルの合成
-							if (m.normal.Length() > 0.0f) {
-								VECTOR3 pushVecNorm = XMVector3Normalize(pushVec); // 合成済みベクトルの向き
-								float dot = Dot(push, pushVecNorm);	// その成分の長さ
-
-								// 合成ベクトルに加える
-								pushVec += push - pushVecNorm * dot;
+						VECTOR3 v = XMVector3Cross(move, m.normal);
+						if (v.Length() <= 0.0001f) {
+							float len = move.Length(); // 当たった点から中心への距離
+							if (len > 0.0f) {
+								move = move * ((coll.radius - len) / len);
 							}
-							else {
-								VECTOR3 pushVecCornerNorm = XMVector3Normalize(pushVecCorner); // 合成済みベクトルの向き
-								float dotCorner = Dot(push, pushVecCornerNorm); // その成分の長さ
-
-								// コーナーの押し返しベクトルに加える
-								pushVecCorner += push - pushVecCornerNorm * dotCorner;
-							}
-
-							pushedCorner = true;
+							VECTOR3 push = m.normal * Dot(move, m.normal); // 押し返したいベクトル
+							// 今のpushVecと合成する
+							VECTOR3 pushVecNorm = XMVector3Normalize(pushVec); // 合成済みベクトルの向き
+							float dot = Dot(push, pushVecNorm);	// その成分の長さ
+							//							if (dot < pushVec.Length()) {
+							pushVec += push - pushVecNorm * dot; // その成分を減らしていい
+							//							}
+							//							else {
+							//								pushVec = push;
+							//							}
 						}
-
+						else {
+							float len = move.Length(); // 当たった点から中心への距離
+							move = move * ((coll.radius - len) / len);
+							VECTOR3 push = m.normal * Dot(move, m.normal); // 押し返したいベクトル
+							// 今のpushVecと合成する
+							VECTOR3 pushVecNorm = XMVector3Normalize(pushVecCorner); // 合成済みベクトルの向き
+							float dot = Dot(push, pushVecNorm);	// その成分の長さ
+							//							if (dot < pushVecCorner.Length()) {
+							pushVecCorner += push - pushVecNorm * dot; // その成分を減らしていい
+							//							}
+							//							else {
+							//								pushVecCorner = push;
+							//							}
+						}
 						pushed = true;
 					}
 				}
 			}
 		}
 	}
-
-	// 衝突があった場合に押し返しベクトルをoutに代入
 	if (pushed && out != nullptr) {
-		if (pushedCorner) {
+		if (pushVec.LengthSquare() > 0.0f) {
 			*out = pushVec;
 		}
 		else {
 			*out = pushVecCorner;
 		}
 	}
-
 	return pushed;
 }
-

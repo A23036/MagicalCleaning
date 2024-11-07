@@ -37,7 +37,6 @@ private:
 	int mp;
 	int weight;
 
-
 	bool doneAtkAnim;
 
 	int moveSpeed;	//ˆÚ“®‘¬“x

@@ -83,7 +83,7 @@ void Player::Update()
 	}
 	
 	child->SetPos(bone);
-
+	
 	animator->Update(); // 毎フレーム、Updateを呼ぶ
 
 	switch (state) {
@@ -105,7 +105,6 @@ void Player::Update()
 	}
 
 	//当たり判定処理
-	
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	VECTOR3 push;
 	if (st->HitSphere(Collider(), &push)) {
@@ -128,13 +127,13 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-	
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 100));
 	ImGui::Begin("PlayerNum");
 	ImGui::InputInt("X", &playerNum);
 	ImGui::End();
-
+	*/
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
 	ImGui::SetNextWindowSize(ImVec2(100, 100));
 	ImGui::Begin("PlayerPos");
@@ -170,6 +169,7 @@ void Player::Update()
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
+	
 	std::list<Dust*> dusts =ObjectManager::FindGameObjects<Dust>();
 	
 	for (Dust* dust : dusts) {
@@ -252,7 +252,7 @@ SphereCollider Player::Collider()
 {
 	SphereCollider col;
 	col.center = transform.position + VECTOR3(0, 0.6f, 0);
-	col.radius = 0.55f;
+	col.radius = 0.5f;
 	return col;
 }
 
@@ -344,8 +344,6 @@ void Player::UpdateOnGround()
 		animator->SetPlaySpeed(1.0f);
 		state = sAttack2;
 	}
-
-	
 }
 
 
@@ -485,7 +483,7 @@ void Player::UpdateAttack3()
 Broom::Broom(Object3D* parentModel)
 {
 	parent = parentModel;
-//	transform.SetParent(parent); // tansformにも親を教える
+//	transform.SetParent(parent); // transformにも親を教える
 
 	mesh = new CFbxMesh();
 	mesh->Load("data/Player2/weapon/broom.mesh");
