@@ -1,18 +1,41 @@
 #include "Camera.h"
 #include "Player.h"
+#include "CsvReader.h"
 #include <iostream>
-										//後方視点			//上方視点
-static const VECTOR3 CameraPos[] = { VECTOR3(0, 3, -7), VECTOR3(0, 5, -0.5) };
-static const VECTOR3 LookPos[] =   { VECTOR3(0, 1.5,  0), VECTOR3(0, 1,    1) };
-static const float CHANGE_TIME_LIMIT = 0.5f; // 秒
 
 Camera::Camera()
 {
+	// csvからデータ読み込み
+	csv = new CsvReader("data/csv/Paramater.csv");
+	if (csv->GetLines() < 1) {
+		MessageBox(NULL, "Paramater.csvが読めません", "エラー", MB_OK);
+	}
+	readLine = 0;
+
+	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
+		if (csv->GetString(i, 0) == "Camera") {
+			if (csv->GetString(i, 1) == "CameraPos") {		// カメラ座標
+				CameraPos = VECTOR3(csv->GetFloat(i, 2), csv->GetFloat(i, 3), csv->GetFloat(i, 4));
+			}
+			if (csv->GetString(i, 1) == "LookPos") {		// カメラ注視点
+				LookPos = VECTOR3(csv->GetFloat(i, 2), csv->GetFloat(i,3), csv->GetFloat(i, 4));
+			}
+			if (csv->GetString(i, 1) == "ChangeTime") {		// カメラ切り替え時間
+				CHANGE_TIME = csv->GetFloat(i,3);
+			}
+			if (csv->GetString(i, 1) == "RotateSpeed") {	// カメラ回転速度
+				ROTATE_SPEED = csv->GetFloat(i, 3);
+			}
+		}
+		if (csv->GetString(i, 0) == "Player") {
+			break;
+		}
+	}
+
+
 	ObjectManager::SetVisible(this, false);		// 自体は表示しない
 	SetDrawOrder(-1000);
-	viewType = 0;
 	
-	autoRotateSpeed = 0.05f;			// カメラの自動回転速度
 
 	ssObj = ObjectManager::FindGameObject<SplitScreen>();
 	
@@ -29,7 +52,7 @@ Camera::Camera()
 	for (int i = 0; i < MAXPLAYER; i++) {
 		rotationY[i] = 0.0f;
 		prevPlayerPos[i] = VECTOR3(0, 0, 0);
-		changeTime[i] = CHANGE_TIME_LIMIT;
+		changeTime[i] = CHANGE_TIME;
 		changePosStart[i]	= VECTOR3(0, 0, 0);
 		changePosGoal[i]	= VECTOR3(0, 0, 0);
 		changeLookStart[i]	= VECTOR3(0, 0, 0);
@@ -166,20 +189,6 @@ void Camera::Draw()
 
 void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 {
-	/* デバッグに使うかもしれないのでコメントアウト
-	// 二つの視点を'L'キーによって切り替える
-	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_L)) {
-		changePosStart = CameraPos[viewType];
-		changeLookStart = LookPos[viewType];
-		viewType += 1;
-		if (viewType >= sizeof(CameraPos) / sizeof(CameraPos[0])) {
-			viewType = 0;
-		}
-		changePosGoal = CameraPos[viewType];
-		changeLookGoal = LookPos[viewType];
-		changeTime = 0.0f;
-	}*/
-	
 	// プレイヤーの位置を取得
 	VECTOR3 playerPos = pos;
 
@@ -199,21 +208,21 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 		changePosStart[counter] = eyePt[counter];
 		changeLookStart[counter] = lookatPt[counter];
-		changePosGoal[counter] = CameraPos[viewType];
-		changeLookGoal[counter] = LookPos[viewType];
+		changePosGoal[counter] = CameraPos;
+		changeLookGoal[counter] = LookPos;
 		
 	}
 	// 2024.10.12 カメラ回転リセット↑
 
 	// プレイヤーが回転・移動してない時のカメラ位置に
 	// プレイヤーの回転・移動行列を掛けると、
-	if (changeTime[counter] >= CHANGE_TIME_LIMIT) {
-		transform.position = CameraPos[viewType] * m;
-		lookPosition = LookPos[viewType] * m;
+	if (changeTime[counter] >= CHANGE_TIME) {
+		transform.position = CameraPos * m;
+		lookPosition = LookPos * m;
 	}
 	else { // 視点切り替え中
 		changeTime[counter] += 1.0f / 60.0f;
-		float timeRate = changeTime[counter] / CHANGE_TIME_LIMIT; // 0,0～1.0
+		float timeRate = changeTime[counter] / CHANGE_TIME; // 0,0～1.0
 		//float rate = -((timeRate - 1) * (timeRate - 1)) + 1;
 		float rate = 1 - pow(1 - timeRate, 3);
 		VECTOR3 position = (changePosGoal[counter] * m - changePosStart[counter]) * rate + changePosStart[counter];
@@ -242,12 +251,12 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 		if (dotVal > 0.1) // プレイヤーがカメラの右側にいる
 		{
 			// 緩やかに右に回転させる
-			targetRotationY += autoRotateSpeed;
+			targetRotationY += ROTATE_SPEED;
 		}
 		else if (dotVal < -0.1) // プレイヤーがカメラの左側にいる
 		{
 			// 緩やかに左に回転させる
-			targetRotationY -= autoRotateSpeed;
+			targetRotationY -= ROTATE_SPEED;
 		}
 
 		// プレイヤーが斜め前にいる場合は回転を少し抑える
