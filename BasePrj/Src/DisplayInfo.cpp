@@ -26,8 +26,12 @@ void DisplayInfo::Update()
 
 void DisplayInfo::Draw()
 {
-	//MP•\Ž¦
-	Player* pl = ObjectManager::FindGameObject<Player>();
+	//UI•\Ž¦
+	std::string s = "Player";
+	int n = ObjectManager::DrawCounter();
+	s = s + std::to_string(n+1);
+
+	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	char str[64]; //•¶Žš—ñ‚ð—pˆÓ
 	sprintf_s<64>(str, "Weight: %4d", pl->getWeight());
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 255, 255));

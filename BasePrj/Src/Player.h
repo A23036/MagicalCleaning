@@ -1,6 +1,7 @@
 #pragma once
 // Player.h
 #include "Object3D.h"
+#include "CsvReader.h"
 #include "Animator.h"
 
 class Broom : public Object3D {
@@ -22,6 +23,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void CsvLoad(); //CSVファイルからデータの設定
+
 	SphereCollider Collider() override;
 
 	int getMP() { return mp; };
@@ -33,11 +36,17 @@ public:
 	void setPlayerNum(int n) { playerNum = n; };
 
 private:
+	CsvReader* csv;
+
+	float GRAVITY;		//重力加速度
+	float JUMP_POWER;	//ジャンプ力
+	float MOVE_SPEED;	//移動速度
+
 	int playerNum;
 	int mp;
 	int weight;
 
-	bool doneAtkAnim;
+	bool finishAtkAnim;
 
 	int moveSpeed;	//移動速度
 	int	jumpNum;	//ジャンプ回数
@@ -45,7 +54,7 @@ private:
 	int atkRange;	//攻撃範囲
 	int carWeight;	//運搬可能重量
 
-	float speedY; // Yの速度
+	float speedY; // Y方向の速度
 
 	Animator* animator; // 部品のインスタンスをポインター型で準備
 	enum AnimID {

@@ -1,20 +1,16 @@
 #include "Player.h"
 #include "../Libs/Imgui/imgui.h"
+#include "CsvReader.h"
 #include "Stage.h"
 #include "Camera.h"
 #include "Dust.h"
 #include "DustBox.h"
 #include <dinput.h>
 
-namespace { // このcpp以外では使えない
-	static const float Gravity = 0.005f; // 重力加速度(正の値)
-	static const float JumpPower = 0.1f;
-	static const float RotationSpeed = 3.0f; // 回転速度(度)
-	static const float MoveSpeed = 0.05f;
-};
-
 Player::Player()
 {
+	CsvLoad(); // csvからデータの設定
+
 	// プレイヤーの持つ箒の生成
 	child = new Broom(this);
 
@@ -55,7 +51,7 @@ Player::Player()
 	speedY = 0;
 	mp = 0;
 	weight = 0;
-	doneAtkAnim = false;
+	finishAtkAnim = true;
 
 	moveSpeed	= 1;
 	jumpNum		= 1;
@@ -82,11 +78,11 @@ void Player::Update()
 {
 	// 箒の位置情報更新
 	MATRIX4X4 bone;
-	if (state != 3) {
+	if (state != sAttack2) {
 		bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
 	}
 	else {
-		bone = mesh->GetFrameMatrices(19);// プレイヤーの原点からの右手の位置(0は右手)
+		bone = mesh->GetFrameMatrices(19);// プレイヤーの原点からの左手の位置(19は左手)
 	}
 	
 	child->SetPos(bone);
@@ -123,14 +119,17 @@ void Player::Update()
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
 	ImGui::Begin("State");
 	switch (state) {
-	case 0:
+	case sOnGround:
 		ImGui::Text("sOnGround");
 		break;
-	case 1:
+	case sJump:
 		ImGui::Text("sJump");
 		break;
-	case 2:
-		ImGui::Text("sAttack");
+	case sAttack1:
+		ImGui::Text("sAttack1");
+		break;
+	case sAttack2:
+		ImGui::Text("sAttack2");
 		break;
 	}
 	ImGui::End();
@@ -255,6 +254,32 @@ void Player::Draw()
 	*/
 }
 
+void Player::CsvLoad()
+{
+	// csvからデータ読み込み
+	csv = new CsvReader("data/csv/Paramater.csv");
+	if (csv->GetLines() < 1) {
+		MessageBox(NULL, "Paramater.csvが読めません", "エラー", MB_OK);
+	}
+
+	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
+		if (csv->GetString(i, 0) == "Player") {
+			if (csv->GetString(i, 1) == "Gravity") {		// 重力
+				GRAVITY = csv->GetFloat(i, 3);
+			}
+			if (csv->GetString(i, 1) == "JumpPower") {		// ジャンプ力
+				JUMP_POWER = csv->GetFloat(i, 3);
+			}
+			if (csv->GetString(i, 1) == "MoveSpeed") {		// 移動速度
+				MOVE_SPEED = csv->GetFloat(i, 3);
+			}
+		}
+		if (csv->GetString(i, 0) == "Dust") {
+			break;
+		}
+	}
+}
+
 SphereCollider Player::Collider()
 {
 	SphereCollider col;
@@ -314,7 +339,7 @@ void Player::UpdateOnGround()
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
 		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
-		moveDirection = XMVector3Normalize(moveDirection) * MoveSpeed * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
 
 		// 移動の適用
 		transform.position += moveDirection;
@@ -336,7 +361,7 @@ void Player::UpdateOnGround()
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
 	if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum)) {
-		speedY = JumpPower;
+		speedY = JUMP_POWER;
 		state = sJump;
 		animator->SetPlaySpeed(1.0f);
 		animator->MergePlay(aJump);
@@ -359,7 +384,7 @@ void Player::UpdateJump()
 {
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	transform.position.y += speedY;
-	speedY -= Gravity;	// 重力
+	speedY -= GRAVITY;	// 重力
 
 	auto di = GameDevice()->m_pDI;
 	// コントローラースティックの入力を取得
@@ -379,7 +404,7 @@ void Player::UpdateJump()
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
 		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
-		moveDirection = XMVector3Normalize(moveDirection) * MoveSpeed * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
 
 		// 移動の適用
 		transform.position += moveDirection;
@@ -400,8 +425,8 @@ void Player::UpdateAttack1()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
-	if (!doneAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
-		doneAtkAnim = true;
+	if (!finishAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
+		finishAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
@@ -422,7 +447,7 @@ void Player::UpdateAttack1()
 	if (animator->Finished())
 	{
 		//攻撃アニメーションの終了
-		doneAtkAnim = false;
+		finishAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
 		transform.rotation.y -= 15 * DegToRad; //回転を戻す
 		state = sOnGround;
@@ -456,8 +481,8 @@ void Player::UpdateAttack2()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 
-	if (!doneAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
-		doneAtkAnim = true;
+	if (!finishAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
+		finishAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
@@ -478,7 +503,7 @@ void Player::UpdateAttack2()
 	if (animator->Finished())
 	{
 		//攻撃アニメーションの終了
-		doneAtkAnim = false;
+		finishAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
 		state = sOnGround;
 	}
@@ -506,7 +531,9 @@ Broom::~Broom()
 
 void Broom::Update()
 {
-	Player* pl = ObjectManager::FindGameObject<Player>();
+	int num = ObjectManager::DrawCounter();
+	std::string s = "Player" + std::to_string(num);
+	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 
 	// 状態ごとの角度変更
 	switch (pl->getPlayerState()) {

@@ -5,37 +5,10 @@
 
 Camera::Camera()
 {
-	// csvからデータ読み込み
-	csv = new CsvReader("data/csv/Paramater.csv");
-	if (csv->GetLines() < 1) {
-		MessageBox(NULL, "Paramater.csvが読めません", "エラー", MB_OK);
-	}
-	readLine = 0;
-
-	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
-		if (csv->GetString(i, 0) == "Camera") {
-			if (csv->GetString(i, 1) == "CameraPos") {		// カメラ座標
-				CameraPos = VECTOR3(csv->GetFloat(i, 2), csv->GetFloat(i, 3), csv->GetFloat(i, 4));
-			}
-			if (csv->GetString(i, 1) == "LookPos") {		// カメラ注視点
-				LookPos = VECTOR3(csv->GetFloat(i, 2), csv->GetFloat(i,3), csv->GetFloat(i, 4));
-			}
-			if (csv->GetString(i, 1) == "ChangeTime") {		// カメラ切り替え時間
-				CHANGE_TIME = csv->GetFloat(i,3);
-			}
-			if (csv->GetString(i, 1) == "RotateSpeed") {	// カメラ回転速度
-				ROTATE_SPEED = csv->GetFloat(i, 3);
-			}
-		}
-		if (csv->GetString(i, 0) == "Player") {
-			break;
-		}
-	}
-
+	CsvLoad(); // csvからデータの設定
 
 	ObjectManager::SetVisible(this, false);		// 自体は表示しない
 	SetDrawOrder(-1000);
-	
 
 	ssObj = ObjectManager::FindGameObject<SplitScreen>();
 	
@@ -140,26 +113,29 @@ void Camera::Update()
 
 			case 2:
 				{
-					// 画面2は原点視点
-					updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
-					/*
-					// 画面2はEnemyGolem視点
-					EnemyGolem* enm = ObjectManager::FindGameObject<EnemyGolem>();
-					if (enm != nullptr && enm->Mesh() != nullptr)
+					// 画面2はPlayer3視点
+					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player3");
+					if (pc != nullptr)
 					{
-						updateCamera(i, enm->Position(), enm->Rotation());
+						updateCamera(i, pc->Position(), pc->Rotation());
 					}
 					else {
 						updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
 					}
-					*/
 				}
 				break;
 
 			case 3:
 				{
-					// 画面3は原点視点
-					updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
+					// 画面3はPlayer4視点
+					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player4");
+					if (pc != nullptr)
+					{
+						updateCamera(i, pc->Position(), pc->Rotation());
+					}
+					else {
+						updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
+					}
 				}
 				break;
 			}
@@ -186,6 +162,36 @@ void Camera::Draw()
 		lookPosition,	//注視点
 		VECTOR3(0, 1, 0));
 }
+
+void Camera::CsvLoad()
+{
+	// csvからデータ読み込み
+	csv = new CsvReader("data/csv/Paramater.csv");
+	if (csv->GetLines() < 1) {
+		MessageBox(NULL, "Paramater.csvが読めません", "エラー", MB_OK);
+	}
+
+	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
+		if (csv->GetString(i, 0) == "Camera") {
+			if (csv->GetString(i, 1) == "CameraPos") {		// カメラ座標
+				CameraPos = VECTOR3( csv->GetFloat(i, 3), csv->GetFloat(i, 4), csv->GetFloat(i, 5) );
+			}
+			if (csv->GetString(i, 1) == "LookPos") {		// カメラ注視点
+				LookPos = VECTOR3( csv->GetFloat(i, 3), csv->GetFloat(i, 4), csv->GetFloat(i, 5) );
+			}
+			if (csv->GetString(i, 1) == "ChangeTime") {		// カメラ切り替え時間
+				CHANGE_TIME = csv->GetFloat(i, 3);
+			}
+			if (csv->GetString(i, 1) == "RotateSpeed") {	// カメラ回転速度
+				ROTATE_SPEED = csv->GetFloat(i, 3);
+			}
+		}
+		if (csv->GetString(i, 0) == "Player") {
+			break;
+		}
+	}
+}
+
 
 void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 {

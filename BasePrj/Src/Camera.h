@@ -17,6 +17,8 @@ public:
 	void Draw() override;
 	float GetRotY(int cameraNum) { return rotationY[cameraNum]; };
 
+	void CsvLoad(); //CSVファイルからデータの設定
+
 	MATRIX4X4 View(int counter) { return view[counter]; }
 	VECTOR3 EyePt(int counter) { return eyePt[counter]; }
 	VECTOR3 LookatPt(int counter) { return lookatPt[counter]; }
@@ -25,12 +27,12 @@ private:
 	void updateCamera(int counter, VECTOR3 pos, VECTOR3 rot);
 
 	CsvReader* csv;
-	int readLine;
 
-	VECTOR3 CameraPos;
-	VECTOR3 LookPos;
+	VECTOR3 CameraPos = VECTOR3(0, 0, 0);		// カメラ位置
+	VECTOR3 LookPos = VECTOR3(0, 1, 0);		// カメラ注視点
 
-	float CHANGE_TIME;
+	float CHANGE_TIME;		// カメラ移動時間
+	float ROTATE_SPEED;		// カメラの自動回転速度
 
 	SplitScreen* ssObj;
 
@@ -45,7 +47,6 @@ private:
 	VECTOR3 changeLookGoal[MAXPLAYER];	// 注視点移動の終了点
 
 	VECTOR3 prevPlayerPos[MAXPLAYER];	// プレイヤーの前回位置
-	float ROTATE_SPEED;				// カメラの自動回転速度
 
 	vector<MATRIX4X4>  view;
 	vector<VECTOR3>  eyePt;

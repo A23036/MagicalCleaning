@@ -1,6 +1,10 @@
-ID,data,x,y,z
-Camera,CameraPos,0,2,-5
-Camera,LookPos,0,1,0
-,,,,
-Camera,ChangeTime,,0.5,
-Camera,RotateSpeed,,0.05,
+ID,data,,x,y,z
+Camera,CameraPos,,0,2,-5
+Camera,LookPos,,0,1,0
+,,,,,
+Camera,ChangeTime,,0.5,,
+Camera,RotateSpeed,,0.05,,
+,,,,,
+Player,Gravity,,0.005,,
+Player,JumpPower,,0.1,,
+Player,MoveSpeed,,0.05,,
