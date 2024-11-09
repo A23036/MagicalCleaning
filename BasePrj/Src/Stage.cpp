@@ -3,6 +3,7 @@
 #include "BlockFileName.h"
 #include "Player.h"
 #include "Coin.h"
+#include "Dust.h"
 #include "DustBox.h"
 
 Stage::Stage(int stageNumber)
@@ -117,11 +118,16 @@ void Stage::Load(int n)
 					b->SetPosition(x, map.size(), -(int)m2.size());
 					d = -1;
 				}
+				else if (d == boxID::WOOD) {
+					int r = Random(0, 2);
+					Dust* du = new Dust(r,VECTOR3(x, map.size(), -(int)m2.size()));
+					d = -1;
+				}
 				else if (d == boxID::COIN) {
 					Coin* c = new Coin();
 					c->SetPosition(x, map.size(), -(int)m2.size());
 					d = -1;
-				} 
+				}
 				m.push_back(d);
 			}
 			m2.push_back(m);

@@ -31,12 +31,13 @@ Dust::~Dust()
 
 void Dust::Update()
 {
+	/*
 	ImGui::SetNextWindowPos(ImVec2(100, 60));
 	ImGui::SetNextWindowSize(ImVec2(150, 100));
 	ImGui::Begin("DustHP");
 	ImGui::InputInt("HP", &hp);
 	ImGui::End();
-
+	*/
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	Player* pl = ObjectManager::FindGameObject<Player>();
 	if (!(st->IsLandBlock(transform.position))) {
