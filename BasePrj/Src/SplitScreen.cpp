@@ -55,16 +55,7 @@ SplitScreen::SplitScreen()
 	vpMulti.back().TopLeftX = 0;
 	vpMulti.back().TopLeftY = 0;
 
-	// 左下半分画面　[1]
-	vpMulti.emplace_back(vp);
-	vpMulti.back().Width  = WINDOW_WIDTH/2;
-	vpMulti.back().Height = WINDOW_HEIGHT/2;
-	vpMulti.back().MinDepth = 0.0f;
-	vpMulti.back().MaxDepth = 1.0f;
-	vpMulti.back().TopLeftX = 0;
-	vpMulti.back().TopLeftY = WINDOW_HEIGHT/2;
-
-	// 右上半分画面　[2]
+	// 右上半分画面　[1]
 	vpMulti.emplace_back(vp);
 	vpMulti.back().Width  = WINDOW_WIDTH/2;
 	vpMulti.back().Height = WINDOW_HEIGHT/2;
@@ -72,6 +63,15 @@ SplitScreen::SplitScreen()
 	vpMulti.back().MaxDepth = 1.0f;
 	vpMulti.back().TopLeftX = WINDOW_WIDTH/2;
 	vpMulti.back().TopLeftY = 0;
+
+	// 左下半分画面　[2]
+	vpMulti.emplace_back(vp);
+	vpMulti.back().Width = WINDOW_WIDTH / 2;
+	vpMulti.back().Height = WINDOW_HEIGHT / 2;
+	vpMulti.back().MinDepth = 0.0f;
+	vpMulti.back().MaxDepth = 1.0f;
+	vpMulti.back().TopLeftX = 0;
+	vpMulti.back().TopLeftY = WINDOW_HEIGHT / 2;
 
 	// 右下半分画面　[3]
 	vpMulti.emplace_back(vp);
