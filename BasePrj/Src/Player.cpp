@@ -544,7 +544,6 @@ void Broom::Update()
 		break;
 	case 2:
 	case 3:
-	default:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, 0);
 		break;

@@ -7,8 +7,8 @@ namespace {
 
 DisplayInfo::DisplayInfo()
 {
-	//image = new CSpriteImage(_T("Data/Image/foregrd3.png"));
-	//sprite = new CSprite();
+	frameUiImage = new CSpriteImage(_T("data/Image/frameUI.png"));
+	sprite = new CSprite();
 
 	SetPriority(-9999); 	// 最後より一つ前に処理する
 	SetDrawOrder(-10000);	// 一番最後に描画する
@@ -16,8 +16,8 @@ DisplayInfo::DisplayInfo()
 
 DisplayInfo::~DisplayInfo()
 {
-	//SAFE_DELETE(image);
-	//SAFE_DELETE(sprite);
+	SAFE_DELETE(frameUiImage);
+	SAFE_DELETE(sprite);
 }
 
 void DisplayInfo::Update()
@@ -35,6 +35,24 @@ void DisplayInfo::Draw()
 	char str[64]; //文字列を用意
 	sprintf_s<64>(str, "Weight: %4d", pl->getWeight());
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 255, 255));
+
+	int imgX=0, imgY=0;
+	if (n%2 == 0) { //Player0,2の位置は左側
+		imgX = 0;
+	}
+	else {
+		imgX = 1;
+	}
+	if (n < 2) { //Player
+		imgY = 0;
+	}
+	else {
+		imgY = 1;
+	}
+
+	// 枠のUI表示
+	sprite->Draw(frameUiImage, 0, 0, imgX * 512, imgY * 288, 512, 288, WINDOW_WIDTH, WINDOW_HEIGHT);
+	
 
 	/*
 	float h = 0;

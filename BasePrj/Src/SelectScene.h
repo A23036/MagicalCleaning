@@ -8,6 +8,4 @@ public:
 	~SelectScene();
 	void Update() override;
 	void Draw() override;
-private:
-	CSprite* sprite;
 };

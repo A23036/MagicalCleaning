@@ -324,6 +324,7 @@
     <ClInclude Include="Src\Stage.h" />
     <ClInclude Include="Src\StageEdit.h" />
     <ClInclude Include="Src\TitleScene.h" />
+    <ClInclude Include="Src\ViewMapScene.h" />
     <ClInclude Include="Src\XAudio.h" />
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +371,7 @@
     <ClCompile Include="Src\Stage.cpp" />
     <ClCompile Include="Src\StageEdit.cpp" />
     <ClCompile Include="Src\TitleScene.cpp" />
+    <ClCompile Include="Src\ViewMapScene.cpp" />
     <ClCompile Include="Src\XAudio.cpp" />
   </ItemGroup>
   <ItemGroup>

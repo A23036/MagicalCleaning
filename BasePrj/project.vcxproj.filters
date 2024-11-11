@@ -57,11 +57,11 @@
     <Filter Include="ソース ファイル\06_共通">
       <UniqueIdentifier>{ef79b2b1-d77c-4e0f-ba34-50e4c05a169f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\11_SprlitScreen">
-      <UniqueIdentifier>{b8f246d9-9f11-407e-bb07-d524ea6d469d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\10_SelectScene">
       <UniqueIdentifier>{5214ba3c-6035-4968-9445-b55e6e931963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\11_ViewMapScene">
+      <UniqueIdentifier>{b8f246d9-9f11-407e-bb07-d524ea6d469d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,17 +315,20 @@
     <ClInclude Include="Src\ScoreManager.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SplitScreen.h">
-      <Filter>ソース ファイル\11_SprlitScreen</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SplitScreenLastDraw.h">
-      <Filter>ソース ファイル\11_SprlitScreen</Filter>
-    </ClInclude>
     <ClInclude Include="Src\SelectScene.h">
       <Filter>ソース ファイル\10_SelectScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\DustBox.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SplitScreen.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SplitScreenLastDraw.h">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ViewMapScene.h">
+      <Filter>リソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -449,17 +452,20 @@
     <ClCompile Include="Src\ScoreManager.cpp">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SplitScreen.cpp">
-      <Filter>ソース ファイル\11_SprlitScreen</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\SplitScreenLastDraw.cpp">
-      <Filter>ソース ファイル\11_SprlitScreen</Filter>
-    </ClCompile>
     <ClCompile Include="Src\SelectScene.cpp">
       <Filter>ソース ファイル\10_SelectScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\DustBox.cpp">
       <Filter>ソース ファイル\08_PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SplitScreen.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SplitScreenLastDraw.cpp">
+      <Filter>ソース ファイル\05_フレームワーク</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ViewMapScene.cpp">
+      <Filter>ソース ファイル\11_ViewMapScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

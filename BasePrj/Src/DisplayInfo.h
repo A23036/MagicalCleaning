@@ -13,6 +13,6 @@ public:
 	void Update() override;
 	void Draw() override;
 private:
-	//CSpriteImage* image;
-	//CSprite* sprite;
+	CSpriteImage* frameUiImage;
+	CSprite* sprite;
 };
