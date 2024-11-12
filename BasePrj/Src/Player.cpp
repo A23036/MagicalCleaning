@@ -9,37 +9,29 @@
 
 Player::Player()
 {
+}
+
+Player::Player(int num) : playerNum(num)
+{
 	CsvLoad(); // csvからデータの設定
 
 	// プレイヤーの持つ箒の生成
-	child = new Broom(this);
+	child = new Broom(this,playerNum);
 
 	animator = new Animator(); // インスタンスを作成
 
 	mesh = new CFbxMesh();
 
-	//キャラクターモデル設定
-	/*
-	for (const std::string& f : files) {
-		CFbxMesh* m = new CFbxMesh();
-		std::string folder = "data/models/"; // 一旦C++の文字列にする
-		m->Load((folder + f + ".mesh").c_str()); // +で文字列をつなげることができる
-		meshes.push_back(m);
-	}*/
-	mesh->Load("Data/Player2/witch.mesh");	
-	mesh->LoadAnimation(aIdle, "Data/Player2/idle.anmx", true);
-	mesh->LoadAnimation(aRun, "Data/Player2/run.anmx", true);
-	mesh->LoadAnimation(aWalk, "Data/Player2/walk.anmx", true);
-	mesh->LoadAnimation(aJump, "Data/Player2/jump.anmx", false);
-	mesh->LoadAnimation(aAttack1, "Data/Player2/attack1.anmx", false);
-	mesh->LoadAnimation(aAttack2, "Data/Player2/attack2.anmx", false);
-	mesh->LoadAnimation(aAttack3, "Data/Player2/attack3.anmx", false);
-	//mesh->Load("Data/Player/PlayerChara.mesh");
-	//mesh->LoadAnimation(aIdle, "Data/Player/Idle.anmx", true);
-	//mesh->LoadAnimation(aRun, "Data/Player/Run.anmx", true);
-	//mesh->LoadAnimation(aAttack1, "Data/Player/attack1.anmx", false);
-	//mesh->LoadAnimation(aAttack2, "Data/Player/attack2.anmx", false);
-	//mesh->LoadAnimation(aAttack3, "Data/Player/attack3.anmx", false);
+	std::string f = "Data/Player/Color" + std::to_string(playerNum);
+	mesh->Load((f + "/witch.mesh").c_str());
+
+	mesh->LoadAnimation(aIdle, (f + "/idle.anmx").c_str(), true);
+	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
+	mesh->LoadAnimation(aWalk, (f + "/walk.anmx").c_str(), true);
+	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
+	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
+	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
+	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -58,8 +50,6 @@ Player::Player()
 	atkSpeed	= 1;
 	atkRange	= 1;
 	carWeight	= 1;
-
-	playerNum = 0;
 }
 
 Player::~Player()
@@ -290,12 +280,12 @@ SphereCollider Player::Collider()
 	return col;
 }
 
-void Player::addMP(int n)
+void Player::AddMP(int n)
 {
 	mp += n;
 }
 
-void Player::addWeight(int n)
+void Player::AddWeight(int n)
 {
 	weight += n;
 }
@@ -516,13 +506,14 @@ void Player::UpdateAttack3()
 }
 
 //　プレイヤーの持つ箒
-Broom::Broom(Object3D* parentModel)
+Broom::Broom(Object3D* parentModel, int num)
 {
 	parent = parentModel;
-//	transform.SetParent(parent); // transformにも親を教える
 
 	mesh = new CFbxMesh();
-	mesh->Load("data/Player2/weapon/broom.mesh");
+
+	std::string f = "Data/Player/Color" + std::to_string(num) + "/weapon";
+	mesh->Load((f + "/broom.mesh").c_str());
 	
 	transform.position = VECTOR3(0, 0, 0);
 }
@@ -538,7 +529,7 @@ void Broom::Update()
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 
 	// 状態ごとの角度変更
-	switch (pl->getPlayerState()) {
+	switch (pl->GetPlayerState()) {
 	case 0:
 	case 1:
 		transform.position = VECTOR3(0, 0, 0);

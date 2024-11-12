@@ -1,7 +1,7 @@
 #include "EasingCalc.h"
 #include "GameMain.h"
 
-float EasingCalc::easeOutBack(float x) //イージング関数:最後に少し飛び出してから戻る
+float EasingCalc::easeOutBack(float x) //最後に少し飛び出してから戻る
 {
 	float c1 = 1.70158;
 	float c3 = c1 + 1;
@@ -9,7 +9,7 @@ float EasingCalc::easeOutBack(float x) //イージング関数:最後に少し飛び出してから
 	return 1 + c3 * pow(x - 1, 3) + c1 * pow(x - 1, 2);
 }
 
-float EasingCalc::easeOutBounce(float x) //イージング関数:最後にはねる
+float EasingCalc::easeOutBounce(float x) //最後にはねる
 {
 	float n1 = 7.5625f;
 	float d1 = 2.75f;

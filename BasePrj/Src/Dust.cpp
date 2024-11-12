@@ -45,7 +45,7 @@ void Dust::Update()
 	}
 	if (hp <= 0)
 	{
-		pl->addWeight(maxHp);
+		pl->AddWeight(maxHp);
 		DestroyMe();
 		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
 		new Dust(dustNum,pos);
@@ -78,6 +78,6 @@ SphereCollider Dust::Collider(int n)
 void Dust::AddDamage(int damage)
 {
 	Player* pl = ObjectManager::FindGameObject<Player>();
-	pl->addWeight(1);
+	pl->AddWeight(1);
 	hp -= damage;
 }

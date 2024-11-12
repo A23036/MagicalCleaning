@@ -33,7 +33,7 @@ void DisplayInfo::Draw()
 
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	char str[64]; //•¶Žš—ñ‚ð—pˆÓ
-	sprintf_s<64>(str, "Weight: %4d", pl->getWeight());
+	sprintf_s<64>(str, "Weight: %4d", pl->GetWeight());
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 255, 255));
 
 	int imgX=0, imgY=0;

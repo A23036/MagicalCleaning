@@ -1,4 +1,6 @@
 #pragma once
+
+//イージング関数をまとめておくクラス
 class EasingCalc
 {
 public:

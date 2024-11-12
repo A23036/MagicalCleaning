@@ -86,31 +86,27 @@ void Stage::Load(int n)
 			for (int x = 0; x < csv->GetColumns(line); x++) {
 				int d = csv->GetInt(line, x);
 				if (d == boxID::CHAR01) {
-					Player* p = new Player();
+					Player* p = new Player(0);
 					p->SetPosition(x, map.size(), -(int)m2.size());
 					p->SetTag("Player1");
-					p->setPlayerNum(0);
 					d = -1;
 				}
 				else if (d == boxID::CHAR02) {
-					Player* p = new Player();
+					Player* p = new Player(1);
 					p->SetPosition(x, map.size(), -(int)m2.size());
 					p->SetTag("Player2");
-					p->setPlayerNum(1);
 					d = -1;
 				}
 				else if (d == boxID::CHAR03) {
-					Player* p = new Player();
+					Player* p = new Player(2);
 					p->SetPosition(x, map.size(), -(int)m2.size());
 					p->SetTag("Player3");
-					p->setPlayerNum(2);
 					d = -1;
 				}
 				else if (d == boxID::CHAR04) {
-					Player* p = new Player();
+					Player* p = new Player(3);
 					p->SetPosition(x, map.size(), -(int)m2.size());
 					p->SetTag("Player4");
-					p->setPlayerNum(3);
 					d = -1;
 				}
 				else if (d == boxID::CHEST_A) {

@@ -6,7 +6,7 @@
 
 class Broom : public Object3D {
 public:
-	Broom(Object3D* parentModel);
+	Broom(Object3D* parentModel, int num);
 	~Broom();
 	void Update() override;
 	void Draw() override;
@@ -19,6 +19,7 @@ private:
 class Player : public Object3D {
 public:
 	Player();
+	Player(int num);
 	~Player();
 	void Update() override;
 	void Draw() override;
@@ -27,22 +28,21 @@ public:
 
 	SphereCollider Collider() override;
 
-	int getMP() { return mp; };
-	int getWeight() { return weight; };
-	int getPlayerNum() { return playerNum; };
-	int getPlayerState() { return state; };
-	void addMP(int n);
-	void addWeight(int n);
-	void setPlayerNum(int n) { playerNum = n; };
+	int GetMP() { return mp; };
+	int GetWeight() { return weight; };
+	int GetPlayerNum() { return playerNum; };
+	int GetPlayerState() { return state; };
+	void AddMP(int n);
+	void AddWeight(int n);
 
 private:
 	CsvReader* csv;
 
 	float GRAVITY;		//重力加速度
 	float JUMP_POWER;	//ジャンプ力
-	float MOVE_SPEED;	//移動速度
+	float MOVE_SPEED;	//基本移動速度
 
-	int playerNum;
+	int playerNum;		//プレイヤー番号
 	int mp;
 	int weight;
 
@@ -53,6 +53,14 @@ private:
 	int atkSpeed;	//攻撃速度
 	int atkRange;	//攻撃範囲
 	int carWeight;	//運搬可能重量
+
+	/*
+	int moveSpeedT	[MAXPLAYER];	//移動速度テーブル
+	int	jumpNumT	[MAXPLAYER];	//ジャンプ回数
+	int atkSpeedT	[MAXPLAYER];	//攻撃速度
+	int atkRangeT	[MAXPLAYER];	//攻撃範囲
+	int carWeightT	[MAXPLAYER];	//運搬可能重量
+	*/
 
 	float speedY; // Y方向の速度
 
@@ -77,15 +85,15 @@ private:
 
 	State state;
 
-	void UpdateOnGround();
-	void UpdateJump();
-	void UpdateAttack1();
-	void UpdateAttack2();
-	void UpdateAttack3();
+	void UpdateOnGround();	//地上処理
+	void UpdateJump();		//空中処理
+	void UpdateAttack1();	//攻撃1中処理
+	void UpdateAttack2();	//攻撃2中処理
+	void UpdateAttack3();	//攻撃3中処理
 
 	int anmFrame; // アニメーションのフレームを数える
 
-	Broom* child;
+	Broom* child; //自身の持っている箒のポインタ
 };
 
 
