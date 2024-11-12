@@ -330,6 +330,9 @@
     <ClInclude Include="Src\ViewMapScene.h">
       <Filter>リソース ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\EasingCalc.h">
+      <Filter>ソース ファイル\06_共通</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
@@ -466,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="Src\ViewMapScene.cpp">
       <Filter>ソース ファイル\11_ViewMapScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EasingCalc.cpp">
+      <Filter>ソース ファイル\06_共通</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

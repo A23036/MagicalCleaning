@@ -296,6 +296,7 @@
     <ClInclude Include="Src\DisplayInfo.h" />
     <ClInclude Include="Src\Dust.h" />
     <ClInclude Include="Src\DustBox.h" />
+    <ClInclude Include="Src\EasingCalc.h" />
     <ClInclude Include="Src\EditScene.h" />
     <ClInclude Include="Src\FbxMesh.h" />
     <ClInclude Include="Src\GameMain.h" />
@@ -346,6 +347,7 @@
     <ClCompile Include="Src\DisplayInfo.cpp" />
     <ClCompile Include="Src\Dust.cpp" />
     <ClCompile Include="Src\DustBox.cpp" />
+    <ClCompile Include="Src\EasingCalc.cpp" />
     <ClCompile Include="Src\EditScene.cpp" />
     <ClCompile Include="Src\FbxMesh.cpp" />
     <ClCompile Include="Src\GameMain.cpp" />

@@ -115,6 +115,7 @@ void Player::Update()
 	}
 
 	// ImGuiウィンドウの位置とサイズを設定
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
 	ImGui::Begin("State");
@@ -133,6 +134,7 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
+	*/
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 100));
