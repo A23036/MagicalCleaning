@@ -317,6 +317,7 @@
     <ClInclude Include="Src\SceneBase.h" />
     <ClInclude Include="Src\SceneFactory.h" />
     <ClInclude Include="Src\SceneManager.h" />
+    <ClInclude Include="Src\SelectDisplay.h" />
     <ClInclude Include="Src\SelectScene.h" />
     <ClInclude Include="Src\Shader.h" />
     <ClInclude Include="Src\SplitScreen.h" />
@@ -365,6 +366,7 @@
     <ClCompile Include="Src\SceneBase.cpp" />
     <ClCompile Include="Src\SceneFactory.cpp" />
     <ClCompile Include="Src\SceneManager.cpp" />
+    <ClCompile Include="Src\SelectDisplay.cpp" />
     <ClCompile Include="Src\SelectScene.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
     <ClCompile Include="Src\SplitScreen.cpp" />

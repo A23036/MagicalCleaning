@@ -11,7 +11,29 @@ Player::Player()
 {
 }
 
-Player::Player(int num) : playerNum(num)
+Player::Player(VECTOR3 pos, VECTOR3 rot, int num)//セレクトシーン/リザルトシーンで使用
+{
+	animator = new Animator(); // インスタンスを作成
+
+	mesh = new CFbxMesh();
+
+	std::string f = "Data/Player/Color" + std::to_string(num);
+	mesh->Load((f + "/witch.mesh").c_str());
+
+	mesh->LoadAnimation(aIdle, (f + "/standby.anmx").c_str(), true);
+
+	animator->SetModel(mesh); // このモデルでアニメーションする
+	animator->Play(aIdle);
+	animator->SetPlaySpeed(1.0f);
+
+	transform.position = pos;
+	transform.rotation = rot;
+
+	state = sStandby;
+}
+
+
+Player::Player(int num) : playerNum(num) // プレイシーンで使用
 {
 	CsvLoad(); // csvからデータの設定
 
@@ -27,11 +49,11 @@ Player::Player(int num) : playerNum(num)
 
 	mesh->LoadAnimation(aIdle, (f + "/idle.anmx").c_str(), true);
 	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
-	mesh->LoadAnimation(aWalk, (f + "/walk.anmx").c_str(), true);
+	//mesh->LoadAnimation(aWalk, (f + "/walk.anmx").c_str(), true);
 	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
-	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
+	//mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -67,19 +89,24 @@ Player::~Player()
 void Player::Update()
 {
 	// 箒の位置情報更新
-	MATRIX4X4 bone;
-	if (state != sAttack2) {
-		bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
+	if (state != sStandby) {
+
+		MATRIX4X4 bone;
+		if (state != sAttack2) {
+			bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
+		}
+		else {
+			bone = mesh->GetFrameMatrices(19);// プレイヤーの原点からの左手の位置(19は左手)
+		}
+
+		child->SetPos(bone);
 	}
-	else {
-		bone = mesh->GetFrameMatrices(19);// プレイヤーの原点からの左手の位置(19は左手)
-	}
-	
-	child->SetPos(bone);
 	
 	animator->Update(); // 毎フレーム、Updateを呼ぶ
 
 	switch (state) {
+	case sStandby:
+		return;
 	case sOnGround:
 		UpdateOnGround();
 		break;
@@ -94,6 +121,8 @@ void Player::Update()
 		break;
 	case sAttack3:
 		UpdateAttack1();
+		break;
+	default:
 		break;
 	}
 
@@ -514,7 +543,7 @@ Broom::Broom(Object3D* parentModel, int num)
 
 	std::string f = "Data/Player/Color" + std::to_string(num) + "/weapon";
 	mesh->Load((f + "/broom.mesh").c_str());
-	
+
 	transform.position = VECTOR3(0, 0, 0);
 }
 

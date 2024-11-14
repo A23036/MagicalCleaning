@@ -19,6 +19,7 @@ private:
 class Player : public Object3D {
 public:
 	Player();
+	Player(VECTOR3 pos, VECTOR3 rot, int num);
 	Player(int num);
 	~Player();
 	void Update() override;
@@ -76,7 +77,8 @@ private:
 	};
 
 	enum State {
-		sOnGround = 0,
+		sStandby = 0,
+		sOnGround,
 		sJump,
 		sAttack1,
 		sAttack2,
