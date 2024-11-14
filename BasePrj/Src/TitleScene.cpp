@@ -220,5 +220,8 @@ void TitleScene::CsvLoad()
 				AlphaGoal = csv->GetFloat(i, 3);
 			}
 		}
+		if (csv->GetString(i, 0) == "Select") { // Title‚ªI‚í‚Á‚½‚ç“Ç‚İ‚İI—¹
+			break;
+		}
 	}
 }

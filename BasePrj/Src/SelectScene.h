@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "Animator.h"
+#include "CsvReader.h"
 
 class SelectScene : public SceneBase
 {
@@ -9,10 +10,12 @@ public:
 	~SelectScene();
 	void Update() override;
 	void Draw() override;
+
+	void CsvLoad(); //CSVファイルからデータの設定
 private:
+	CsvReader* csv;
 	CSprite* sprite;
 	CSpriteImage* selectBackImage;	//セレクト画面背景イメージ
-	CSpriteImage* selectBackImageR;	//セレクト画面背景反転イメージ
-	int scrollSpeed;				//背景スクロール速度
-	int offX;						//背景画像位置X
+	float ScrollSpeed;				//背景スクロール速度
+	float offX;						//背景画像位置X
 };
