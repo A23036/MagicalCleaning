@@ -3,6 +3,7 @@
 #include "Object3D.h"
 #include "CsvReader.h"
 #include "Animator.h"
+#include "DataCarrier.h"
 
 class Broom : public Object3D {
 public:
@@ -33,11 +34,13 @@ public:
 	int GetWeight() { return weight; };
 	int GetPlayerNum() { return playerNum; };
 	int GetPlayerState() { return state; };
+	void SetPlayerState(int state);
 	void AddMP(int n);
 	void AddWeight(int n);
 
 private:
 	CsvReader* csv;
+	DataCarrier* dc;
 
 	float GRAVITY;		//重力加速度
 	float JUMP_POWER;	//ジャンプ力
@@ -83,9 +86,11 @@ private:
 		sAttack1,
 		sAttack2,
 		sAttack3,
+		sStop,
 	};
 
-	State state;
+	int state;		//プレイヤー状態
+	int curState;	//直前のプレイヤー状態
 
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理

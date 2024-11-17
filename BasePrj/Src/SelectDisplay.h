@@ -14,5 +14,21 @@ public:
 	void Draw() override;
 private:
 	CSprite* sprite;
-	CSpriteImage* titleBackImage;	//タイトル画面背景イメージ
+	CSpriteImage* selectUiImage;	//セレクト画面UIイメージ
+	
+	int ColorPosY;			//キャラ選択カラー位置Y
+	int ColorIconSize;		//キャラ選択カラーサイズ
+	int ColorIconDispSize;	//キャラ選択カラー表示サイズ
+	int UiSpace;			//UI同士の間隔
+	int GuideUiPosY;		//操作方法ガイドUI位置Y
+	VECTOR2 BackUiPos;		//戻るUI位置
+
+	bool playerEntry[4];	//プレイヤーのエントリー状態
+	
+	enum Dir{
+		UP = 0,
+		RIGHT,
+		DOWN,
+		LEFT,
+	};
 };

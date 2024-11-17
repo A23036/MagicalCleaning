@@ -21,11 +21,15 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	vpSingle.TopLeftY = 0;
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
+	frameUiImage = new CSpriteImage(_T("data/Image/frameUI.png"));
+	sprite = new CSprite();
+
 }
 
 SplitScreenLastDraw::~SplitScreenLastDraw()
 {
-
+	SAFE_DELETE(frameUiImage);
+	SAFE_DELETE(sprite);
 }
 
 void SplitScreenLastDraw::Update()
@@ -61,14 +65,67 @@ void SplitScreenLastDraw::Draw()
 
 			// -----------------------------------------------------------------
 
+			// 画面全体の描画
 
-			// ここに最後に画面全体に描画したい処理を書く
-			// 例えば、枠線スプライトや全体ステータスの描画など
+			//画面分割枠描画
+			sprite->Draw(frameUiImage, 0, 0, 1024, 576, 1024, 576, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+			//ゲーム時間表示
+			int minutes = gameTime / 60;
+			int seconds = gameTime % 60;
+
+			char str[64];
+
+			switch (gameState) {
+			case sReady:
+				if (seconds <= 2) { //カウントダウン数字
+					sprintf_s(str, "%d", 3 - seconds);
+					GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 100, RGB(0, 0, 255));
+				}
+				else {	//「GO!」
+					sprintf_s(str, "GO!");
+					GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 66, WINDOW_HEIGHT / 2 - 98, str, 100, RGB(0, 0, 255));
+				}
+				sprintf_s(str, "State:Ready");
+				GameDevice()->m_pFont->Draw(0, 0, str, 100, RGB(255, 255, 255));
+				break;
+
+			case sPose:
+				sprite->DrawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(0, 0, 0), 0.5f);
+				sprintf_s(str, "State:Pose");
+				GameDevice()->m_pFont->Draw(0, 0, str, 100, RGB(255, 255, 255));
+				break;
+
+			case sGamePlay:
+				sprintf_s(str, "%02d:%02d", minutes, seconds);
+				GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 30, RGB(255, 0, 0));
+				sprintf_s(str, "State:GamePlay");
+				GameDevice()->m_pFont->Draw(0, 0, str, 100, RGB(255, 255, 255));
+				break;
+
+			case sFinish:
+				sprintf_s(str, "%02d:%02d", minutes, seconds);
+				GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 30, RGB(0, 255, 0));
+				sprintf_s(str, "State:Finish");
+				GameDevice()->m_pFont->Draw(0, 0, str, 100, RGB(255, 255, 255));
+				break;
+			}
+
+			
 
 			// -----------------------------------------------------------------
 			GameDevice()->m_mProj = saveProj;	  // プロジェクションマトリックスを元に戻す
 		}
 	}
 
+}
+
+void SplitScreenLastDraw::SetState(int state)
+{
+	gameState = state;
+}
+
+void SplitScreenLastDraw::SetGameTime(int time)
+{
+	gameTime = time;
 }

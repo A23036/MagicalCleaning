@@ -32,12 +32,6 @@ TitleScene::TitleScene()
 
 TitleScene::~TitleScene()
 {
-	SAFE_DELETE(titleBackImage);
-	SAFE_DELETE(broomImage);
-	SAFE_DELETE(titleText1Image);
-	SAFE_DELETE(titleText2Image);
-	SAFE_DELETE(titleText3Image);
-	SAFE_DELETE(sprite);
 }
 
 void TitleScene::Update()

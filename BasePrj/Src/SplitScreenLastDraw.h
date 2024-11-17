@@ -13,6 +13,22 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void SetState(int state);
+	void SetGameTime(int time);
+
 private:
 	D3D11_VIEWPORT vpSingle;
+
+	CSprite* sprite;
+	CSpriteImage* frameUiImage;
+
+	int gameState;
+	int gameTime;
+
+	enum GameState {
+		sReady = 0,	//開始前カウントダウン
+		sPose,		//ポーズ中
+		sGamePlay,	//ゲームプレイ中
+		sFinish,	//ゲーム終了演出中
+	};
 };

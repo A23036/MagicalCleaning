@@ -1,11 +1,11 @@
 #include "Player.h"
 #include "../Libs/Imgui/imgui.h"
+#include <dinput.h>
 #include "CsvReader.h"
 #include "Stage.h"
 #include "Camera.h"
 #include "Dust.h"
 #include "DustBox.h"
-#include <dinput.h>
 
 Player::Player()
 {
@@ -37,6 +37,8 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 {
 	CsvLoad(); // csvからデータの設定
 
+	dc = ObjectManager::FindGameObject<DataCarrier>();
+
 	// プレイヤーの持つ箒の生成
 	child = new Broom(this,playerNum);
 
@@ -62,6 +64,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	transform.position = VECTOR3(0, 0, 0);
 	transform.rotation = VECTOR3(0, 0, 0);
 	state = sOnGround;
+	curState = sOnGround;
 	speedY = 0;
 	mp = 0;
 	weight = 0;
@@ -76,20 +79,14 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 
 Player::~Player()
 {
-	if (mesh != nullptr) {
-		delete mesh;
-		mesh = nullptr;
-	}
-	if (animator != nullptr) {
-		delete animator;
-		animator = nullptr;
-	}
+	SAFE_DELETE(mesh);
+	SAFE_DELETE(animator);
 }
 
 void Player::Update()
 {
 	// 箒の位置情報更新
-	if (state != sStandby) {
+	if (state != sStandby) { //キャラセレクト画面では持たない
 
 		MATRIX4X4 bone;
 		if (state != sAttack2) {
@@ -102,7 +99,15 @@ void Player::Update()
 		child->SetPos(bone);
 	}
 	
-	animator->Update(); // 毎フレーム、Updateを呼ぶ
+	
+	if (dc->GetIsPlay()) {
+		animator->Update(); // 毎フレーム、Updateを呼ぶ
+		state = curState;
+	}
+	else
+	{
+		state = sStop;
+	}
 
 	switch (state) {
 	case sStandby:
@@ -122,6 +127,8 @@ void Player::Update()
 	case sAttack3:
 		UpdateAttack1();
 		break;
+	case sStop:
+		return;
 	default:
 		break;
 	}
@@ -256,6 +263,8 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
+
+	curState = state;
 }
 	
 void Player::Draw()
@@ -307,6 +316,11 @@ SphereCollider Player::Collider()
 	col.center = transform.position + VECTOR3(0, 0.6f, 0);
 	col.radius = 0.5f;
 	return col;
+}
+
+void Player::SetPlayerState(int state)
+{
+	this->state = state;
 }
 
 void Player::AddMP(int n)
@@ -559,13 +573,13 @@ void Broom::Update()
 
 	// 状態ごとの角度変更
 	switch (pl->GetPlayerState()) {
-	case 0:
 	case 1:
+	case 2:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, -70);
 		break;
-	case 2:
 	case 3:
+	case 4:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, 0);
 		break;
