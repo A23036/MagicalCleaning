@@ -4,11 +4,14 @@
 #include "DataCarrier.h"
 #include "PlayDisplay.h"
 #include "SplitScreenLastDraw.h"
+#include "Player.h"
 
 PlayScene::PlayScene()
 {
 	pd = new PlayDisplay();
-	dc = new DataCarrier();
+
+	dc = SingleInstantiate<DataCarrier>(); //DataCarrier‚ÍƒVƒ“ƒOƒ‹ƒgƒ“‚Å¶¬
+	
 	new Stage(5);
 	new Camera();
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
@@ -17,7 +20,7 @@ PlayScene::PlayScene()
 	frm = 0;
 	isPlay = false;
 	state = sReady;
-	GameTime = 10;
+	GameTime = 180;
 }
 
 PlayScene::~PlayScene()
@@ -33,8 +36,9 @@ void PlayScene::Update()
 
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
 		SceneManager::ChangeScene("TitleScene");
+		frm = 0;
+		timer = 0;
 		isPlay = false;
-		dc->SetIsPlay(isPlay);
 	}
 
 	switch (state) {

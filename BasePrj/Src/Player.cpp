@@ -99,7 +99,34 @@ void Player::Update()
 		child->SetPos(bone);
 	}
 	
-	
+	///*
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(100, 60));
+	ImGui::Begin("State");
+
+	switch (state) {
+	case sStandby:
+		ImGui::Text("sStandby");
+		break;
+	case sOnGround:
+		ImGui::Text("sOnGround");
+		break;
+	case sJump:
+		ImGui::Text("sJump");
+		break;
+	case sAttack1:
+		ImGui::Text("sAttack1");
+		break;
+	case sAttack2:
+		ImGui::Text("sAttack2");
+		break;
+	case sStop:
+		ImGui::Text("sStop");
+		break;
+	}
+	ImGui::End();
+	//*/
+
 	if (dc->GetIsPlay()) {
 		animator->Update(); // 毎フレーム、Updateを呼ぶ
 		state = curState;
@@ -141,26 +168,7 @@ void Player::Update()
 	}
 
 	// ImGuiウィンドウの位置とサイズを設定
-	/*
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(100, 60));
-	ImGui::Begin("State");
-	switch (state) {
-	case sOnGround:
-		ImGui::Text("sOnGround");
-		break;
-	case sJump:
-		ImGui::Text("sJump");
-		break;
-	case sAttack1:
-		ImGui::Text("sAttack1");
-		break;
-	case sAttack2:
-		ImGui::Text("sAttack2");
-		break;
-	}
-	ImGui::End();
-	*/
+	
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 100));
@@ -323,6 +331,11 @@ void Player::SetPlayerState(int state)
 	this->state = state;
 }
 
+void Player::SetPlayerCurState(int state)
+{
+	curState = state;
+}
+
 void Player::AddMP(int n)
 {
 	mp += n;
@@ -331,6 +344,7 @@ void Player::AddMP(int n)
 void Player::AddWeight(int n)
 {
 	weight += n;
+
 }
 
 void Player::UpdateOnGround()

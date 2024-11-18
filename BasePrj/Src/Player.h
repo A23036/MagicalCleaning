@@ -35,6 +35,7 @@ public:
 	int GetPlayerNum() { return playerNum; };
 	int GetPlayerState() { return state; };
 	void SetPlayerState(int state);
+	void SetPlayerCurState(int state);
 	void AddMP(int n);
 	void AddWeight(int n);
 
