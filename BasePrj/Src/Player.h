@@ -15,6 +15,14 @@ enum State { //プレイヤー状態
 	sStop,
 };
 
+enum SelectPowerID { //選択中強化能力
+	pMS = 0,
+	pJN,
+	pAS,
+	pAR,
+	pCW,
+};
+
 class Broom : public Object3D {
 public:
 	Broom(Object3D* parentModel, int num);
@@ -44,6 +52,8 @@ public:
 	int GetWeight() { return weight; };
 	int GetPlayerNum() { return playerNum; };
 	int GetPlayerState() { return state; };
+	int GetSelectPower() { return selectPower; };
+	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
 	void SetPlayerCurState(int state);
 	void AddMP(int n);
@@ -58,23 +68,42 @@ private:
 	float MOVE_SPEED;	//基本移動速度
 
 	int playerNum;		//プレイヤー番号
-	int mp;
-	int weight;
+	int mp;				//MP
+	int weight;			//運搬重量
+	int jumpCount;		//現在ジャンプ回数
+	bool isFly;
 
 	bool finishAtkAnim;
 
-	int moveSpeed;	//移動速度
-	int	jumpNum;	//ジャンプ回数
-	int atkSpeed;	//攻撃速度
-	int atkRange;	//攻撃範囲
-	int carWeight;	//運搬可能重量
+	float	moveSpeed;	//移動速度
+	int		jumpNum;	//ジャンプ回数
+	float	atkSpeed;	//攻撃速度
+	float	atkRange;	//攻撃範囲
+	int		carWeight;	//運搬可能重量
 
-	int moveSpeedT	[MAXPLAYER];	//移動速度テーブル
-	int	jumpNumT	[MAXPLAYER];	//ジャンプ回数
-	int atkSpeedT	[MAXPLAYER];	//攻撃速度
-	int atkRangeT	[MAXPLAYER];	//攻撃範囲
-	int carWeightT	[MAXPLAYER];	//運搬可能重量
+	int msNum;
+	int jnNum;
+	int asNum;
+	int arNum;
+	int cwNum;
+
+	static const int MsTableNum = 10;	//移動速度テーブル数
+	static const int JnTableNum = 5;	//ジャンプ回数テーブル数
+	static const int AsTableNum = 10;	//攻撃速度テーブル数
+	static const int ArTableNum = 5;	//攻撃範囲テーブル数
+	static const int CwTableNum = 10;	//運搬可能重量テーブル数
+
+	float MoveSpeedT	[MsTableNum];	//移動速度テーブル
+	int	  JumpNumT		[JnTableNum];	//ジャンプ回数テーブル
+	float AtkSpeedT		[AsTableNum];	//攻撃速度テーブル
+	float AtkRangeT		[ArTableNum];	//攻撃範囲テーブル
+	int   CarWeightT	[CwTableNum];	//運搬可能重量テーブル
 	
+	int MoveSpeedC[MsTableNum];	//移動速度コストテーブル
+	int	JumpNumC[JnTableNum];	//ジャンプ回数コストテーブル
+	int AtkSpeedC[AsTableNum];	//攻撃速度コストテーブル
+	int AtkRangeC[ArTableNum];	//攻撃範囲コストテーブル
+	int CarWeightC[CwTableNum];	//運搬可能重量コストテーブル
 
 	float speedY; // Y方向の速度
 
@@ -84,6 +113,8 @@ private:
 		aRun = 1,
 		aWalk,
 		aJump,
+		aJump2,
+		aFly,
 		aAttack1,
 		aAttack2,
 		aAttack3,
@@ -91,6 +122,8 @@ private:
 
 	int state;		//プレイヤー状態
 	int curState;	//直前のプレイヤー状態
+
+	int selectPower; //選択中能力
 
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理

@@ -53,6 +53,8 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
 	//mesh->LoadAnimation(aWalk, (f + "/walk.anmx").c_str(), true);
 	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
+	mesh->LoadAnimation(aJump2, (f + "/jump2.anmx").c_str(), false);
+	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
 	//mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
@@ -68,13 +70,23 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	mp = 0;
 	weight = 0;
+	jumpCount = 0;
+	isFly = false;
 	finishAtkAnim = true;
 
-	moveSpeed	= 1;
-	jumpNum		= 1;
-	atkSpeed	= 1;
-	atkRange	= 1;
-	carWeight	= 1;
+	msNum = 0;
+	jnNum = 0;
+	asNum = 0;
+	arNum = 0;
+	cwNum = 0;
+
+	moveSpeed	= MoveSpeedT[msNum];
+	jumpNum		= JumpNumT[jnNum];
+	atkSpeed	= AtkSpeedT[asNum];
+	atkRange	= AtkRangeT[arNum];
+	carWeight	= CarWeightT[cwNum];
+
+	selectPower = 0;
 }
 
 Player::~Player()
@@ -89,21 +101,33 @@ void Player::Update()
 	if (state != sStandby) { //キャラセレクト画面では持たない
 
 		MATRIX4X4 bone;
-		if (state != sAttack2) {
-			bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
+		if (state == sAttack2) {
+			bone = mesh->GetFrameMatrices(18);// プレイヤーの原点からの左手の位置(18は左手)
 		}
 		else {
-			bone = mesh->GetFrameMatrices(18);// プレイヤーの原点からの左手の位置(18は左手)
+			bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
+		}
+		if (animator->PlayingID() == aFly) {
+			bone = mesh->GetFrameMatrices(2);//プレイヤーのルート位置
 		}
 
 		child->SetPos(bone);
 	}
 	
-	/*
+	
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
-	ImGui::Begin("State");
-
+	ImGui::Begin("isFly");
+	if (isFly) {
+		ImGui::Text("Fly");
+	}
+	else
+	{
+		ImGui::Text("notFly");
+	}
+	ImGui::End();
+	
+	/**
 	switch (state) {
 	case sStandby:
 		ImGui::Text("sStandby");
@@ -159,6 +183,67 @@ void Player::Update()
 	default:
 		break;
 	}
+
+	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 3, playerNum)) { //能力強化
+		switch (selectPower) {
+		case pMS:
+			if (mp >= MoveSpeedC[msNum] && msNum < MsTableNum - 1)
+			{
+				mp -= MoveSpeedC[msNum];
+				msNum++;
+				moveSpeed = MoveSpeedT[msNum];
+			}
+			break;
+		case pJN:
+			if (mp >= JumpNumC[jnNum] && jnNum < JnTableNum - 1)
+			{
+				mp -= JumpNumC[jnNum];
+				jnNum++;
+				jumpNum = JumpNumT[jnNum];
+			}
+			break;
+		case pAS:
+			if (mp >= AtkSpeedC[asNum] && asNum < AsTableNum - 1)
+			{
+				mp -= AtkSpeedC[asNum];
+				asNum++;
+				atkSpeed = AtkSpeedT[asNum];
+			}
+			break;
+		case pAR:
+			if (mp >= AtkRangeC[arNum] && arNum < ArTableNum - 1)
+			{
+				mp -= AtkRangeC[arNum];
+				arNum++;
+				atkRange = AtkRangeT[arNum];
+			}
+			break;
+		case pCW:
+			if (mp >= CarWeightC[cwNum] && cwNum < CwTableNum - 1)
+			{
+				mp -= CarWeightC[cwNum];
+				cwNum++;
+				carWeight = CarWeightT[cwNum];
+			}
+			break;
+		}
+	}
+
+	
+	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 4, playerNum)) { //強化能力変更
+		selectPower--;
+		if (selectPower < 0) {
+			selectPower = 4;
+		}
+	}
+	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 5, playerNum)) { //強化能力変更
+		selectPower++;
+		if (selectPower > 4) {
+			selectPower = 0;
+		}
+	}
+
+
 
 	//当たり判定処理
 	Stage* st = ObjectManager::FindGameObject<Stage>();
@@ -301,6 +386,56 @@ void Player::CsvLoad()
 			if (csv->GetString(i, 1) == "MoveSpeed") {		// 移動速度
 				MOVE_SPEED = csv->GetFloat(i, 3);
 			}
+			if (csv->GetString(i, 1) == "MoveSpeedT") {		// 移動速度テーブル
+				for (int j = 0; j < MsTableNum; j++) {
+					MoveSpeedT[j] = csv->GetFloat(i, 3+j);
+				}
+			}
+			if (csv->GetString(i, 1) == "JumpNumT") {		// ジャンプ回数テーブル
+				for (int j = 0; j < JnTableNum; j++) {
+					JumpNumT[j] = csv->GetInt(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "AtkSpeedT") {		// 攻撃速度テーブル
+				for (int j = 0; j < AsTableNum; j++) {
+					AtkSpeedT[j] = csv->GetFloat(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "AtkRangeT") {		// 攻撃範囲テーブル
+				for (int j = 0; j < ArTableNum; j++) {
+					AtkRangeT[j] = csv->GetFloat(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "CarWeightT") {		// 運搬可能重量テーブル
+				for (int j = 0; j < CwTableNum; j++) {
+					CarWeightT[j] = csv->GetInt(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "MoveSpeedC") {		// 移動速度コストテーブル
+				for (int j = 0; j < MsTableNum; j++) {
+					MoveSpeedC[j] = csv->GetInt(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "JumpNumC") {		// ジャンプ回数コストテーブル
+				for (int j = 0; j < JnTableNum; j++) {
+					JumpNumC[j] = csv->GetInt(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "AtkSpeedC") {		// 攻撃速度コストテーブル
+				for (int j = 0; j < AsTableNum; j++) {
+					AtkSpeedC[j] = csv->GetInt(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "AtkRangeC") {		// 攻撃範囲コストテーブル
+				for (int j = 0; j < ArTableNum; j++) {
+					AtkRangeC[j] = csv->GetInt(i, 3 + j);
+				}
+			}
+			if (csv->GetString(i, 1) == "CarWeightC") {		// 運搬可能重量コストテーブル
+				for (int j = 0; j < CwTableNum; j++) {
+					CarWeightC[j] = csv->GetInt(i, 3 + j);
+				}
+			}
 		}
 		if (csv->GetString(i, 0) == "Dust") {
 			break;
@@ -312,7 +447,7 @@ SphereCollider Player::Collider()
 {
 	SphereCollider col;
 	col.center = transform.position + VECTOR3(0, 0.6f, 0);
-	col.radius = 0.5f;
+	col.radius = 0.58f;
 	return col;
 }
 
@@ -381,16 +516,25 @@ void Player::UpdateOnGround()
 		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
 
 		// 移動の適用
-		transform.position += moveDirection;
+		transform.position += moveDirection * moveSpeed;
 
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
 
-		//走行速度に応じたアニメーションスピードを設定
-		animator->SetPlaySpeed(sqrt(ix * ix + iy * iy));
-		
-		// 走行アニメーションを再生
-		animator->MergePlay(aRun,0);
+		if (sqrt(ix * ix + iy * iy) * moveSpeed > 2.0) {
+			// 飛行アニメーションを再生
+			animator->MergePlay(aFly, 0);
+			animator->SetPlaySpeed(1.0f);
+			isFly = true;
+		}
+		else {
+			//走行速度に応じたアニメーションスピードを設定
+			animator->SetPlaySpeed(sqrt(ix * ix + iy * iy) * moveSpeed);
+
+			// 走行アニメーションを再生
+			animator->MergePlay(aRun, 0);
+			isFly = false;
+		}
 	}
 	else {
 		// スティックが傾いていない場合は待機アニメーションを再生
@@ -399,21 +543,22 @@ void Player::UpdateOnGround()
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
-	if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum)) {
+	if ((di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum) )) { //ジャンプ
 		speedY = JUMP_POWER;
 		animator->MergePlay(aJump,0);
 		animator->SetPlaySpeed(1.0f);
+		jumpCount++;
 		state = sJump;
 	}
 	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃ボタン
 		animator->MergePlay(aAttack1,0);
-		animator->SetPlaySpeed(1.0f);
+		animator->SetPlaySpeed(1.0f * atkSpeed);
 		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
 	}
 	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 1, playerNum)) { //攻撃ボタン
 		animator->MergePlay(aAttack2,0);
-		animator->SetPlaySpeed(1.0f);
+		animator->SetPlaySpeed(1.0f * atkSpeed);
 		transform.rotation.y += 10 * DegToRad; //正面方向に回転させる
 		state = sAttack2;
 	}
@@ -444,19 +589,32 @@ void Player::UpdateJump()
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
 		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
-		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED* sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
 
 		// 移動の適用
-		transform.position += moveDirection;
+		transform.position += moveDirection * moveSpeed;
 
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
 
 	}
 
+	if (di->CheckJoy(KD_TRG, 2, playerNum) && jumpCount <= jumpNum) {
+		speedY = JUMP_POWER;
+		if (jumpCount % 2 == 0) {
+			animator->MergePlay(aJump);
+		}
+		else {
+			animator->MergePlay(aJump2);
+		}
+		animator->SetPlaySpeed(1.0f);
+		jumpCount++;
+	}
+
 	if (st->IsLandBlock(transform.position)) {
 		// ジャンプ終了
 		state = sOnGround;
+		jumpCount = 0;
 	}
 }
 
@@ -465,7 +623,7 @@ void Player::UpdateAttack1()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
-	if (!finishAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
+	if (!finishAtkAnim && animator->CurrentFrame() <= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
 		finishAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
@@ -521,7 +679,7 @@ void Player::UpdateAttack2()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 
-	if (!finishAtkAnim && animator->CurrentFrame() == 20) { //攻撃のヒットしたタイミング
+	if (!finishAtkAnim && animator->CurrentFrame() <= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
 		finishAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
@@ -578,6 +736,16 @@ void Broom::Update()
 	// 状態ごとの角度変更
 	switch (pl->GetPlayerState()) {
 	case sOnGround:
+		if (!pl->GetIsFly()) {
+			transform.position = VECTOR3(0, 0, 0);
+			transform.rotation = VECTOR3(0, 0, -70);
+		}
+		else {
+			transform.position = VECTOR3(7*0.01, -10*0.01, -35*0.01);
+			transform.rotation = VECTOR3(77, 0, 90);
+		}
+		break;
+
 	case sJump:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, -70);

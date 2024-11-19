@@ -206,7 +206,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 	// 左SHIFTキーが押されたらカメラをプレイヤーの後方に移動
 	auto di = GameDevice()->m_pDI;
-	if (di->CheckKey(KD_TRG, DIK_LSHIFT) || di->CheckJoy(KD_TRG, DIJ_Y,counter)) {
+	if (di->CheckKey(KD_TRG, DIK_LSHIFT) || di->CheckJoy(KD_TRG, 6,counter)) {
 		//プレイヤーの回転を保存
 		rotationY[counter] = rot.y;
 

@@ -27,6 +27,25 @@ void PlayDisplay::Draw()
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	char str[64]; //•¶Žš—ñ‚ð—pˆÓ
 	sprintf_s<64>(str, "MP:%3d", pl->GetMP());
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH * 1/4 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 255, 255));
+	GameDevice()->m_pFont->Draw(WINDOW_WIDTH * 1/4 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 0,0));
+
+	switch (pl->GetSelectPower()){
+	case pMS:
+		sprintf_s<64>(str, "MoveSpeed");
+		break;
+	case pJN:
+		sprintf_s<64>(str, "JumpNum");
+		break;
+	case pAS:
+		sprintf_s<64>(str, "AtkSpeed");
+		break;
+	case pAR:
+		sprintf_s<64>(str, "AtkRange");
+		break;
+	case pCW:
+		sprintf_s<64>(str, "CarWeight");
+		break;
+	}
+	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 120, str, 50, RGB(255, 0,0));
 
 }

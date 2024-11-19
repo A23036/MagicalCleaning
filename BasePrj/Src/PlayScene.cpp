@@ -20,7 +20,7 @@ PlayScene::PlayScene()
 	frm = 0;
 	isPlay = false;
 	state = sReady;
-	GameTime = 180;
+	GameTime = 1800;
 }
 
 PlayScene::~PlayScene()
