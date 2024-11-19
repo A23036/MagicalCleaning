@@ -1,5 +1,6 @@
 #pragma once
 #include "Object3D.h"
+#include "Player.h"
 
 class Dust : public Object3D {
 public:
@@ -11,7 +12,7 @@ public:
 
 	int GetNum() { return dustNum; };
 
-	void AddDamage(int damage);
+	void AddDamage(Player* player,int damage);
 
 private:
 	int maxHp;

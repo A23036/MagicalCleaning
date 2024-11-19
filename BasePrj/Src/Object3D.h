@@ -3,6 +3,10 @@
 #include "FbxMesh.h"
 #include "MeshCollider.h"
 
+namespace {
+	static const int MAXPLAYER = 4;
+}
+
 class Transform {
 public:
 	VECTOR3 position;

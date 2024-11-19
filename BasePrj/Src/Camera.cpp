@@ -276,11 +276,13 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 		// ‰ñ“]—Ê‚ğXV
 		rotationY[counter] = targetRotationY;
 
+		/*
 		ImGui::SetNextWindowPos(ImVec2(0, 160));
 		ImGui::SetNextWindowSize(ImVec2(200, 60));
 		ImGui::Begin("Dot");
 		ImGui::InputFloat("dot", &dotVal);
 		ImGui::End();
+		*/
 	}
 	//2024.10.25 ƒJƒƒ‰©“®‰ñ“]ˆ—ª
 

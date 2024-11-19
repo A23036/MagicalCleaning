@@ -32,6 +32,7 @@ Stage::~Stage()
 void Stage::Update()
 {
 	//Œ»İ‚Ìƒ}ƒbƒvî•ñ
+	/*
 	ImGui::Begin("mapsize");
 	int x = map.size();
 	int y = map[0].size();
@@ -40,6 +41,7 @@ void Stage::Update()
 	ImGui::InputInt("Y", &y);
 	ImGui::InputInt("Z", &z);
 	ImGui::End();
+	*/
 }
 
 void Stage::Draw()

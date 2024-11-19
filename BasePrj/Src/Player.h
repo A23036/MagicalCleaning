@@ -5,6 +5,16 @@
 #include "Animator.h"
 #include "DataCarrier.h"
 
+enum State { //プレイヤー状態
+	sStandby = 0,
+	sOnGround,
+	sJump,
+	sAttack1,
+	sAttack2,
+	sAttack3,
+	sStop,
+};
+
 class Broom : public Object3D {
 public:
 	Broom(Object3D* parentModel, int num);
@@ -59,13 +69,12 @@ private:
 	int atkRange;	//攻撃範囲
 	int carWeight;	//運搬可能重量
 
-	/*
 	int moveSpeedT	[MAXPLAYER];	//移動速度テーブル
 	int	jumpNumT	[MAXPLAYER];	//ジャンプ回数
 	int atkSpeedT	[MAXPLAYER];	//攻撃速度
 	int atkRangeT	[MAXPLAYER];	//攻撃範囲
 	int carWeightT	[MAXPLAYER];	//運搬可能重量
-	*/
+	
 
 	float speedY; // Y方向の速度
 
@@ -78,16 +87,6 @@ private:
 		aAttack1,
 		aAttack2,
 		aAttack3,
-	};
-
-	enum State {
-		sStandby = 0,
-		sOnGround,
-		sJump,
-		sAttack1,
-		sAttack2,
-		sAttack3,
-		sStop,
 	};
 
 	int state;		//プレイヤー状態

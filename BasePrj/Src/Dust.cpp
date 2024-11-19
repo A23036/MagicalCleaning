@@ -31,24 +31,9 @@ Dust::~Dust()
 
 void Dust::Update()
 {
-	/*
-	ImGui::SetNextWindowPos(ImVec2(100, 60));
-	ImGui::SetNextWindowSize(ImVec2(150, 100));
-	ImGui::Begin("DustHP");
-	ImGui::InputInt("HP", &hp);
-	ImGui::End();
-	*/
 	Stage* st = ObjectManager::FindGameObject<Stage>();
-	Player* pl = ObjectManager::FindGameObject<Player>();
 	if (!(st->IsLandBlock(transform.position))) {
 		transform.position.y -= 0.05f;
-	}
-	if (hp <= 0)
-	{
-		pl->AddWeight(maxHp);
-		DestroyMe();
-		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
-		new Dust(dustNum,pos);
 	}
 }
 
@@ -75,9 +60,15 @@ SphereCollider Dust::Collider(int n)
 	return col;
 }
 
-void Dust::AddDamage(int damage)
+void Dust::AddDamage(Player* player,int damage)
 {
-	Player* pl = ObjectManager::FindGameObject<Player>();
-	pl->AddWeight(1);
+	player->AddMP(1);
 	hp -= damage;
+	if (hp <= 0)
+	{
+		player->AddMP(maxHp);
+		DestroyMe();
+		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
+		new Dust(dustNum, pos);
+	}
 }

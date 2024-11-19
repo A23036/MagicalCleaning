@@ -93,13 +93,13 @@ void Player::Update()
 			bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
 		}
 		else {
-			bone = mesh->GetFrameMatrices(19);// プレイヤーの原点からの左手の位置(19は左手)
+			bone = mesh->GetFrameMatrices(18);// プレイヤーの原点からの左手の位置(18は左手)
 		}
 
 		child->SetPos(bone);
 	}
 	
-	///*
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
 	ImGui::Begin("State");
@@ -125,10 +125,10 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-	//*/
+	*/
 
 	if (dc->GetIsPlay()) {
-		animator->Update(); // 毎フレーム、Updateを呼ぶ
+		animator->Update();
 		state = curState;
 	}
 	else
@@ -168,14 +168,7 @@ void Player::Update()
 	}
 
 	// ImGuiウィンドウの位置とサイズを設定
-	
 	/*
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(100, 100));
-	ImGui::Begin("PlayerNum");
-	ImGui::InputInt("X", &playerNum);
-	ImGui::End();
-	*/
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
 	ImGui::SetNextWindowSize(ImVec2(100, 100));
 	ImGui::Begin("PlayerPos");
@@ -203,16 +196,13 @@ void Player::Update()
 	float rx = di->GetJoyState().lRx;
 	float ry = di->GetJoyState().lRy;
 	float rz = di->GetJoyState().lRz;
-	//ImGui::InputFloat("rX", &rx);
-	//ImGui::InputFloat("rY", &ry);
-	//ImGui::InputFloat("rZ", &rz);
 	ImGui::End();
-	
+	*/
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
 	
-	std::list<Dust*> dusts =ObjectManager::FindGameObjects<Dust>();
+	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
 	for (Dust* dust : dusts) {
 		SphereCollider tCol = dust->Collider(dust->GetNum());
@@ -400,30 +390,31 @@ void Player::UpdateOnGround()
 		animator->SetPlaySpeed(sqrt(ix * ix + iy * iy));
 		
 		// 走行アニメーションを再生
-		animator->MergePlay(aRun);
+		animator->MergePlay(aRun,0);
 	}
 	else {
 		// スティックが傾いていない場合は待機アニメーションを再生
 		animator->SetPlaySpeed(1.0f);
-		animator->MergePlay(aIdle);
+		animator->MergePlay(aIdle,0);
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
 	if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum)) {
 		speedY = JUMP_POWER;
-		state = sJump;
+		animator->MergePlay(aJump,0);
 		animator->SetPlaySpeed(1.0f);
-		animator->MergePlay(aJump);
+		state = sJump;
 	}
 	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃ボタン
-		animator->MergePlay(aAttack1);
+		animator->MergePlay(aAttack1,0);
 		animator->SetPlaySpeed(1.0f);
 		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
 	}
 	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 1, playerNum)) { //攻撃ボタン
-		animator->MergePlay(aAttack2);
+		animator->MergePlay(aAttack2,0);
 		animator->SetPlaySpeed(1.0f);
+		transform.rotation.y += 10 * DegToRad; //正面方向に回転させる
 		state = sAttack2;
 	}
 }
@@ -479,7 +470,7 @@ void Player::UpdateAttack1()
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
-			VECTOR3 forward = VECTOR3(0, 0.5f, 1.0f); // 回転してない時の移動量
+			VECTOR3 forward = VECTOR3(0, 0, 1.0f); // 回転してない時の移動量
 			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
 			forward = forward * rotY; // キャラの向いてる方への移動量
 			atkCol.center = transform.position + forward; //攻撃判定の球を作る
@@ -488,7 +479,7 @@ void Player::UpdateAttack1()
 			float rSum = atkCol.radius + dCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
-				d->AddDamage(1); //ダメージを与える
+				d->AddDamage(this,1); //ダメージを与える
 			}
 		}
 	}
@@ -535,7 +526,7 @@ void Player::UpdateAttack2()
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
-			VECTOR3 forward = VECTOR3(0, 0.5f, 1.0f); // 回転してない時の移動量
+			VECTOR3 forward = VECTOR3(0, 0, 1.0f); // 回転してない時の移動量
 			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
 			forward = forward * rotY; // キャラの向いてる方への移動量
 			atkCol.center = transform.position + forward; //攻撃判定の球を作る
@@ -544,7 +535,7 @@ void Player::UpdateAttack2()
 			float rSum = atkCol.radius + dCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
-				d->AddDamage(1); //ダメージを与える
+				d->AddDamage(this,1); //ダメージを与える
 			}
 		}
 	}
@@ -573,6 +564,7 @@ Broom::Broom(Object3D* parentModel, int num)
 	mesh->Load((f + "/broom.mesh").c_str());
 
 	transform.position = VECTOR3(0, 0, 0);
+	transform.rotation = VECTOR3(0, 0, -70);
 }
 
 Broom::~Broom()
@@ -581,19 +573,17 @@ Broom::~Broom()
 
 void Broom::Update()
 {
-	int num = ObjectManager::DrawCounter();
-	std::string s = "Player" + std::to_string(num);
-	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
+	Player* pl = dynamic_cast<Player*>(parent);
 
 	// 状態ごとの角度変更
 	switch (pl->GetPlayerState()) {
-	case 1:
-	case 2:
+	case sOnGround:
+	case sJump:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, -70);
 		break;
-	case 3:
-	case 4:
+	case sAttack1:
+	case sAttack2:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, 0);
 		break;

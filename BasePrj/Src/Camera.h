@@ -5,10 +5,6 @@
 
 using namespace std;
 
-namespace {
-	static const int MAXPLAYER = 4;
-}
-
 class Camera : public Object3D {
 public:
 	Camera();
