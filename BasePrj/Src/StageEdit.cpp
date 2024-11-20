@@ -31,13 +31,16 @@ StageEdit::StageEdit()
 	cursorZ = 0;
 
 	GameDevice()->m_mView = XMMatrixLookAtLH(
-		VECTOR3(0, 20, -10), // カメラ位置
+		VECTOR3(0, 10, 5), // カメラ位置
 		VECTOR3(0, 0, 0), // 注視点
-		VECTOR3(0, 1, 1)); // 上ベクトル
+		VECTOR3(0, 1, 0)); // 上ベクトル
 }
 
 StageEdit::~StageEdit()
 {
+	for (int i = 0; i < meshes.size(); i++) {
+		delete meshes[i];
+	}
 }
 
 void StageEdit::Update()
@@ -128,9 +131,9 @@ void StageEdit::Update()
 void StageEdit::Draw()
 {
 	GameDevice()->m_mView = XMMatrixLookAtLH(
-		VECTOR3(cursorX+5 , cursorY + 20, -cursorZ - 10), // カメラ位置
+		VECTOR3(cursorX , cursorY + 15, -cursorZ - 10), // カメラ位置
 		VECTOR3(cursorX, cursorY, -cursorZ), // 注視点
-		VECTOR3(0, 1, 1)); // 上ベクトル
+		VECTOR3(0, 1, 0)); // 上ベクトル
 
 	for (int y = 0; y < map.size(); y++) {
 		for (int z = 0; z < map[y].size(); z++) {
