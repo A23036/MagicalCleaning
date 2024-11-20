@@ -63,6 +63,7 @@ private:
 	CsvReader* csv;
 	DataCarrier* dc;
 
+	float deltaTime;
 	float GRAVITY;		//重力加速度
 	float JUMP_POWER;	//ジャンプ力
 	float MOVE_SPEED;	//基本移動速度

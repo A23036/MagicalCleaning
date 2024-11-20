@@ -54,7 +54,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	//mesh->LoadAnimation(aWalk, (f + "/walk.anmx").c_str(), true);
 	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
 	mesh->LoadAnimation(aJump2, (f + "/jump2.anmx").c_str(), false);
-	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), false);
+	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), true);
 	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
 	//mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
@@ -62,17 +62,18 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
 	animator->SetPlaySpeed(1.0f);
-	
+
 	transform.position = VECTOR3(0, 0, 0);
 	transform.rotation = VECTOR3(0, 0, 0);
+	deltaTime = 0.0f;
 	state = sOnGround;
 	curState = sOnGround;
 	speedY = 0;
-	mp = 0;
+	mp = 100;
 	weight = 0;
 	jumpCount = 0;
 	isFly = false;
-	finishAtkAnim = true;
+	finishAtkAnim = false;
 
 	msNum = 0;
 	jnNum = 0;
@@ -97,6 +98,8 @@ Player::~Player()
 
 void Player::Update()
 {
+	deltaTime = 60 * SceneManager::DeltaTime();
+
 	// 箒の位置情報更新
 	if (state != sStandby) { //キャラセレクト画面では持たない
 
@@ -110,7 +113,7 @@ void Player::Update()
 		if (animator->PlayingID() == aFly) {
 			bone = mesh->GetFrameMatrices(2);//プレイヤーのルート位置
 		}
-
+		
 		child->SetPos(bone);
 	}
 	
@@ -346,7 +349,7 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
-
+	
 	curState = state;
 }
 	
@@ -516,7 +519,7 @@ void Player::UpdateOnGround()
 		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
 
 		// 移動の適用
-		transform.position += moveDirection * moveSpeed;
+		transform.position += moveDirection * moveSpeed * deltaTime;
 
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
@@ -540,13 +543,16 @@ void Player::UpdateOnGround()
 		// スティックが傾いていない場合は待機アニメーションを再生
 		animator->SetPlaySpeed(1.0f);
 		animator->MergePlay(aIdle,0);
+		isFly = false;
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
 	if ((di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum) )) { //ジャンプ
 		speedY = JUMP_POWER;
-		animator->MergePlay(aJump,0);
-		animator->SetPlaySpeed(1.0f);
+		if (!isFly) {
+			animator->MergePlay(aJump, 0);
+			animator->SetPlaySpeed(1.0f);
+		}
 		jumpCount++;
 		state = sJump;
 	}
@@ -568,8 +574,8 @@ void Player::UpdateOnGround()
 void Player::UpdateJump()
 {
 	Stage* st = ObjectManager::FindGameObject<Stage>();
-	transform.position.y += speedY;
-	speedY -= GRAVITY;	// 重力
+	transform.position.y += speedY * deltaTime;
+	speedY -= GRAVITY * deltaTime;	// 重力
 
 	auto di = GameDevice()->m_pDI;
 	// コントローラースティックの入力を取得
@@ -592,7 +598,7 @@ void Player::UpdateJump()
 		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED* sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
 
 		// 移動の適用
-		transform.position += moveDirection * moveSpeed;
+		transform.position += moveDirection * moveSpeed * deltaTime;
 
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
@@ -601,11 +607,12 @@ void Player::UpdateJump()
 
 	if (di->CheckJoy(KD_TRG, 2, playerNum) && jumpCount <= jumpNum) {
 		speedY = JUMP_POWER;
+		isFly = false;
 		if (jumpCount % 2 == 0) {
-			animator->MergePlay(aJump);
+			animator->MergePlay(aJump); //ジャンプアニメーション1
 		}
 		else {
-			animator->MergePlay(aJump2);
+			animator->MergePlay(aJump2);//ジャンプアニメーション2
 		}
 		animator->SetPlaySpeed(1.0f);
 		jumpCount++;
@@ -722,7 +729,7 @@ Broom::Broom(Object3D* parentModel, int num)
 	mesh->Load((f + "/broom.mesh").c_str());
 
 	transform.position = VECTOR3(0, 0, 0);
-	transform.rotation = VECTOR3(0, 0, -70);
+	transform.rotation = VECTOR3(0, 0, -70 * DegToRad);
 }
 
 Broom::~Broom()
@@ -736,20 +743,17 @@ void Broom::Update()
 	// 状態ごとの角度変更
 	switch (pl->GetPlayerState()) {
 	case sOnGround:
+	case sJump:
 		if (!pl->GetIsFly()) {
 			transform.position = VECTOR3(0, 0, 0);
-			transform.rotation = VECTOR3(0, 0, -70);
+			transform.rotation = VECTOR3(0, 0, -70*DegToRad);
 		}
 		else {
-			transform.position = VECTOR3(7*0.01, -10*0.01, -35*0.01);
-			transform.rotation = VECTOR3(77, 0, 90);
+			transform.position = VECTOR3(7 * 0.01, -10 * 0.01, -35 * 0.01);
+			transform.rotation = VECTOR3(77 * DegToRad, 75 * DegToRad, 90 * DegToRad);
 		}
 		break;
 
-	case sJump:
-		transform.position = VECTOR3(0, 0, 0);
-		transform.rotation = VECTOR3(0, 0, -70);
-		break;
 	case sAttack1:
 	case sAttack2:
 		transform.position = VECTOR3(0, 0, 0);
