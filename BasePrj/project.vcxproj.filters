@@ -324,9 +324,6 @@
     <ClInclude Include="Src\SplitScreenLastDraw.h">
       <Filter>ソース ファイル\05_フレームワーク</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ViewMapScene.h">
-      <Filter>リソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\EasingCalc.h">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClInclude>
@@ -335,6 +332,9 @@
     </ClInclude>
     <ClInclude Include="Src\DataCarrier.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ViewMapScene.h">
+      <Filter>ソース ファイル\11_ViewMapScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

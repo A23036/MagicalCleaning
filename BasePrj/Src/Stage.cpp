@@ -51,7 +51,7 @@ void Stage::Draw()
 	std::string s = "Player" + std::to_string(num);
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	VECTOR3 pos = pl->Position();
-
+	
 	for (int y = 0; y < map.size(); y++) {
 		for (int z = 0; z < map[y].size(); z++) {
 			for (int x = 0; x < map[y][z].size(); x++) {
