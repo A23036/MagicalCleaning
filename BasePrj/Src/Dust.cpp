@@ -37,6 +37,22 @@ void Dust::Update()
 	}
 }
 
+void Dust::Draw()
+{
+	// 画面ごとにプレイヤー周辺のみマップ描画
+	int num = ObjectManager::DrawCounter() + 1;
+	std::string s = "Player" + std::to_string(num);
+	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
+	VECTOR3 pos = pl->Position();
+
+	VECTOR3 dist = pos - transform.position;
+	if (dist.LengthSquare() < 400) //特定の範囲内だけ描画
+	{
+		mesh->Render(transform.matrix());
+	}
+		
+}
+
 
 SphereCollider Dust::Collider(int n)
 {

@@ -7,6 +7,7 @@ public:
 	Dust(int number,VECTOR3 pos);
 	~Dust();
 	void Update();
+	void Draw() override;
 
 	SphereCollider Collider(int n);
 
