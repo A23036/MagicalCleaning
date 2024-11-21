@@ -12,15 +12,16 @@ PlayScene::PlayScene()
 
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrierはシングルトンで生成
 	
-	new Stage(5);
 	new Camera();
+	new Stage(5);
+	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
 	
 	timer = 0;
 	frm = 0;
 	isPlay = false;
 	state = sReady;
-	GameTime = 1800;
+	GameTime = 10;
 }
 
 PlayScene::~PlayScene()
@@ -104,7 +105,18 @@ void PlayScene::UpdateGamePlay()
 void PlayScene::UpdateFinish()
 {
 	timer = frm * (1.0f / 60.0f);
-	if (timer >= 3) {
-		//リザルトへ
+	if (timer >= 3) { //リザルトへ
+		std::list<Player*> players = ObjectManager::FindGameObjects<Player>();
+		int max=0;
+		int winner = -1;
+		for (Player* pl : players)
+		{
+			if (max < pl->GetScore()) { //一番スコアが高いプレイヤーの探索
+				max = pl->GetScore();
+				winner = pl->GetPlayerNum();
+			}
+		}
+		dc->SetWinnerId(winner); // 勝者を保存
+		SceneManager::ChangeScene("ResultScene");
 	}
 }

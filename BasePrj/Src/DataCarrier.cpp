@@ -30,3 +30,8 @@ void DataCarrier::SetGameState(int state)
 {
 	gameState = state;
 }
+
+void DataCarrier::SetWinnerId(int id)
+{
+	winnerId = id;
+}

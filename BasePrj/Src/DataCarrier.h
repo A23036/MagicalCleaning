@@ -13,13 +13,16 @@ public:
 	void SetGameTime(int time);
 	void SetIsPlay(bool isPlay);
 	void SetGameState(int state);
+	void SetWinnerId(int id);
 
 	int GetGameTime() { return gameTime; };
 	bool GetIsPlay() { return isPlay; };
 	int GetGameState() { return gameState; };
+	int GetWinnerId() { return winnerId; };
 
 private:
 	int gameTime;	//ƒQ[ƒ€Œo‰ßŠÔ(•b)
 	bool isPlay;	//ƒQ[ƒ€’†”»’è
 	int gameState;	//ƒQ[ƒ€ó‘Ô•Ï”
+	int winnerId;
 };

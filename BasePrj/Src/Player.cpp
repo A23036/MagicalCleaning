@@ -69,6 +69,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	state = sOnGround;
 	curState = sOnGround;
 	speedY = 0;
+	score = 0;
 	mp = 100;
 	weight = 0;
 	jumpCount = 0;
@@ -475,6 +476,11 @@ void Player::AddWeight(int n)
 
 }
 
+void Player::AddScore(int n)
+{
+	score += n;
+}
+
 void Player::UpdateOnGround()
 {
 	
@@ -490,6 +496,7 @@ void Player::UpdateOnGround()
 	ImGui::InputInt("IY", &y);
 	ImGui::End();
 	*/
+	
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	if (!(st->IsLandBlock(transform.position))) {
 		// 空中
@@ -504,6 +511,20 @@ void Player::UpdateOnGround()
 	float ix = di->GetJoyState(playerNum).lX / 1000.0f;
 	float iy = di->GetJoyState(playerNum).lY / 1000.0f;
 	
+	// キーボード操作を取得(1Pのみ動かせる)
+	if (di->CheckKey(KD_DAT, DIK_W) && playerNum == 0) {
+		iy = -1.0f; // 前進
+	}
+	if (di->CheckKey(KD_DAT, DIK_S) && playerNum == 0) {
+		iy = 1.0f;  // 後退
+	}
+	if (di->CheckKey(KD_DAT, DIK_A) && playerNum == 0) {
+		ix = -1.0f; // 左移動
+	}
+	if (di->CheckKey(KD_DAT, DIK_D) && playerNum == 0) {
+		ix = 1.0f;  // 右移動
+	}
+
 	// スティックが入力されているか確認
 	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
 		// 入力に基づいて移動方向を設定
@@ -582,6 +603,20 @@ void Player::UpdateJump()
 	// 正規化して -1.0～1.0 の範囲にする
 	float ix = di->GetJoyState(playerNum).lX / 1000.0f;
 	float iy = di->GetJoyState(playerNum).lY / 1000.0f;
+
+	// キーボード操作を取得(1Pのみ動かせる)
+	if (di->CheckKey(KD_DAT, DIK_W) && playerNum == 0) {
+		iy = -1.0f; // 前進
+	}
+	if (di->CheckKey(KD_DAT, DIK_S) && playerNum == 0) {
+		iy = 1.0f;  // 後退
+	}
+	if (di->CheckKey(KD_DAT, DIK_A) && playerNum == 0) {
+		ix = -1.0f; // 左移動
+	}
+	if (di->CheckKey(KD_DAT, DIK_D) && playerNum == 0) {
+		ix = 1.0f;  // 右移動
+	}
 
 	// スティックが入力されているか確認
 	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {

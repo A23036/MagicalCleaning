@@ -48,4 +48,7 @@ void PlayDisplay::Draw()
 	}
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 120, str, 50, RGB(255, 0,0));
 
+	sprintf_s<64>(str, "Score:%3d", pl->GetScore() );
+	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 70, 30, str, 50, RGB(255, 255, 0));
+
 }

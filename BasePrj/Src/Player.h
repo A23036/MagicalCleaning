@@ -50,6 +50,7 @@ public:
 
 	int GetMP() { return mp; };
 	int GetWeight() { return weight; };
+	int GetScore() { return score; };
 	int GetPlayerNum() { return playerNum; };
 	int GetPlayerState() { return state; };
 	int GetSelectPower() { return selectPower; };
@@ -58,6 +59,7 @@ public:
 	void SetPlayerCurState(int state);
 	void AddMP(int n);
 	void AddWeight(int n);
+	void AddScore(int n);
 
 private:
 	CsvReader* csv;
@@ -69,6 +71,7 @@ private:
 	float MOVE_SPEED;	//基本移動速度
 
 	int playerNum;		//プレイヤー番号
+	int score;
 	int mp;				//MP
 	int weight;			//運搬重量
 	int jumpCount;		//現在ジャンプ回数

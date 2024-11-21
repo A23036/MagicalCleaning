@@ -79,10 +79,12 @@ SphereCollider Dust::Collider(int n)
 void Dust::AddDamage(Player* player,int damage)
 {
 	player->AddMP(1);
+	player->AddScore(1);
 	hp -= damage;
 	if (hp <= 0)
 	{
 		player->AddMP(maxHp);
+		player->AddScore(maxHp);
 		DestroyMe();
 		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
 		new Dust(dustNum, pos);
