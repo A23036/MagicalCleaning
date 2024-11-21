@@ -118,10 +118,10 @@ private:
 	enum AnimID {
 		aIdle = 0,
 		aRun = 1,
-		aWalk,
 		aJump,
 		aJump2,
 		aFly,
+		aFall,
 		aAttack1,
 		aAttack2,
 		aAttack3,

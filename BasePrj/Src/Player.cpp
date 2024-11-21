@@ -51,10 +51,10 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 
 	mesh->LoadAnimation(aIdle, (f + "/idle.anmx").c_str(), true);
 	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
-	//mesh->LoadAnimation(aWalk, (f + "/walk.anmx").c_str(), true);
 	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
 	mesh->LoadAnimation(aJump2, (f + "/jump2.anmx").c_str(), false);
 	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), true);
+	mesh->LoadAnimation(aFall, (f + "/fall.anmx").c_str(), true);
 	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
 	//mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
@@ -124,7 +124,7 @@ void Player::Update()
 	}
 	
 	
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
 	ImGui::Begin("isFly");
 	if (isDash) {
@@ -136,7 +136,7 @@ void Player::Update()
 	}
 	ImGui::End();
 	
-	/**
+	/*
 	switch (state) {
 	case sStandby:
 		ImGui::Text("sStandby");
@@ -607,13 +607,16 @@ void Player::UpdateJump()
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	transform.position.y += speedY * deltaTime;
 	if (canFly && GameDevice()->m_pDI->CheckJoy(KD_DAT, 7, playerNum)) {
-		speedY = GRAVITY * 0.01;	// 重力
+		speedY = -0.01;	// 重力
 		isFly = true;
-		if (animator->PlayingID() == aRun) {
+		if (animator->PlayingID() == aRun || animator->PlayingID() == aFall) {
 			animator->MergePlay(aFly);
 		}
 	}
 	else {
+		if (animator->PlayingID() == aFly && !isDash) {
+			animator->MergePlay(aFall);
+		}
 		speedY -= GRAVITY * deltaTime;	// 重力
 		isFly = false;
 	}
@@ -673,8 +676,16 @@ void Player::UpdateJump()
 		jumpCount++;
 	}
 
-	if (animator->Finished() && isFly) {
-		animator->MergePlay(aFly);
+
+	if (animator->Finished()) {
+		if (isFly) {
+			animator->MergePlay(aFly);
+		}
+		else
+		{
+			animator->MergePlay(aFall);
+		}
+		
 	}
 
 	if (st->IsLandBlock(transform.position)) {
