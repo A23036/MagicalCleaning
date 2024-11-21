@@ -3,6 +3,7 @@
 #include "Object3D.h"
 #include "CsvReader.h"
 #include "MeshCollider.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -22,4 +23,5 @@ private:
 	MeshCollider* boxCollider;
 	vector<vector<vector<int>>> map; // マップデータの三次元配列
 	CsvReader* csv;
+	Camera* cm;
 };

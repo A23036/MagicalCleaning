@@ -2,6 +2,7 @@
 #include "CsvReader.h"
 #include "BlockFileName.h"
 #include "Player.h"
+#include "Camera.h"
 #include "Coin.h"
 #include "Dust.h"
 #include "DustBox.h"
@@ -16,6 +17,8 @@ Stage::Stage(int stageNumber)
 	}
 	boxCollider = new MeshCollider();
 	boxCollider->MakeFromFile("data/models/boxCol.mesh");
+	
+	cm = ObjectManager::FindGameObject<Camera>();
 
 	Load(stageNumber);
 }
@@ -47,11 +50,11 @@ void Stage::Update()
 void Stage::Draw()
 {
 	// 画面ごとにプレイヤー周辺のみマップ描画
-	int num = ObjectManager::DrawCounter() + 1; 
-	std::string s = "Player" + std::to_string(num);
+	int num = ObjectManager::DrawCounter(); 
+	std::string s = "Player" + std::to_string(num+1);
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	VECTOR3 pos = pl->Position();
-	
+	/*
 	for (int y = 0; y < map.size(); y++) {
 		for (int z = 0; z < map[y].size(); z++) {
 			for (int x = 0; x < map[y][z].size(); x++) {
@@ -64,7 +67,37 @@ void Stage::Draw()
 				}
 			}
 		}
+	}*/
+
+	// 描画範囲（半径）
+	const int radius = 20; // プレイヤーからの範囲を指定
+
+	// 描画範囲の計算
+	int minX = max(0, static_cast<int>(pos.x) - radius);
+	int maxX = min(static_cast<int>(map[0][0].size()) - 1, static_cast<int>(pos.x) + radius);
+	int minY = max(0, static_cast<int>(pos.y) - radius);
+	int maxY = min(static_cast<int>(map.size()) - 1, static_cast<int>(pos.y) + radius);
+	int minZ = max(0, static_cast<int>(-pos.z) - radius);
+	int maxZ = min(static_cast<int>(map[0].size()) - 1, static_cast<int>(-pos.z) + radius);
+
+	for (int y = minY; y <= maxY; y++) {
+		for (int z = minZ; z <= maxZ; z++) {
+			for (int x = minX; x <= maxX; x++) {
+				VECTOR3 dist = pos - VECTOR3(x, y, -z);
+
+				// 特定の範囲内だけ描画
+				if (dist.LengthSquare() >= 500)
+					continue;
+
+				// チップの描画処理
+				int chip = map[y][z][x];
+				if (chip >= 0) { // 負の時は穴
+					meshes[chip]->Render(XMMatrixTranslation(x, y, -z));
+				}
+			}
+		}
 	}
+
 }
 
 void Stage::Load(int n)
