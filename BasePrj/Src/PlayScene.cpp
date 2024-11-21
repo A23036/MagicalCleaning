@@ -8,6 +8,8 @@
 
 PlayScene::PlayScene()
 {
+	CsvLoad();
+
 	pd = new PlayDisplay();
 
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrierはシングルトンで生成
@@ -21,7 +23,6 @@ PlayScene::PlayScene()
 	frm = 0;
 	isPlay = false;
 	state = sReady;
-	GameTime = 10;
 }
 
 PlayScene::~PlayScene()
@@ -65,6 +66,24 @@ void PlayScene::Update()
 void PlayScene::Draw()
 {
 	GameDevice()->m_pFont->Draw(750, 15, _T("PLAY SCENE"), 32, RGB(255, 0, 0));	
+}
+
+void PlayScene::CsvLoad()
+{
+	// csvからデータ読み込み
+	csv = new CsvReader("data/csv/AnimParam.csv");
+	if (csv->GetLines() < 1) {
+		MessageBox(NULL, "AnimParam.csvが読めません", "エラー", MB_OK);
+	}
+
+	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
+		if (csv->GetString(i, 0) == "Play") {
+			
+			if (csv->GetString(i, 1) == "GameTime") {	// 終了時透明度
+				GameTime = csv->GetFloat(i, 3);
+			}
+		}
+	}
 }
 
 void PlayScene::UpdateReady()

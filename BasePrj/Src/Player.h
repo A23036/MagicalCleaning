@@ -54,6 +54,7 @@ public:
 	int GetPlayerNum() { return playerNum; };
 	int GetPlayerState() { return state; };
 	int GetSelectPower() { return selectPower; };
+	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
 	void SetPlayerCurState(int state);
@@ -75,7 +76,9 @@ private:
 	int mp;				//MP
 	int weight;			//運搬重量
 	int jumpCount;		//現在ジャンプ回数
-	bool isFly;
+	bool isDash;		//ダッシュ中判定
+	bool isFly;			//飛行中判定
+	bool canFly;		//飛行可能判定
 
 	bool finishAtkAnim;
 

@@ -2,6 +2,7 @@
 #include "Object3D.h"
 #include "CsvReader.h"
 #include "SplitScreen.h"
+#include "DataCarrier.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ private:
 	void updateCamera(int counter, VECTOR3 pos, VECTOR3 rot);
 
 	CsvReader* csv;
+	DataCarrier* dc;
 
 	VECTOR3 CameraPos = VECTOR3(0, 0, 0);		// カメラ位置
 	VECTOR3 LookPos = VECTOR3(0, 1, 0);		// カメラ注視点

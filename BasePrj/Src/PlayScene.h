@@ -3,6 +3,7 @@
 #include "PlayDisplay.h"
 #include "SplitScreenLastDraw.h"
 #include "DataCarrier.h"
+#include "CsvReader.h"
 
 class PlayScene : public SceneBase
 {
@@ -12,10 +13,13 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void CsvLoad();
+
 private:
 	PlayDisplay* pd;
 	SplitScreenLastDraw* ssld;
 	DataCarrier* dc;
+	CsvReader* csv;
 
 	int timer;		//ゲーム経過時間(秒)
 	int frm;		//ゲーム経過時間(フレーム)

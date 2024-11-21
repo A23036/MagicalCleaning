@@ -66,14 +66,19 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	transform.position = VECTOR3(0, 0, 0);
 	transform.rotation = VECTOR3(0, 0, 0);
 	deltaTime = 0.0f;
+
 	state = sOnGround;
 	curState = sOnGround;
+
 	speedY = 0;
 	score = 0;
 	mp = 100;
 	weight = 0;
 	jumpCount = 0;
+
+	isDash = false;
 	isFly = false;
+	canFly = false;
 	finishAtkAnim = false;
 
 	msNum = 0;
@@ -111,7 +116,7 @@ void Player::Update()
 		else {
 			bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
 		}
-		if (animator->PlayingID() == aFly) {
+		if (animator->PlayingID() == aFly || isFly) {
 			bone = mesh->GetFrameMatrices(2);//プレイヤーのルート位置
 		}
 		
@@ -122,7 +127,7 @@ void Player::Update()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
 	ImGui::Begin("isFly");
-	if (isFly) {
+	if (isDash) {
 		ImGui::Text("Fly");
 	}
 	else
@@ -203,7 +208,12 @@ void Player::Update()
 			{
 				mp -= JumpNumC[jnNum];
 				jnNum++;
-				jumpNum = JumpNumT[jnNum];
+				if (jnNum == JnTableNum - 1) {
+					canFly = true;
+				}
+				else {
+					jumpNum = JumpNumT[jnNum];
+				}
 			}
 			break;
 		case pAS:
@@ -549,7 +559,7 @@ void Player::UpdateOnGround()
 			// 飛行アニメーションを再生
 			animator->MergePlay(aFly, 0);
 			animator->SetPlaySpeed(1.0f);
-			isFly = true;
+			isDash = true;
 		}
 		else {
 			//走行速度に応じたアニメーションスピードを設定
@@ -557,20 +567,20 @@ void Player::UpdateOnGround()
 
 			// 走行アニメーションを再生
 			animator->MergePlay(aRun, 0);
-			isFly = false;
+			isDash = false;
 		}
 	}
 	else {
 		// スティックが傾いていない場合は待機アニメーションを再生
 		animator->SetPlaySpeed(1.0f);
 		animator->MergePlay(aIdle,0);
-		isFly = false;
+		isDash = false;
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
 	if ((di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum) )) { //ジャンプ
 		speedY = JUMP_POWER;
-		if (!isFly) {
+		if (!isDash) {
 			animator->MergePlay(aJump, 0);
 			animator->SetPlaySpeed(1.0f);
 		}
@@ -596,7 +606,17 @@ void Player::UpdateJump()
 {
 	Stage* st = ObjectManager::FindGameObject<Stage>();
 	transform.position.y += speedY * deltaTime;
-	speedY -= GRAVITY * deltaTime;	// 重力
+	if (canFly && GameDevice()->m_pDI->CheckJoy(KD_DAT, 7, playerNum)) {
+		speedY = GRAVITY * 0.01;	// 重力
+		isFly = true;
+		if (animator->PlayingID() == aRun) {
+			animator->MergePlay(aFly);
+		}
+	}
+	else {
+		speedY -= GRAVITY * deltaTime;	// 重力
+		isFly = false;
+	}
 
 	auto di = GameDevice()->m_pDI;
 	// コントローラースティックの入力を取得
@@ -642,7 +662,7 @@ void Player::UpdateJump()
 
 	if (di->CheckJoy(KD_TRG, 2, playerNum) && jumpCount <= jumpNum) {
 		speedY = JUMP_POWER;
-		isFly = false;
+		isDash = false;
 		if (jumpCount % 2 == 0) {
 			animator->MergePlay(aJump); //ジャンプアニメーション1
 		}
@@ -651,6 +671,10 @@ void Player::UpdateJump()
 		}
 		animator->SetPlaySpeed(1.0f);
 		jumpCount++;
+	}
+
+	if (animator->Finished() && isFly) {
+		animator->MergePlay(aFly);
 	}
 
 	if (st->IsLandBlock(transform.position)) {
@@ -779,13 +803,13 @@ void Broom::Update()
 	switch (pl->GetPlayerState()) {
 	case sOnGround:
 	case sJump:
-		if (!pl->GetIsFly()) {
-			transform.position = VECTOR3(0, 0, 0);
-			transform.rotation = VECTOR3(0, 0, -70*DegToRad);
-		}
-		else {
+		if (pl->GetIsDash() || pl->GetIsFly()) {
 			transform.position = VECTOR3(7 * 0.01, -10 * 0.01, -35 * 0.01);
 			transform.rotation = VECTOR3(77 * DegToRad, 75 * DegToRad, 90 * DegToRad);
+		}
+		else {
+			transform.position = VECTOR3(0, 0, 0);
+			transform.rotation = VECTOR3(0, 0, -70 * DegToRad);
 		}
 		break;
 

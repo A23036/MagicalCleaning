@@ -11,6 +11,7 @@ Camera::Camera()
 	SetDrawOrder(-1000);
 
 	ssObj = ObjectManager::FindGameObject<SplitScreen>();
+	dc = ObjectManager::FindGameObject<DataCarrier>();
 	
 	while (view.size() < ssObj->MultiSize())
 	{
@@ -195,6 +196,10 @@ void Camera::CsvLoad()
 
 void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 {
+	if (!dc->GetIsPlay() && dc->GetGameState() != 0) {
+		return;
+	}
+
 	// プレイヤーの位置を取得
 	VECTOR3 playerPos = pos;
 
