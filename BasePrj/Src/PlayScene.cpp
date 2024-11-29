@@ -16,6 +16,7 @@ PlayScene::PlayScene()
 	
 	new Camera();
 	new Stage(5);
+	//new Stage();
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
 	

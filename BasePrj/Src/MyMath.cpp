@@ -601,7 +601,7 @@ FLOAT AddAngle(const VECTOR3& p1, const VECTOR3& p2, const VECTOR3& p3, const VE
 //  –ß‚è’l@@int  —”
 //-----------------------------------------------------------------------------
 int Random(int min1, int max1)
-{
+ {
 	static unsigned int cnt = 0;
 	int range;
 

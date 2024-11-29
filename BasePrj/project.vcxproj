@@ -321,6 +321,7 @@
     <ClInclude Include="Src\SelectDisplay.h" />
     <ClInclude Include="Src\SelectScene.h" />
     <ClInclude Include="Src\Shader.h" />
+    <ClInclude Include="Src\SlashEffect.h" />
     <ClInclude Include="Src\SplitScreen.h" />
     <ClInclude Include="Src\SplitScreenLastDraw.h" />
     <ClInclude Include="Src\Sprite3D.h" />
@@ -371,6 +372,7 @@
     <ClCompile Include="Src\SelectDisplay.cpp" />
     <ClCompile Include="Src\SelectScene.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
+    <ClCompile Include="Src\SlashEffect.cpp" />
     <ClCompile Include="Src\SplitScreen.cpp" />
     <ClCompile Include="Src\SplitScreenLastDraw.cpp" />
     <ClCompile Include="Src\Sprite3D.cpp" />

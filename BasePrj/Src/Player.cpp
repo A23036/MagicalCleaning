@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Dust.h"
 #include "DustBox.h"
+#include "SlashEffect.h"
 
 Player::Player()
 {
@@ -21,6 +22,7 @@ Player::Player(VECTOR3 pos, VECTOR3 rot, int num)//セレクトシーン/リザルトシーン
 	mesh->Load((f + "/witch.mesh").c_str());
 
 	mesh->LoadAnimation(aIdle, (f + "/standby.anmx").c_str(), true);
+	
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -123,7 +125,7 @@ void Player::Update()
 		child->SetPos(bone);
 	}
 	
-	
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 60));
 	ImGui::Begin("isFly");
@@ -135,8 +137,11 @@ void Player::Update()
 		ImGui::Text("notFly");
 	}
 	ImGui::End();
-	
+	*/
 	/*
+	ImGui::SetNextWindowPos(ImVec2(0, 50));
+	ImGui::SetNextWindowSize(ImVec2(100, 160));
+	ImGui::Begin("state");
 	switch (state) {
 	case sStandby:
 		ImGui::Text("sStandby");
@@ -300,7 +305,7 @@ void Player::Update()
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
-	
+	/*
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
 	for (Dust* dust : dusts) {
@@ -317,7 +322,7 @@ void Player::Update()
 			pushVec = XMVector3Normalize(pushVec); // pushVecの長さを１にする
 			transform.position += pushVec * pushLen;
 		}
-	}
+	}*/
 	
 	// DustBoxにめり込まないようにする
 	// 自分の座標は、transform.position
@@ -360,6 +365,20 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
+
+	ImGui::Begin("IsLand");
+	VECTOR3 start = transform.position;
+	start.y += 1.0f;
+	VECTOR3 end = transform.position;
+	end.y -= 1.0f;
+	if (HitLineToMesh(start, end)) {
+		
+		ImGui::Text("ground");
+	}
+	else {
+		ImGui::Text("air");
+	}
+	ImGui::End();
 	
 	curState = state;
 }
@@ -367,18 +386,7 @@ void Player::Update()
 void Player::Draw()
 {
 	Object3D::Draw(); // 継承元の関数を呼ぶ
-	/*
-	MATRIX4X4 tip = XMMatrixRotationRollPitchYawFromVector(VECTOR3(-33, 82, 0) * DegToRad);
-	VECTOR3 tipPos = VECTOR3(0, 0, 1.2f) * tip;
-	VECTOR3 tipPos = VECTOR3(0.9966, 0.6536, 0.140);
-	MATRIX4X4 mat = transform.matrix();// 世界(ワールド)の中で、プレイヤーの位置と向き
-	MATRIX4X4 bone = mesh->GetFrameMatrices(34); // プレイヤーの原点からの手首の位置(34は手首)
-	VECTOR3 start = VECTOR3(0, 0, 0) * bone * mat;
-	VECTOR3 end = tipPos * bone * mat;
-	
-	CSprite spr;
-	spr.DrawLine3D(start, end, RGB(255, 0, 0));
-	*/
+
 }
 
 void Player::CsvLoad()
@@ -465,6 +473,24 @@ SphereCollider Player::Collider()
 	return col;
 }
 
+int Player::GetPowerCost(int selectPower)
+{
+	switch (selectPower) {
+	case pMS:
+		return MoveSpeedC[msNum];
+	case pJN:
+		return JumpNumC[jnNum];
+	case pAS:
+		return AtkSpeedC[asNum];
+	case pAR:
+		return AtkRangeC[arNum];
+	case pCW:
+		return CarWeightC[cwNum];
+	default:
+		return 0;
+	}
+}
+
 void Player::SetPlayerState(int state)
 {
 	this->state = state;
@@ -493,9 +519,9 @@ void Player::AddScore(int n)
 
 void Player::UpdateOnGround()
 {
-	
+
 	auto di = GameDevice()->m_pDI;
-	
+
 	int x = di->GetJoyState(playerNum).lX;	// 右:1000 / 左:-1000
 	int y = di->GetJoyState(playerNum).lY;	// 下:1000 / 上:-1000
 	/*
@@ -513,7 +539,16 @@ void Player::UpdateOnGround()
 		state = sJump;
 		return; //この下の処理は行わない
 	}
-	 
+	/*
+	VECTOR3 start = transform.position;
+	start.y += 1.0f;
+	VECTOR3 end = transform.position;
+	if (!HitLineToMesh(start, end)) {
+		state = sJump;
+		return;
+	}
+	*/
+
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↓
 	
 	// コントローラースティックの入力を取得
@@ -687,9 +722,10 @@ void Player::UpdateJump()
 		}
 		
 	}
-
+	
 	if (st->IsLandBlock(transform.position)) {
 		// ジャンプ終了
+		isFly = false;
 		state = sOnGround;
 		jumpCount = 0;
 	}
@@ -700,16 +736,23 @@ void Player::UpdateAttack1()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
-	if (!finishAtkAnim && animator->CurrentFrame() <= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
+	if (!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
 		finishAtkAnim = true;
+		//エフェクトの再生
+		VECTOR3 forward = VECTOR3(0, 0, atkRange); // 回転してない時の移動量
+		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
+		forward = forward * rotY; // キャラの向いてる方への移動量
+		forward += transform.position;
+		new SlashEffect(forward,atkRange);
+
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
-			VECTOR3 forward = VECTOR3(0, 0, 1.0f); // 回転してない時の移動量
+			VECTOR3 forward = VECTOR3(0, 0, atkRange); // 回転してない時の移動量
 			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
 			forward = forward * rotY; // キャラの向いてる方への移動量
 			atkCol.center = transform.position + forward; //攻撃判定の球を作る
-			atkCol.radius = 1.0f;
+			atkCol.radius = 1.0f * atkRange;
 			VECTOR3 pushVec = atkCol.center - dCol.center;
 			float rSum = atkCol.radius + dCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
@@ -756,7 +799,7 @@ void Player::UpdateAttack2()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 
-	if (!finishAtkAnim && animator->CurrentFrame() <= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
+	if (!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
 		finishAtkAnim = true;
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
@@ -765,7 +808,7 @@ void Player::UpdateAttack2()
 			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
 			forward = forward * rotY; // キャラの向いてる方への移動量
 			atkCol.center = transform.position + forward; //攻撃判定の球を作る
-			atkCol.radius = 1.0f;
+			atkCol.radius = 1.0f * atkRange;
 			VECTOR3 pushVec = atkCol.center - dCol.center;
 			float rSum = atkCol.radius + dCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定

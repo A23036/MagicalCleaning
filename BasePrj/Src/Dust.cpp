@@ -6,6 +6,7 @@ Dust::Dust(int number, VECTOR3 pos)
 {
 	SetTag("STAGEOBJ");
 	mesh = new CFbxMesh();
+
 	mesh->Load("data/models/boxWooden.mesh");
 	transform.position = pos;
 	switch (number) { //ƒTƒCƒY‚²‚Æ‚Ìİ’è
