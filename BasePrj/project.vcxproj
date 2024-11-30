@@ -312,6 +312,7 @@
     <ClInclude Include="Src\ObjectManager.h" />
     <ClInclude Include="Src\Player.h" />
     <ClInclude Include="Src\PlayScene.h" />
+    <ClInclude Include="Src\PowerUpEffect.h" />
     <ClInclude Include="Src\resource.h" />
     <ClInclude Include="Src\ResourceManager.h" />
     <ClInclude Include="Src\ResultScene.h" />
@@ -364,6 +365,7 @@
     <ClCompile Include="Src\ObjectManager.cpp" />
     <ClCompile Include="Src\Player.cpp" />
     <ClCompile Include="Src\PlayScene.cpp" />
+    <ClCompile Include="Src\PowerUpEffect.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\ResultScene.cpp" />
     <ClCompile Include="Src\SceneBase.cpp" />

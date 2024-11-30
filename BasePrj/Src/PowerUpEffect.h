@@ -1,10 +1,10 @@
 #pragma once
 #include "Object3D.h"
 
-class SlashEffect : public Object3D {
+class PowerUpEffect : public Object3D {
 public:
-	SlashEffect(VECTOR3 pos,float scale);
-	~SlashEffect();
+	PowerUpEffect(Object3D* parentModel,VECTOR3 pos);
+	~PowerUpEffect();
 	void Update();
 
 private:
@@ -12,8 +12,11 @@ private:
 	float fadeTime;
 	float curTime;
 	float rotSpeed;
+	float upSpeed;
 	int frm;
 
 	bool isFading; // フェード中かどうかのフラグ
 	float fadeProgress; // フェードの進捗
+
+	Object3D* parent;
 };

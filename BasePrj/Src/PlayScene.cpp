@@ -15,7 +15,7 @@ PlayScene::PlayScene()
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrier‚ÍƒVƒ“ƒOƒ‹ƒgƒ“‚Å¶¬
 	
 	new Camera();
-	new Stage(5);
+	new Stage(4);
 	//new Stage();
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();

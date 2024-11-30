@@ -7,6 +7,7 @@
 #include "Dust.h"
 #include "DustBox.h"
 #include "SlashEffect.h"
+#include "PowerUpEffect.h"
 
 Player::Player()
 {
@@ -206,6 +207,7 @@ void Player::Update()
 				mp -= MoveSpeedC[msNum];
 				msNum++;
 				moveSpeed = MoveSpeedT[msNum];
+				new PowerUpEffect(this,transform.position);
 			}
 			break;
 		case pJN:
@@ -213,6 +215,7 @@ void Player::Update()
 			{
 				mp -= JumpNumC[jnNum];
 				jnNum++;
+				new PowerUpEffect(this, transform.position);
 				if (jnNum == JnTableNum - 1) {
 					canFly = true;
 				}
@@ -227,6 +230,7 @@ void Player::Update()
 				mp -= AtkSpeedC[asNum];
 				asNum++;
 				atkSpeed = AtkSpeedT[asNum];
+				new PowerUpEffect(this, transform.position);
 			}
 			break;
 		case pAR:
@@ -235,6 +239,7 @@ void Player::Update()
 				mp -= AtkRangeC[arNum];
 				arNum++;
 				atkRange = AtkRangeT[arNum];
+				new PowerUpEffect(this, transform.position);
 			}
 			break;
 		case pCW:
@@ -243,6 +248,7 @@ void Player::Update()
 				mp -= CarWeightC[cwNum];
 				cwNum++;
 				carWeight = CarWeightT[cwNum];
+				new PowerUpEffect(this, transform.position);
 			}
 			break;
 		}
