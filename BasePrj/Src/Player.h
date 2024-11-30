@@ -4,6 +4,8 @@
 #include "CsvReader.h"
 #include "Animator.h"
 #include "DataCarrier.h"
+#include "Stage.h"
+#include "Camera.h"
 
 enum State { //プレイヤー状態
 	sStandby = 0,
@@ -41,6 +43,7 @@ public:
 	Player(VECTOR3 pos, VECTOR3 rot, int num);
 	Player(int num);
 	~Player();
+	void Start() override;
 	void Update() override;
 	void Draw() override;
 
@@ -66,6 +69,9 @@ public:
 private:
 	CsvReader* csv;
 	DataCarrier* dc;
+	Stage* st;
+	Camera* cm;
+	list<Player*> otherPlayers;
 
 	float deltaTime;
 	float GRAVITY;		//重力加速度
@@ -129,7 +135,7 @@ private:
 	};
 
 	int state;		//プレイヤー状態
-	int curState;	//直前のプレイヤー状態
+	int prevState;	//直前のプレイヤー状態
 
 	int selectPower; //選択中能力
 

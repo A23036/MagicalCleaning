@@ -28,7 +28,7 @@ namespace {
 	bool needSortUpdate;
 	bool needSortDraw;
 	int drawTimes = 1; // 描画回数(画面分割数と同じ) 
-	int drawCounter; // 描画カウンター（何画面目の描画か） 
+	int drawCounter; // 描画カウンター（何画面目の描画か)
 };
 
 void deleteDrawObject(GameObject* obj)

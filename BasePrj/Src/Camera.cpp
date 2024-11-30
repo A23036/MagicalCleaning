@@ -16,7 +16,7 @@ Camera::Camera()
 	while (view.size() < ssObj->MultiSize())
 	{
 		MATRIX4X4 m = XMMatrixIdentity();
-		view.emplace_back(m);                                                                         
+		view.emplace_back(m);
 		VECTOR3 v = VECTOR3(0, 0, 0);
 		eyePt.emplace_back(v);
 		lookatPt.emplace_back(v);
@@ -38,6 +38,13 @@ Camera::~Camera()
 {
 }
 
+void Camera::Start()
+{
+	for (int i = 0; i < MAXPLAYER; i++) {
+		string s = "Player" + to_string(i+1);
+		player[i] = ObjectManager::FindGameObjectWithTag<Player>(s);
+	}
+}
 
 void Camera::Update()
 {
@@ -47,50 +54,16 @@ void Camera::Update()
 		// 多画面のとき
 		for (int i = 0; i < ssObj->MultiSize(); i++)
 		{
-			/*
-			// ２画面のとき
-			switch (i)
-			{
-			case 0:
-			{
-				// 画面0はPlayer視点
-				Player* pc = ObjectManager::FindGameObject<Player>();
-				if (pc != nullptr)
-				{
-					updateCamera(i, pc->Position(), pc->Rotation());
-				}
-				else {
-					updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
-				}
-			}
-			break;
-
-			case 1:
-			{
-				// 画面1はEnemyRS視点
-				EnemyRS* enm = ObjectManager::FindGameObject<EnemyRS>();
-				if (enm != nullptr && enm->Mesh() != nullptr)
-				{
-					updateCamera(i, enm->Position(), enm->Rotation());
-				}
-				else {
-					updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
-				}
-			}
-			break;
-			}
-			*/
-			///*
 			// ４画面のとき
 			switch (i)
 			{
 			case 0:
 				{
 					// 画面0はPlayer1視点
-					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player1");
-					if (pc != nullptr)
+					//Player* pc = player[0];
+					if (player[i] != nullptr)
 					{
-						updateCamera(i, pc->Position(), pc->Rotation());
+						updateCamera(i, player[0]->Position(), player[0]->Rotation());
 					}
 					else {
 						updateCamera(i, VECTOR3(0,0,0), VECTOR3(0,0,0));
@@ -101,10 +74,10 @@ void Camera::Update()
 			case 1:
 				{
 					// 画面1はPlayer2視点
-					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player2");
-					if (pc != nullptr)
+					//Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player2");
+					if (player[i] != nullptr)
 					{
-						updateCamera(i, pc->Position(), pc->Rotation());
+						updateCamera(i, player[i]->Position(), player[i]->Rotation());
 					}
 					else {
 						updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
@@ -115,10 +88,10 @@ void Camera::Update()
 			case 2:
 				{
 					// 画面2はPlayer3視点
-					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player3");
-					if (pc != nullptr)
+					//Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player3");
+					if (player[i] != nullptr)
 					{
-						updateCamera(i, pc->Position(), pc->Rotation());
+						updateCamera(i, player[i]->Position(), player[i]->Rotation());
 					}
 					else {
 						updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
@@ -129,10 +102,10 @@ void Camera::Update()
 			case 3:
 				{
 					// 画面3はPlayer4視点
-					Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player4");
-					if (pc != nullptr)
+					//Player* pc = ObjectManager::FindGameObjectWithTag<Player>("Player4");
+					if (player[i] != nullptr)
 					{
-						updateCamera(i, pc->Position(), pc->Rotation());
+						updateCamera(i, player[i]->Position(), player[i]->Rotation());
 					}
 					else {
 						updateCamera(i, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
@@ -140,15 +113,14 @@ void Camera::Update()
 				}
 				break;
 			}
-			//*/
 		}
 	}
 	else {
 		// １画面のときPlayer視点
-		Player* pc = ObjectManager::FindGameObject<Player>();
-		if (pc != nullptr)
+		//Player* pc = ObjectManager::FindGameObject<Player>();
+		if (player[0] != nullptr)
 		{
-			updateCamera(0, pc->Position(), pc->Rotation());
+			updateCamera(0, player[0]->Position(), player[0]->Rotation());
 		}
 		else {
 			updateCamera(0, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
@@ -169,6 +141,8 @@ void Camera::Draw()
 		lookPosition,	//注視点
 		VECTOR3(0, 1, 0));
 }
+
+
 
 void Camera::CsvLoad()
 {
@@ -299,7 +273,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 
 	// カメラが壁にめり込まないようにする
-	/*
+	
 	VECTOR3 start = pos;
 	start.y = 1.0;
 	VECTOR3 end = transform.position;
@@ -315,7 +289,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 	}
 	
 	transform.position = end;
-	*/
+	
 	// プレイヤーの位置を保存
 	prevPlayerPos[counter] = playerPos;
 	

@@ -6,12 +6,16 @@
 
 using namespace std;
 
+class Player;
+
 class Camera : public Object3D {
 public:
 	Camera();
 	~Camera();
+	void Start() override;
 	void Update() override;
 	void Draw() override;
+	
 	float GetRotY(int cameraNum) { return rotationY[cameraNum]; };
 
 	void CsvLoad(); //CSVファイルからデータの設定
@@ -26,8 +30,10 @@ private:
 	CsvReader* csv;
 	DataCarrier* dc;
 
-	VECTOR3 CameraPos = VECTOR3(0, 0, 0);		// カメラ位置
+	VECTOR3 CameraPos = VECTOR3(0, 0, 0);	// カメラ位置
 	VECTOR3 LookPos = VECTOR3(0, 1, 0);		// カメラ注視点
+
+	Player* player[MAXPLAYER];
 
 	float CHANGE_TIME;		// カメラ移動時間
 	float ROTATE_SPEED;		// カメラの自動回転速度

@@ -14,8 +14,6 @@ using namespace std;
 
 Stage::Stage()
 {
-	//cm = ObjectManager::FindGameObject<Camera>();
-
 	size = 7;
 	chipX = 10;
 	chipY = 5;
@@ -23,7 +21,18 @@ Stage::Stage()
 
 	//ランダムなマップチップ配列の作成
 	GenerateRandomMap(15,size);
-	Load();
+	//Load();
+
+	SetTag("STAGEOBJ");
+
+	mesh = new CFbxMesh();
+	mesh->Load("data/Map2/map50Field1.mesh");
+
+	meshCol = new MeshCollider();
+	meshCol->MakeFromMesh(mesh); //メッシュを作成
+
+	this->SetPosition(0, -1, 0);
+
 }
 
 Stage::Stage(int stageNumber)
@@ -68,13 +77,14 @@ void Stage::Update()
 
 void Stage::Draw()
 {
+	/*
 	// 画面ごとにプレイヤー周辺のみマップ描画
 	int num = ObjectManager::DrawCounter(); 
 	std::string s = "Player" + std::to_string(num+1);
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	VECTOR3 pos = pl->Position();
 	
-	const int radius = 23; // プレイヤーからの描画範囲を指定
+	const int radius = 25; // プレイヤーからの描画範囲を指定
 
 	// 描画範囲の計算
 	int minX = max(0, static_cast<int>(pos.x) - radius);
@@ -84,15 +94,18 @@ void Stage::Draw()
 	int minZ = max(0, static_cast<int>(-pos.z) - radius);
 	int maxZ = min(static_cast<int>(map[0].size()) - 1, static_cast<int>(-pos.z) + radius);
 	
+	int i = 0;
+	int j = 0;
 	for (int y = minY; y <= maxY; y++) {
 		for (int z = minZ; z <= maxZ; z++) {
 			for (int x = minX; x <= maxX; x++) {
+				i++;
 				VECTOR3 dist = pos - VECTOR3(x, y, -z);
 
 				// 特定の範囲内だけ描画
 				if (dist.LengthSquare() >= 500)
 					continue;
-
+				j++;
 				// チップの描画処理
 				int chip = map[y][z][x];
 				if (chip >= 0) { // 負の時は穴
@@ -101,7 +114,8 @@ void Stage::Draw()
 			}
 		}
 	}
-	
+	*/
+	mesh->Render(transform.matrix());
 }
 
 void Stage::Load() 
@@ -273,6 +287,19 @@ void Stage::Load(int n)
 
 bool Stage::IsLandBlock(VECTOR3 pos)
 {
+	
+	VECTOR3 to = pos;
+	to.y -= 0.01f;
+	pos.y += 1.0f;
+	
+	if (HitLineToMesh(pos,to)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+
+	/*
 	if (csv == nullptr) {
 		return false;
 	}
@@ -303,6 +330,7 @@ bool Stage::IsLandBlock(VECTOR3 pos)
 		return true;
 	}
 	return false;
+	*/
 }
 
 bool Stage::HitSphere(const SphereCollider& coll, VECTOR3* out)

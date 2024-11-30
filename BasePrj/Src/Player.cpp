@@ -40,8 +40,6 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 {
 	CsvLoad(); // csvからデータの設定
 
-	dc = ObjectManager::FindGameObject<DataCarrier>();
-
 	// プレイヤーの持つ箒の生成
 	child = new Broom(this,playerNum);
 
@@ -71,7 +69,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	deltaTime = 0.0f;
 
 	state = sOnGround;
-	curState = sOnGround;
+	prevState = sOnGround;
 
 	speedY = 0;
 	score = 0;
@@ -103,6 +101,14 @@ Player::~Player()
 {
 	SAFE_DELETE(mesh);
 	SAFE_DELETE(animator);
+}
+
+void Player::Start()
+{
+	otherPlayers = ObjectManager::FindGameObjects<Player>();
+	dc = ObjectManager::FindGameObject<DataCarrier>();
+	st = ObjectManager::FindGameObject<Stage>();
+	cm = ObjectManager::FindGameObject<Camera>();
 }
 
 void Player::Update()
@@ -168,7 +174,7 @@ void Player::Update()
 
 	if (dc->GetIsPlay()) {
 		animator->Update();
-		state = curState;
+		state = prevState;
 	}
 	else
 	{
@@ -271,20 +277,20 @@ void Player::Update()
 
 
 	//当たり判定処理
-	Stage* st = ObjectManager::FindGameObject<Stage>();
 	VECTOR3 push;
-	if (st->HitSphere(Collider(), &push)) {
+	if (st->HitSphereToMesh(Collider(), &push)) {
 		transform.position += push;
 	}
-
+	
 	// ImGuiウィンドウの位置とサイズを設定
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
-	ImGui::SetNextWindowSize(ImVec2(100, 100));
+	ImGui::SetNextWindowSize(ImVec2(120, 400));
 	ImGui::Begin("PlayerPos");
 	ImGui::InputFloat("X", &transform.position.x);
 	ImGui::InputFloat("Y", &transform.position.y);
 	ImGui::InputFloat("Z", &transform.position.z);
+	ImGui::InputFloat("speedY", &speedY);
 	ImGui::End();
 	
 	// 入力ボタン確認
@@ -311,7 +317,7 @@ void Player::Update()
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
-	/*
+	
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
 	for (Dust* dust : dusts) {
@@ -328,11 +334,12 @@ void Player::Update()
 			pushVec = XMVector3Normalize(pushVec); // pushVecの長さを１にする
 			transform.position += pushVec * pushLen;
 		}
-	}*/
+	}
 	
 	// DustBoxにめり込まないようにする
 	// 自分の座標は、transform.position
 	// DustBoxの座標を知る
+	/*
 	std::list<DustBox*> boxs = ObjectManager::FindGameObjects<DustBox>();
 
 	for (DustBox* box : boxs) {
@@ -350,13 +357,11 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
-
+	*/
 	// playerにめり込まないようにする
 	// 自分の座標は、transform.position
 	// playerの座標を知る
-	std::list<Player*> players = ObjectManager::FindGameObjects<Player>();
-
-	for (Player* player : players) {
+	for (Player* player : otherPlayers) {
 		SphereCollider tCol = player->Collider();
 		SphereCollider pCol = Collider();
 		VECTOR3 pushVec = pCol.center - tCol.center;
@@ -371,22 +376,8 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
-
-	ImGui::Begin("IsLand");
-	VECTOR3 start = transform.position;
-	start.y += 1.0f;
-	VECTOR3 end = transform.position;
-	end.y -= 1.0f;
-	if (HitLineToMesh(start, end)) {
-		
-		ImGui::Text("ground");
-	}
-	else {
-		ImGui::Text("air");
-	}
-	ImGui::End();
 	
-	curState = state;
+	prevState = state;
 }
 	
 void Player::Draw()
@@ -480,7 +471,7 @@ SphereCollider Player::Collider()
 }
 
 int Player::GetPowerCost(int selectPower)
-{
+{ 
 	switch (selectPower) {
 	case pMS:
 		return MoveSpeedC[msNum];
@@ -504,7 +495,7 @@ void Player::SetPlayerState(int state)
 
 void Player::SetPlayerCurState(int state)
 {
-	curState = state;
+	prevState = state;
 }
 
 void Player::AddMP(int n)
@@ -525,7 +516,6 @@ void Player::AddScore(int n)
 
 void Player::UpdateOnGround()
 {
-
 	auto di = GameDevice()->m_pDI;
 
 	int x = di->GetJoyState(playerNum).lX;	// 右:1000 / 左:-1000
@@ -539,7 +529,6 @@ void Player::UpdateOnGround()
 	ImGui::End();
 	*/
 	
-	Stage* st = ObjectManager::FindGameObject<Stage>();
 	if (!(st->IsLandBlock(transform.position))) {
 		// 空中
 		state = sJump;
@@ -582,8 +571,7 @@ void Player::UpdateOnGround()
 		VECTOR3 inputDirection = VECTOR3(ix, 0, -iy); // Z軸方向は反転
 
 		// カメラのY軸回転を取得
-		Camera* camera = ObjectManager::FindGameObject<Camera>();
-		float cameraYRotation = camera->GetRotY(playerNum);
+		float cameraYRotation = cm->GetRotY(playerNum);
 
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
@@ -645,7 +633,6 @@ void Player::UpdateOnGround()
 
 void Player::UpdateJump()
 {
-	Stage* st = ObjectManager::FindGameObject<Stage>();
 	transform.position.y += speedY * deltaTime;
 	if (canFly && GameDevice()->m_pDI->CheckJoy(KD_DAT, 7, playerNum)) {
 		speedY = -0.01;	// 重力
@@ -688,8 +675,7 @@ void Player::UpdateJump()
 		VECTOR3 inputDirection = VECTOR3(ix, 0, -iy); // Z軸方向は反転
 
 		// カメラのY軸回転を取得
-		Camera* camera = ObjectManager::FindGameObject<Camera>();
-		float cameraYRotation = camera->GetRotY(playerNum);
+		float cameraYRotation = cm->GetRotY(playerNum);
 
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
@@ -728,12 +714,13 @@ void Player::UpdateJump()
 		}
 		
 	}
-	
+
 	if (st->IsLandBlock(transform.position)) {
 		// ジャンプ終了
 		isFly = false;
 		state = sOnGround;
 		jumpCount = 0;
+		speedY = 0;
 	}
 }
 

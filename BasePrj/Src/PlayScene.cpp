@@ -14,9 +14,24 @@ PlayScene::PlayScene()
 
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrier‚ÍƒVƒ“ƒOƒ‹ƒgƒ“‚Å¶¬
 	
+	new Stage();
+
+	Player* p1 = new Player(0);
+	p1->SetPosition(0, 0, 0);
+	p1->SetTag("Player1");
+	Player* p2 = new Player(1);
+	p2->SetPosition(0, 0, 1);
+	p2->SetTag("Player2");
+	Player* p3 = new Player(2);
+	p3->SetPosition(1, 0, 0);
+	p3->SetTag("Player3");
+	Player* p4 = new Player(3);
+	p4->SetPosition(1, 0, 1);
+	p4->SetTag("Player4");
+
 	new Camera();
-	new Stage(4);
-	//new Stage();
+	//new Stage(4);
+	
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
 	
