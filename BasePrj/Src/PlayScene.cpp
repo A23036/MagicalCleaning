@@ -20,13 +20,13 @@ PlayScene::PlayScene()
 	p1->SetPosition(0, 0, 0);
 	p1->SetTag("Player1");
 	Player* p2 = new Player(1);
-	p2->SetPosition(0, 0, 1);
+	p2->SetPosition(0, 0, 2);
 	p2->SetTag("Player2");
 	Player* p3 = new Player(2);
-	p3->SetPosition(1, 0, 0);
+	p3->SetPosition(2, 0, 0);
 	p3->SetTag("Player3");
 	Player* p4 = new Player(3);
-	p4->SetPosition(1, 0, 1);
+	p4->SetPosition(2, 0, 2);
 	p4->SetTag("Player4");
 
 	new Camera();
@@ -50,6 +50,7 @@ void PlayScene::Update()
 	ssld->SetState(state);
 	ssld->SetGameTime(timer);
 	dc->SetGameState(state);
+	dc->SetGameTime(timer);
 	dc->SetIsPlay(isPlay);
 
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {

@@ -40,6 +40,7 @@ void Dust::Update()
 
 void Dust::Draw()
 {
+	/*
 	// 画面ごとにプレイヤー周辺のみマップ描画
 	int num = ObjectManager::DrawCounter() + 1;
 	std::string s = "Player" + std::to_string(num);
@@ -50,8 +51,8 @@ void Dust::Draw()
 	if (dist.LengthSquare() < 400) //特定の範囲内だけ描画
 	{
 		mesh->Render(transform.matrix());
-	}
-		
+	}*/
+	mesh->Render(transform.matrix());
 }
 
 

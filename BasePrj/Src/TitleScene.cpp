@@ -8,11 +8,11 @@ TitleScene::TitleScene()
 	CsvLoad();
 
 	//スプライトイメージのロード
-	titleBackImage	= new CSpriteImage(_T("data/Image/title/title.png"));
-	broomImage		= new CSpriteImage(_T("data/Image/title/Broom.png"));
-	titleText1Image = new CSpriteImage(_T("data/Image/title/Text1.png"));
-	titleText2Image = new CSpriteImage(_T("data/Image/title/Text2.png"));
-	titleText3Image = new CSpriteImage(_T("data/Image/title/Text3.png"));
+	titleBackImage	= new CSpriteImage(_T("data/Image/Title/title.png"));
+	broomImage		= new CSpriteImage(_T("data/Image/Title/Broom.png"));
+	titleText1Image = new CSpriteImage(_T("data/Image/Title/Text1.png"));
+	titleText2Image = new CSpriteImage(_T("data/Image/Title/Text2.png"));
+	titleText3Image = new CSpriteImage(_T("data/Image/Title/Text3.png"));
 	
 	sprite = new CSprite();
 	easing = new EasingCalc();

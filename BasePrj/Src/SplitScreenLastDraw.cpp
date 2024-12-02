@@ -21,7 +21,7 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	vpSingle.TopLeftY = 0;
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
-	frameUiImage = new CSpriteImage(_T("data/Image/frameUI.png"));
+	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI.png"));
 	sprite = new CSprite();
 
 }
@@ -78,6 +78,7 @@ void SplitScreenLastDraw::Draw()
 
 			switch (gameState) {
 			case sReady:
+				/*
 				if (seconds <= 2) { //カウントダウン数字
 					sprintf_s(str, "%d", 3 - seconds);
 					GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 100, RGB(0, 0, 255));
@@ -86,6 +87,7 @@ void SplitScreenLastDraw::Draw()
 					sprintf_s(str, "GO!");
 					GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 66, WINDOW_HEIGHT / 2 - 98, str, 100, RGB(0, 0, 255));
 				}
+				*/
 				sprintf_s(str, "State:Ready");
 				break;
 
