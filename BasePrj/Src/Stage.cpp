@@ -6,6 +6,7 @@
 #include "Coin.h"
 #include "Dust.h"
 #include "DustBox.h"
+#include "Collision.h"
 #include <iostream>
 #include <fstream>
 
@@ -21,18 +22,20 @@ Stage::Stage()
 
 	//ランダムなマップチップ配列の作成
 	GenerateRandomMap(15,size);
-	//Load();
 
 	SetTag("STAGEOBJ");
 
 	mesh = new CFbxMesh();
 	mesh->Load("data/Map2/map50Field1.mesh");
 
-	meshCol = new MeshCollider();
-	meshCol->MakeFromMesh(mesh); //メッシュを作成
+	//meshCol = new MeshCollider();
+	//meshCol->MakeFromMesh(mesh); //メッシュを作成
 
-	this->SetPosition(0, -1, 0);
+	mapCol = new CCollision;	// -- 2024.12.2
+	mapCol->AddFbxLoad(mesh);	// -- 2024.12.2 
 
+
+	this->SetPosition(0, 0, 0); //移動させる場合、mapCol->AddFbxLoad(mesh)に引数を追加
 }
 
 Stage::Stage(int stageNumber)
@@ -58,6 +61,8 @@ Stage::~Stage()
 //		csv = nullptr;
 //	}
 	SAFE_DELETE(csv);
+
+	SAFE_DELETE(mapCol);
 }
 
 void Stage::Update()
@@ -298,6 +303,7 @@ bool Stage::IsLandBlock(VECTOR3 pos)
 	else {
 		return false;
 	}
+	return true;
 
 	/*
 	if (csv == nullptr) {

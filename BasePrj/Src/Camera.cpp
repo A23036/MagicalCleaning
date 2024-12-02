@@ -223,7 +223,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 	}
 
 	//2024.10.25 カメラ自動回転処理↓
-
+	
 	// プレイヤーの移動方向を計算
 	VECTOR3 moveDir = playerPos - prevPlayerPos[counter];
 	moveDir.y = 0.0f;	// 垂直方向の動きを無視
@@ -261,14 +261,8 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 		// 回転量を更新
 		rotationY[counter] = targetRotationY;
 
-		/*
-		ImGui::SetNextWindowPos(ImVec2(0, 160));
-		ImGui::SetNextWindowSize(ImVec2(200, 60));
-		ImGui::Begin("Dot");
-		ImGui::InputFloat("dot", &dotVal);
-		ImGui::End();
-		*/
 	}
+	
 	//2024.10.25 カメラ自動回転処理↑
 
 

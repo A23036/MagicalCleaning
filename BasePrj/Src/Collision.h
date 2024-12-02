@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 //    メッシュ接触判定用のライブラリ
-//	  											ver 3.3         2024.3.23
+//	  											ver 4.0         2024.9.30
 //	  Collision.h								
 //------------------------------------------------------------------------
 #pragma once
@@ -29,7 +29,7 @@
 
 // 重力の加速度
 // Collisionの中では使用していない。ゲーム中で使用している
-#define  GRAVITY  -9.8f
+//#define  GRAVITY  -9.8f
 
 // AddAngle関数の戻り値である角度（ラジアン）の限界値
 // 理論値は、2.0であるが誤差を考慮して>=1.99f～1.95f程度とする
@@ -58,6 +58,14 @@
 // 複数分割度マップの最小サイズ
 #define  MESHCKTBL_LOWLIMIT  3.0f
 
+// コリジョン関数の戻り値
+enum CollRet
+{
+	clError = -1,  // エラー
+	clMove = 1,	   // 平行移動中
+	clLand = 2,	   // 着地
+	clFall = 3	   // 落下中
+};
 
 // ---------------------------------------------------------
 //
@@ -168,7 +176,7 @@ class CFbxMesh;
 // ---------------------------------------------------------
 class  CCollision
 {
-public:
+private:
 	CDirect3D*			m_pD3D;
 	CShader*			m_pShader;
 	CFbxMeshCtrl*		m_pFbxMeshCtrl;			// -- 2021.2.4
@@ -189,7 +197,6 @@ public:
 
 	// コリジョン移動用
 	bool				m_bMoveFlag;	// 移動するかどうか 移動の時 真
-	MATRIX4X4			m_mWorldBase;	// 移動マトリックスの初期位置	// -- 2022.11.14
 	MATRIX4X4			m_mWorldOld;	// 移動マトリックス（現在位置の一つ前）
 	MATRIX4X4			m_mWorld;		// 移動マトリックスの現在位置
 	MATRIX4X4			m_mWorldInv;	// 移動マトリックスの現在位置の逆マトリックス
@@ -200,41 +207,163 @@ public:
 
 	~CCollision();
 
-	bool	AddFbxLoad( const TCHAR*);										// -- 2022.11.14
+	/// <summary>
+	/// FbxMeshファイルから、コリジョン判定データを作成する
+	/// 判定データは座標原点に設定される
+	/// </summary>
+	/// <param name="">モデルデータのパス</param>
+	/// <returns>true:正常  false:ファイルが見つからない</returns>
+	bool	AddFbxLoad( const TCHAR*);
+
+	/// <summary>
+	/// FbxMeshファイルから、コリジョン判定データを作成する
+	/// 判定データを設定する座標を指定する
+	/// </summary>
+	/// <param name="">モデルデータのパス</param>
+	/// <param name="vOffset">設定する座標</param>
+	/// <returns>true:正常  false:ファイルが見つからない</returns>
 	bool	AddFbxLoad( const TCHAR*, const VECTOR3& vOffset);
-	bool	AddFbxLoad( const TCHAR*, const MATRIX4X4& mOffset);			// -- 2022.11.14
-	bool	AddFbxLoad(const CFbxMesh* pFbxMesh);							// -- 2022.11.14
+
+	/// <summary>
+	/// FbxMeshファイルから、コリジョン判定データを作成する
+	/// 判定データを設定するワールドマトリックスを指定する
+	/// </summary>
+	/// <param name="">モデルデータのパス</param>
+	/// <param name="mOffset">設定するマトリックス</param>
+	/// <returns>true:正常  false:ファイルが見つからない</returns>
+	bool	AddFbxLoad( const TCHAR*, const MATRIX4X4& mOffset);
+
+	/// <summary>
+	/// FbxMeshデータから、コリジョン判定データを作成する
+	/// 判定データは座標原点に設定される
+	/// </summary>
+	/// <param name="">メッシュデーター</param>
+	/// <returns>true:正常  false:ファイルが見つからない</returns>
+	bool	AddFbxLoad(const CFbxMesh* pFbxMesh);
+
+	/// <summary>
+	/// FbxMeshデータから、コリジョン判定データを作成する
+	/// 判定データを設定する座標を指定する
+	/// </summary>
+	/// <param name="">メッシュデーター</param>
+	/// <param name="vOffset">設定する座標</param>
+	/// <returns>true:正常  false:ファイルが見つからない</returns>
 	bool	AddFbxLoad(const CFbxMesh* pFbxMesh, const VECTOR3& vOffset);
-	bool	AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset);	// -- 2022.11.14
-	void	MakeChkColMesh(const int& nNum, const VECTOR3& vMin, const VECTOR3& vMax);
-	void	GetChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, int nIdx[], int& nIMax);
-	void	SetChkArray(const int& nNum, const int& nNo, const int& nIdx, ColFace* pFace);
-	void	ClearAll(void);
-	void	DeleteAll(void);
 
-	int     isCollisionLay(const MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal);
-	int     isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VECTOR3& vHit, VECTOR3& vNormal);
-	int     isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn, const float& fRadius, VECTOR3& vHit, VECTOR3& vNormal);
-	int     isCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, float fRadius = 0.2f);
-	int     isCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);    // -- 2022.11.14
-	int     isCollisionMoveGravity(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, float fRadius = 0.2f);
-	int     isCollisionMoveGravity(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);    // -- 2022.11.14
+ 	/// <summary>
+	/// FbxMeshデータから、コリジョン判定データを作成する
+	/// 判定データを設定するワールドマトリックスを指定する
+	/// </summary>
+	/// <param name="">メッシュデーター</param>
+	/// <param name="vOffset">設定するワールドマトリックス</param>
+	/// <returns>true:正常  false:ファイルが見つからない</returns>
+	bool	AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset);
 
-	void    GetMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vNow, const VECTOR3& vOld, const float& fRadius,
-							int& nStatrX, int& nEndX, int& nStatrY, int& nEndY, int& nStatrZ, int& nEndZ);
+	/// <summary>
+	/// 線分との当たり判定を行う
+	/// 始点から一番近いポリゴンの当たり判定情報を返します
+	/// ポリゴンの表面のみ判定し、裏面は判定しません
+	/// </summary>
+	/// <param name="startIn">線分の始点</param>
+	/// <param name="endIn">線分の終点</param>
+	/// <param name="vHit">当たった位置を入れる場所(Out)</param>
+	/// <param name="vNormal">当たった位置の法線を入れる場所(Out)</param>
+	/// <returns>当たっていればtrue</returns>
+	bool    IsCollisionLay(const VECTOR3& startIn, const VECTOR3& endIn, VECTOR3& vHit, VECTOR3& vNormal);
 
-	int     CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal, float fRadius);    // -- 2022.11.14
-	void    InitHeightCheck();
-	bool    CheckHeight(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld, const float fObjheight);
-	int     CheckFloorMove(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld);
-	int     CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal, float fRadius);    // -- 2022.11.14
-	void    GetDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, float& fNowDist, float& fOldDist, float& fLayDist);
-	int     CheckLay(const VECTOR3[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, const float& fNowDist, const float& fOldDist, const float& fLayDist, VECTOR3& vHit);
-	int     CheckNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vFaceNorm, const float& fNowDist, float fRadius, VECTOR3& vHit);
+	/// <summary>
+	/// 球体との当たり判定を行う
+	/// 移動開始から一番近いポリゴンの当たり判定情報を返します
+	/// </summary>
+	/// <param name="startIn">移動開始点</param>
+	/// <param name="endIn">移動終了点</param>
+	/// <param name="fRadius">半径</param>
+	/// <param name="vHit">当たった位置を入れる場所(Out)</param>
+	/// <param name="vNormal">当たった位置の法線を入れる場所(Out)</param>
+	/// <returns>当たっていればtrue</returns>
+	bool    IsCollisionSphere(const VECTOR3& startIn, const VECTOR3& endIn, const float& fRadius, VECTOR3& vHit, VECTOR3& vNormal);
 
-	void	InitWorldMatrix(const MATRIX4X4&);	// -- 2022.11.14
+	/// <summary>
+	/// 球体の移動線分との当たり判定を行う
+	/// 移動開始点から一番近いポリゴンで当たり判定を行います
+	/// 当たっていた場合、球体がポリゴンの外に出るように移動終了点positionの値が変更されます
+	/// </summary>
+	/// <param name="positionOld">移動前点</param>
+	/// <param name="position">移動後点(In/Out)</param>
+	/// <param name="fRadius">半径</param>
+	/// <returns>当たっていればtrue</returns>
+	bool    IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, float fRadius = 0.2f);
+
+	/// <summary>
+	/// 球体の移動線分との当たり判定を行う
+	/// 移動開始点から一番近いポリゴンの当たり判定情報を返します
+	/// 当たっていた場合、球体がポリゴンの外に出るように移動終了点positionの値が変更されます
+	/// </summary>
+	/// <param name="positionOld">移動前点</param>
+	/// <param name="position">移動後点(In/Out)</param>
+	/// <param name="vHit">当たった位置を入れる場所(Out)</param>
+	/// <param name="vNormal">当たった位置の法線を入れる場所(Out)</param>
+	/// <param name="fRadius">半径</param>
+	/// <returns>当たっていればtrue</returns>
+	bool    IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);
+
+	/// <summary>
+	/// 球体の移動線分との重力を加味した当たり判定を行う
+	/// 移動開始点から一番近いポリゴンで当たり判定を行います
+	/// 当たっていた場合、球体がポリゴンの外に出るように移動終了点positionの値が変更されます
+	/// </summary>
+	/// <param name="positionOld">移動前点</param>
+	/// <param name="position">移動後点(In/Out)</param>
+	/// <param name="fRadius">半径</param>
+	/// <returns>コリジョン判定の結果</returns>
+	CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, float fRadius = 0.2f);
+
+	/// 球体の移動線分との重力を加味した当たり判定を行う
+	/// 移動開始点から一番近いポリゴンで当たり判定を行います
+	/// 当たっていた場合、球体がポリゴンの外に出るように移動終了点positionの値が変更されます
+	/// </summary>
+	/// <param name="positionOld">移動前点</param>
+	/// <param name="position">移動後点(In/Out)</param>
+	/// <param name="vHit">当たった位置を入れる場所(Out)</param>
+	/// <param name="vNormal">当たった位置の法線を入れる場所(Out)</param>
+	/// <param name="fRadius">半径</param>
+	/// <returns>コリジョン判定の結果</returns>
+	CollRet IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& pisition, VECTOR3& vHit, VECTOR3& vNormal, float fRadius = 0.2f);
+
+	/// <summary>
+	/// 移動マップのマトリックスの初期化と設定、参照等
+	/// (通常のマップには関係しない)
+	/// </summary>
+	/// <param name="">ワールドマトリックス</param>
+	void	InitWorldMatrix(const MATRIX4X4&);
 	void	SetWorldMatrix(const MATRIX4X4&);
+	void	SaveWorldMatrix() { m_mWorldOld = m_mWorld; }
+	MATRIX4X4 WorldMatrix(){ return m_mWorld;}
 
-	void    GetChkAABB(VECTOR3& vMin, VECTOR3& vMax);				// -- 2020.12.3
+	/// <summary>
+	/// マップフラグの参照
+	/// </summary>
+	/// <returns>移動マップのときtrue</returns>
+	bool	MoveFlag() { return m_bMoveFlag; }
+
+	void    GetChkAABB(VECTOR3& vMin, VECTOR3& vMax);
+
+private:
+	void	makeChkColMesh(const int& nNum, const VECTOR3& vMin, const VECTOR3& vMax);
+	void	getChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, int nIdx[], int& nIMax);
+	void	setChkArray(const int& nNum, const int& nNo, const int& nIdx, ColFace* pFace);
+	void	clearAll(void);
+	void	deleteAll(void);
+
+	void    getMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vNow, const VECTOR3& vOld, const float& fRadius,
+							int& nStatrX, int& nEndX, int& nStatrY, int& nEndY, int& nStatrZ, int& nEndZ);
+	int     checkWallMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius); 
+	void    initHeightCheck();
+	bool    checkHeight(const VECTOR3& positionOld, VECTOR3& position, const float fObjheight);
+	CollRet checkFloorMove(const VECTOR3& positionOld, VECTOR3& position);
+	int     checkCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius);    // -- 2024.9.10
+	void    getDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, float& fNowDist, float& fOldDist, float& fLayDist);
+	int     checkLay(const VECTOR3[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, const float& fNowDist, const float& fOldDist, const float& fLayDist, VECTOR3& vHit);
+	int     checkNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vFaceNorm, const float& fNowDist, float fRadius, VECTOR3& vHit);
 
 };

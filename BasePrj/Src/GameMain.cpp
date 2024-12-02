@@ -143,6 +143,9 @@ HRESULT CGameMain::Init()
 	SceneManager::Start();
 	ObjectManager::Start();
 
+	//リフレッシュレートの設定
+	MainControl::UseFrameTimer(1.0f / 60.0f);
+
 	return S_OK;
 }
 
@@ -199,8 +202,8 @@ void CGameMain::Draw()
 	MyImgui::ImguiRender();      // MyImgui実描画処理    // -- 2020.11.15
 
 	//画面更新（バックバッファをフロントバッファに）
-	m_pD3D->m_pSwapChain->Present(1, 0);                   // 60fps Vsync
-	//m_pD3D->m_pSwapChain->Present(0, 0);                   // Vsyncなし
+	//m_pD3D->m_pSwapChain->Present(1, 0);                   // 60fps Vsync
+	m_pD3D->m_pSwapChain->Present(0, 0);                   // Vsyncなし
 }
 
 //------------------------------------------------------------------------

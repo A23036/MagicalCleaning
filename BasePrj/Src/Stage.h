@@ -4,6 +4,7 @@
 #include "CsvReader.h"
 #include "MeshCollider.h"
 #include "Camera.h"
+#include "Collision.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ public:
 	void GenerateRandomMap(int totalMaps, int size);
 	void SaveMapChips(const vector<vector<int>>& mapChips, const string& filePath);
 	void SaveMapChips(const vector<vector<vector<int>>>& mapChips, const string& filePath);
-	
+	CCollision* MapCol() {	return mapCol;	}	// -- 2024.12.2
 private:
 	CFbxMesh* mesh;
 	vector<CFbxMesh*> meshes;		// 可変の配列
@@ -30,6 +31,8 @@ private:
 	vector<vector<int>> mapChips;		// マップチップデータの二次元配列
 	CsvReader* csv;
 	Camera* cm;
+
+	CCollision* mapCol;	// -- 2024.12.2
 
 	int size;	//マップのグリッドサイズ
 	int chipX;	//マップチップのXサイズ

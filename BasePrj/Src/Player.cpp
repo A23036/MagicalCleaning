@@ -114,6 +114,7 @@ void Player::Start()
 void Player::Update()
 {
 	deltaTime = 60 * SceneManager::DeltaTime();
+	posOld = transform.position;    // -- 2024.12.2
 
 	// 箒の位置情報更新
 	if (state != sStandby) { //キャラセレクト画面では持たない
@@ -145,7 +146,7 @@ void Player::Update()
 	}
 	ImGui::End();
 	*/
-	/*
+	
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 160));
 	ImGui::Begin("state");
@@ -170,7 +171,7 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-	*/
+	
 
 	if (dc->GetIsPlay()) {
 		animator->Update();
@@ -204,7 +205,7 @@ void Player::Update()
 	default:
 		break;
 	}
-
+	
 	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 3, playerNum)) { //能力強化
 		switch (selectPower) {
 		case pMS:
@@ -259,7 +260,7 @@ void Player::Update()
 			break;
 		}
 	}
-
+	
 	
 	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 4, playerNum)) { //強化能力変更
 		selectPower--;
@@ -277,10 +278,15 @@ void Player::Update()
 
 
 	//当たり判定処理
-	VECTOR3 push;
-	if (st->HitSphereToMesh(Collider(), &push)) {
-		transform.position += push;
-	}
+	//VECTOR3 push;
+	
+	//if (st->HitSphereToMesh(Collider(), &push)) {
+	//	transform.position += push;
+	//}
+
+	//当たり判定処理 // -- 2024.12.2
+	st->MapCol()->IsCollisionMoveGravity(posOld, transform.position);
+	
 	
 	// ImGuiウィンドウの位置とサイズを設定
 	/*
@@ -317,7 +323,7 @@ void Player::Update()
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
-	
+	/*
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
 	for (Dust* dust : dusts) {
@@ -335,7 +341,7 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
-	
+	*/
 	// DustBoxにめり込まないようにする
 	// 自分の座標は、transform.position
 	// DustBoxの座標を知る
@@ -361,6 +367,7 @@ void Player::Update()
 	// playerにめり込まないようにする
 	// 自分の座標は、transform.position
 	// playerの座標を知る
+	
 	for (Player* player : otherPlayers) {
 		SphereCollider tCol = player->Collider();
 		SphereCollider pCol = Collider();
@@ -529,11 +536,11 @@ void Player::UpdateOnGround()
 	ImGui::End();
 	*/
 	
-	if (!(st->IsLandBlock(transform.position))) {
-		// 空中
+	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
 		state = sJump;
-		return; //この下の処理は行わない
+		return;
 	}
+
 	/*
 	VECTOR3 start = transform.position;
 	start.y += 1.0f;
@@ -715,7 +722,7 @@ void Player::UpdateJump()
 		
 	}
 
-	if (st->IsLandBlock(transform.position)) {
+	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) != clFall) {
 		// ジャンプ終了
 		isFly = false;
 		state = sOnGround;

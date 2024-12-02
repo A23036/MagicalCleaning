@@ -137,6 +137,8 @@ private:
 	int state;		//プレイヤー状態
 	int prevState;	//直前のプレイヤー状態
 
+	VECTOR3 posOld;	//直前のプレイヤー位置
+
 	int selectPower; //選択中能力
 
 	void UpdateOnGround();	//地上処理

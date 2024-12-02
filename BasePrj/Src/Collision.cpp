@@ -1,15 +1,20 @@
 //------------------------------------------------------------------------
 //    メッシュ接触判定用のライブラリ
-//	  								             ver 3.3        2024.3.23
+//	  								             ver 4.0        2024.9.30
 //	                                                      Collision.cpp
 //------------------------------------------------------------------------
 #include "Collision.h"
 #include "GameMain.h"
 
+//------------------------------------------------------------------------
+//	コンストラクタ
+//
+//	CDirect3D*	  pD3D        Direct3D
+//
+//------------------------------------------------------------------------
 CCollision::CCollision() : CCollision(GameDevice()->m_pFbxMeshCtrl)	   		   // -- 2024.3.13
 {
 }
-
 //------------------------------------------------------------------------
 //	コンストラクタ
 //
@@ -18,7 +23,7 @@ CCollision::CCollision() : CCollision(GameDevice()->m_pFbxMeshCtrl)	   		   // -
 //------------------------------------------------------------------------
 CCollision::CCollision(CFbxMeshCtrl* pFbxMeshCtrl)
 {
-	ClearAll();
+	clearAll();
 	m_pD3D = pFbxMeshCtrl->m_pD3D;
 	m_pShader = pFbxMeshCtrl->m_pShader;
 	m_pFbxMeshCtrl = pFbxMeshCtrl; 
@@ -29,7 +34,7 @@ CCollision::CCollision(CFbxMeshCtrl* pFbxMeshCtrl)
 //------------------------------------------------------------------------
 CCollision::~CCollision()
 {
-	DeleteAll();
+	deleteAll();
 };
 
 //------------------------------------------------------------------------
@@ -37,7 +42,7 @@ CCollision::~CCollision()
 //															2019.8.6
 //
 //------------------------------------------------------------------------
-void CCollision::ClearAll(void)
+void CCollision::clearAll(void)
 {
 
 	// 高さ判定用の変数
@@ -53,7 +58,6 @@ void CCollision::ClearAll(void)
 
 	// コリジョン移動用
 	m_bMoveFlag = false;				// 移動するかどうか 移動の時 真
-	m_mWorldBase = XMMatrixIdentity();	// 移動マトリックス初期位置    // -- 2022.11.14
 	m_mWorldOld  = XMMatrixIdentity();	// 移動マトリックス一つ前
 	m_mWorld     = XMMatrixIdentity();	// 移動マトリックス
 	m_mWorldInv  = XMMatrixIdentity();	// 移動マトリックスの逆マトリックス
@@ -64,7 +68,7 @@ void CCollision::ClearAll(void)
 //															2019.8.6
 //
 //------------------------------------------------------------------------
-void CCollision::DeleteAll(void)
+void CCollision::deleteAll(void)
 {
 	// メモリの解放
 	for (int n = 0; n<m_nNum; n++)
@@ -95,7 +99,7 @@ void CCollision::DeleteAll(void)
 	}
 
 	// ゼロクリヤー（再使用時の対策）
-	ClearAll();
+	clearAll();
 }
 
 //------------------------------------------------------------------------
@@ -330,7 +334,7 @@ bool CCollision::AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset)
 	}
 
 	// 複数分割度マップを作成する
-	MakeChkColMesh(m_nNum, vMin, vMax);
+	makeChkColMesh(m_nNum, vMin, vMax);
 
 	m_nNum++;	// メッシュ接触判定配列添字を１増やす
 
@@ -356,7 +360,7 @@ bool CCollision::AddFbxLoad(const CFbxMesh* pFbxMesh, const MATRIX4X4& mOffset)
 //
 //  戻り値　なし
 //  -------------------------------------------------------------------
-void CCollision::MakeChkColMesh( const int& nNum, const VECTOR3& vMin, const VECTOR3& vMax)
+void CCollision::makeChkColMesh( const int& nNum, const VECTOR3& vMin, const VECTOR3& vMax)
 {
 	const float fSpare = 1.05f;  // 正立方体の大きさ５％の余裕
 
@@ -452,12 +456,12 @@ void CCollision::MakeChkColMesh( const int& nNum, const VECTOR3& vMin, const VEC
 		}
 
 		// 同じ大きさの配列の中のどこの位置に格納するかを決定する
-		GetChkArrayIdx(n, j, m_ColArray[n].pFace[i].AABB, ChkIdx, ChkIMax);
+		getChkArrayIdx(n, j, m_ColArray[n].pFace[i].AABB, ChkIdx, ChkIMax);
 
 		// 格納配列に格納する（リスト構造である）
 		for (int k = 0; k < ChkIMax; k++)
 		{
-			SetChkArray(n, j, ChkIdx[k], &m_ColArray[n].pFace[i]);
+			setChkArray(n, j, ChkIdx[k], &m_ColArray[n].pFace[i]);
 		}
 	}
 	
@@ -480,7 +484,7 @@ void CCollision::MakeChkColMesh( const int& nNum, const VECTOR3& vMin, const VEC
 //  
 //  戻り値　なし
 //-----------------------------------------------------------------------------
-void  CCollision::GetChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, int nIdx[], int& nIMax)
+void  CCollision::getChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, int nIdx[], int& nIMax)
 {
 	VECTOR3 vPos;
 	int i, j, x, y, z, m;
@@ -544,7 +548,7 @@ void  CCollision::GetChkArrayIdx(const int& nNum, const int& nNo, CAABB AABB, in
 //  
 //  戻り値　なし
 //-----------------------------------------------------------------------------
-void  CCollision::SetChkArray(const int& nNum, const int& nNo, const int& nIdx, ColFace* pFace)
+void  CCollision::setChkArray(const int& nNum, const int& nNo, const int& nIdx, ColFace* pFace)
 {
 	struct ChkFace* p;
 	int n = nNum;
@@ -594,7 +598,7 @@ void  CCollision::SetChkArray(const int& nNum, const int& nNo, const int& nIdx, 
 //	戻り値 
 //		なし
 // -----------------------------------------------------------------------------------------------------------
-void	CCollision::GetMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vNow, const VECTOR3& vOld, const float& fRadius,
+void	CCollision::getMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vNow, const VECTOR3& vOld, const float& fRadius,
 									int& nStatrX, int& nEndX, int& nStatrY, int& nEndY, int& nStatrZ, int& nEndZ)
 {
 	int n = nNum;
@@ -655,44 +659,26 @@ void	CCollision::GetMeshLimit(const int& nNum, const int& nNo, const VECTOR3& vN
 
 //-----------------------------------------------------------------------------
 // オブジェクトのレイとメッシュ接触判定用配列との接触判定
-//																	2019.8.6
-//  
-//  const MATRIX4X4& mWorld		オブジェクトの現在のマトリックス
-//  const MATRIX4X4& mWorldOld	オブジェクトの一つ前のマトリックス
-//  VECTOR3 &vHit				接触点の座標（出力）
-//  VECTOR3 &vNormal			接触点の法線ベクトル（出力）
-//  
-//  戻り値　int nRet
-//		接触したとき　		１
-//		接触していないとき	０
-//-----------------------------------------------------------------------------
-int  CCollision::isCollisionLay(const MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal)
-{
-	return isCollisionLay(GetPositionVector(mWorld), GetPositionVector(mWorldOld), vHit, vNormal);
-}
-
-//-----------------------------------------------------------------------------
-// オブジェクトのレイとメッシュ接触判定用配列との接触判定
 //																		2019.8.6
 //  
-//	const VECTOR3&　vNowIn		移動後位置の座標
-//	const VECTOR3&　vOldIn		移動前位置の座標
+//	const VECTOR3&　startIn		移動開始位置の座標
+//	const VECTOR3&　endIn		移動終了位置の座標
 //  VECTOR3 &vHit				接触点の座標（出力）
 //  VECTOR3 &vNormal			接触点の法線ベクトル（出力）
 //  
-//  戻り値　int nRet
-//		接触したとき　		１
-//		接触していないとき	０
+//  戻り値　bool bRet
+//		接触したとき　		true
+//		接触していないとき  false
 //-----------------------------------------------------------------------------
-int  CCollision::isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VECTOR3& vHit, VECTOR3& vNormal)
+bool  CCollision::IsCollisionLay(const VECTOR3& startIn, const VECTOR3& endIn, VECTOR3& vHit, VECTOR3& vNormal)
 {
-	int      nRet = 0;
+	bool     bRet = false;
 	int      n, i;
 	int      x, y, z, m;
 	int      nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ;
 	ChkFace* p;
 
-	VECTOR3  vNow, vOld;
+	VECTOR3  vOld, vNow;
 	VECTOR3  vVert[3], vFaceNorm, vInsPt;
 	float    fNowDist, fOldDist, fLayDist;
 	float    fLenMin = 9999999.0f;				// 交点と移動前点との距離の最小値
@@ -701,16 +687,14 @@ int  CCollision::isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VE
 	if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 	{
 		// コリジョンマップが移動しているときは、キャラクターが逆に移動していると見なして判定をする
-		// このために、キャラクターの位置マトリックスにマップ移動の逆行列を掛けて判定を行う
-		MATRIX4X4  mWorldNow = XMMatrixTranslation(vNowIn.x, vNowIn.y, vNowIn.z);
-		MATRIX4X4  mWorldOld = XMMatrixTranslation(vOldIn.x, vOldIn.y, vOldIn.z);
-		vNow = GetPositionVector(mWorldNow * m_mWorldInv);
-		vOld = GetPositionVector(mWorldOld * m_mWorldInv);
+		// このために、キャラクターの位置にマップ移動の逆行列を掛けて判定を行う
+		vOld = XMVector3TransformCoord(startIn, m_mWorldInv);
+		vNow = XMVector3TransformCoord(endIn, m_mWorldInv);
 	}
 	else {
 		// コリジョンマップが移動していないときは、キャラクターの位置をそのまま使用する
-		vNow = vNowIn;
-		vOld = vOldIn;
+		vOld = startIn;
+		vNow = endIn;
 	}
 
 	// レイとメッシュとの衝突判定を行う
@@ -722,7 +706,7 @@ int  CCollision::isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VE
 			if (m_ChkColMesh[n].ChkBlkArray[i].ppChkFace == nullptr) break;	// 配列にデータがないとき
 
 			// 配列の対象とする開始点と終了点のブロック番号を求める
-			GetMeshLimit(n, i, vNow, vOld, 0, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
+			getMeshLimit(n, i, vNow, vOld, 0, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
 
 			// 配列の検索を開始する
 			for (y = nStartY; y <= nEndY; y++) {
@@ -743,11 +727,11 @@ int  CCollision::isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VE
 							vFaceNorm = p->pFace->vNormal;
 
 							// 直線の３角形ポリゴン法線方向の距離を求める
-							GetDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
+							getDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
 							// ３角形ポリゴンと直線（レイ）との接触判定を行う
-							if (CheckLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
+							if (checkLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
 							{
-								nRet = 1;   // 接触している
+								bRet = true;   // 接触している
 								float len = magnitude(vOld - vInsPt);
 								if (fLenMin > len)   // より近い交点を探す
 								{
@@ -755,8 +739,8 @@ int  CCollision::isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VE
 									if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 									{
 										// コリジョンマップが移動しているときは、実際の描画位置に戻して出力する
-										vHit = GetPositionVector(XMMatrixTranslation(vInsPt.x, vInsPt.y, vInsPt.z) * m_mWorld);
-										vNormal = GetPositionVector(XMMatrixTranslation(vFaceNorm.x, vFaceNorm.y, vFaceNorm.z) * GetRotateMatrix(m_mWorld)); // -- 2022.11.14
+										vHit = XMVector3TransformCoord(vInsPt, m_mWorld);	   // -- 2024.9.10
+										vNormal = XMVector3TransformCoord(vFaceNorm, m_mWorld); 
 										vNormal = normalize(vNormal);
 									}
 									else {
@@ -772,25 +756,25 @@ int  CCollision::isCollisionLay(const VECTOR3& vNowIn, const VECTOR3& vOldIn, VE
 			}
 		}
 	}
-	return  nRet;
+	return  bRet;
 }
 //-----------------------------------------------------------------------------
 // オブジェクトの球とメッシュ接触判定用配列との接触判定
 //																				// -- 2020.12.14
 //  
-//	const VECTOR3&　vNowIn		移動後オブジェクト中心位置の座標
-//	const VECTOR3&　vOldIn		移動前オブジェクト中心位置の座標
+//	const VECTOR3&　startIn		移動開始位置の座標
+//	const VECTOR3&　endIn		移動終了位置の座標
 //	const float&　fRadius		球の半径
 //  VECTOR3 &vHit				接触時のオブジェクト中心位置の座標（出力）
 //  VECTOR3 &vNormal			接触点の法線ベクトル（出力）
 //  
-//  戻り値　int nRet
-//		接触したとき　		１
-//		接触していないとき	０
+//  戻り値　book bRet
+//		接触したとき　		true
+//		接触していないとき	false
 //-----------------------------------------------------------------------------
-int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn, const float& fRadius, VECTOR3& vHit, VECTOR3& vNormal)
+bool  CCollision::IsCollisionSphere(const VECTOR3& startIn, const VECTOR3& endIn, const float& fRadius, VECTOR3& vHit, VECTOR3& vNormal)
 {
-	int      nRet = 0;
+	bool     bRet = false;
 	int      n, i;
 	int      x, y, z, m;
 	int      nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ;
@@ -806,15 +790,13 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 	{
 		// コリジョンマップが移動しているときは、キャラクターが逆に移動していると見なして判定をする
 		// このために、キャラクターの位置マトリックスにマップ移動の逆行列を掛けて判定を行う
-		MATRIX4X4  mWorldNow = XMMatrixTranslation(vNowIn.x, vNowIn.y, vNowIn.z);
-		MATRIX4X4  mWorldOld = XMMatrixTranslation(vOldIn.x, vOldIn.y, vOldIn.z);
-		vNow = GetPositionVector(mWorldNow * m_mWorldInv);
-		vOld = GetPositionVector(mWorldOld * m_mWorldInv);
+		vOld = XMVector3TransformCoord(startIn, m_mWorldInv);
+		vNow = XMVector3TransformCoord(endIn, m_mWorldInv);
 	}
 	else {
 		// コリジョンマップが移動していないときは、キャラクターの位置をそのまま使用する
-		vNow = vNowIn;
-		vOld = vOldIn;
+		vOld = startIn;
+		vNow = endIn;
 	}
 
 	// レイとメッシュとの衝突判定を行う
@@ -827,7 +809,7 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 
 			// 配列の対象とする開始点と終了点のブロック番号を求める
 			// ・半径分移動させるため、判定範囲を半径の２倍とする
-			GetMeshLimit(n, i, vNow, vOld, fRadius*2, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
+			getMeshLimit(n, i, vNow, vOld, fRadius*2, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
 
 			// 配列の検索を開始する
 			for (y = nStartY; y <= nEndY; y++) {
@@ -852,13 +834,13 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 
 							// 直線の３角形ポリゴン法線方向の距離を求める
 							// ・オブジェクトの中心点から法線方向の逆方向に半径分移動させた点で判定する
-							GetDistNormal(vVert, vNow - vNormalRadius, vOld - vNormalRadius, vFaceNorm, fNowDist, fOldDist, fLayDist);
+							getDistNormal(vVert, vNow - vNormalRadius, vOld - vNormalRadius, vFaceNorm, fNowDist, fOldDist, fLayDist);
 
                             // ３角形ポリゴンと直線（レイ）との接触判定を行う
 							// ・オブジェクトの中心点から法線方向の逆方向に半径分移動させた点で判定する
-							if (CheckLay(vVert, vNow - vNormalRadius, vOld - vNormalRadius, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
+							if (checkLay(vVert, vNow - vNormalRadius, vOld - vNormalRadius, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
 							{
-								nRet = 1;   // 接触している
+								bRet = true;   // 接触している
 								float len = magnitude(vOld - vInsPt);
 								if (fLenMin > len)   // より近い交点を探す
 								{
@@ -866,8 +848,8 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 									if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 									{
 										// コリジョンマップが移動しているときは、実際の描画位置に戻して出力する
-										vHit = GetPositionVector(XMMatrixTranslationFromVector(vInsPt + vNormalRadius) * m_mWorld); // 接触位置を法線方向に半径分戻してやる
-										vNormal = GetPositionVector(XMMatrixTranslationFromVector(vFaceNorm) * GetRotateMatrix(m_mWorld)); // -- 2022.11.14
+										vHit = XMVector3TransformCoord(vInsPt + vNormalRadius, m_mWorld); // 接触位置を法線方向に半径分戻してやる	  // -- 2024.9.10
+										vNormal = XMVector3TransformCoord(vFaceNorm, m_mWorld);
 										vNormal = normalize(vNormal);
 									}
 									else {
@@ -880,12 +862,12 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 								// 接触していないときは、ポリゴンを法線方向に持ち上げた事により、
 								// ポリゴンの切れ目ですり抜けている可能性があるので、
 								// 再度、直線の中心点で接触判定を行う
-								GetDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
+								getDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
 
 								// ３角形ポリゴンと直線（レイ）との接触判定を行う
-								if (CheckLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
+								if (checkLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
 								{
-									nRet = 1;   // 接触している
+									bRet = true;   // 接触している
 									float len = magnitude(vOld - vInsPt);
 									if (fLenMin > len)   // より近い交点を探す
 									{
@@ -893,8 +875,8 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 										if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 										{
 											// コリジョンマップが移動しているときは、実際の描画位置に戻して出力する
-											vHit = GetPositionVector(XMMatrixTranslationFromVector(vInsPt - normalize(vNow - vOld)*fRadius) * m_mWorld); // 接触位置を進行方向の逆方向に半径分戻してやる
-											vNormal = GetPositionVector(XMMatrixTranslationFromVector(vFaceNorm) * GetRotateMatrix(m_mWorld)); // -- 2022.11.14
+											vHit = XMVector3TransformCoord(vInsPt - normalize(vNow - vOld)*fRadius, m_mWorld); // 接触位置を進行方向の逆方向に半径分戻してやる	 // -- 2024.9.10
+											vNormal = XMVector3TransformCoord(vFaceNorm, m_mWorld); 
 											vNormal = normalize(vNormal);
 										}
 										else {
@@ -912,94 +894,96 @@ int  CCollision::isCollisionSphere(const VECTOR3& vNowIn, const VECTOR3& vOldIn,
 		}
 	}
 
-	return  nRet;
+	return  bRet;
 }
 
 //-----------------------------------------------------------------------------
 // オブジェクトのレイとメッシュ接触判定用配列との接触判定とスリスリ動かす制御
-//																		2022.11.14
+//																		// -- 2024.9.10
 //	重力を考えず、接触判定と移動を行う
 //  また、判定は２度行う
 //  
-//  MATRIX4X4& mWorldIn            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOldIn  オブジェクトの一つ前のマトリックス
+//  const VECTOR3& positionOld     オブジェクトの1つ前の位置
+//  VECTOR3& position              オブジェクトの現在位置(in/out)
 //  float fRadius                  オブジェクトの半径（省略値は0.2）
 //  
-//  戻り値　int nRet
-//		接触したとき　		１
-//		接触していないとき	０
+//  戻り値　bool bRet
+//		接触したとき　		true
+//		接触していないとき	false
 //-----------------------------------------------------------------------------
-int CCollision::isCollisionMove(MATRIX4X4& mWorldIn, const MATRIX4X4& mWorldOldIn, float fRadius)
+bool CCollision::IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, float fRadius)
 {
 	VECTOR3 vHit, vNormal;
-	return isCollisionMove(mWorldIn, mWorldOldIn, vHit, vNormal, fRadius);
+	return IsCollisionMove( positionOld, position, vHit, vNormal, fRadius);
 }
 //-----------------------------------------------------------------------------
 // オブジェクトのレイとメッシュ接触判定用配列との接触判定とスリスリ動かす制御
-//																		2022.11.14
+//																		// -- 2024.9.10
 //	重力を考えず、接触判定と移動を行う
 //  また、判定は２度行う
 //  
-//  MATRIX4X4& mWorldIn				オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOldIn	オブジェクトの一つ前のマトリックス
+//  const VECTOR3& positionOld     オブジェクトの1つ前の位置
+//  VECTOR3& position              オブジェクトの現在位置(in/out)
 //  VECTOR3 &vHit					接触点の座標（出力）
 //  VECTOR3 &vNormal				接触点の法線ベクトル（出力）
 //  float fRadius					オブジェクトの半径（省略値は0.2）
 // 
-//  戻り値　int nRet
-//		接触したとき　		１
-//		接触していないとき	０
+//  戻り値　bool bRet
+//		接触したとき　		true
+//		接触していないとき	false
 //-----------------------------------------------------------------------------
-int CCollision::isCollisionMove(MATRIX4X4& mWorldIn, const MATRIX4X4& mWorldOldIn, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
+bool CCollision::IsCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
 {
 
-	int nRet = 0;
+	bool bRet = false;
+	int  nRet = 0;
 
-	MATRIX4X4 mWorld, mWorldOld;
+	VECTOR3 vOld = positionOld;
+	VECTOR3 vNow = position;
 
 	// 移動マップの事前処理を行う
 	if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 	{
 		// コリジョンマップが移動しているときは、キャラクターが逆に移動していると見なして判定をする
 		// このために、キャラクターの位置マトリックスにマップ移動の逆行列を掛けて判定を行う
-		mWorld = mWorldIn * m_mWorldInv;
-		mWorldOld = mWorldOldIn * m_mWorldInv;
+		vOld = XMVector3TransformCoord( vOld, m_mWorldInv);
+		vNow = XMVector3TransformCoord( vNow, m_mWorldInv);
 	}
 	else {
 		// コリジョンマップが移動していないときは、キャラクターの位置をそのまま使用する
-		mWorld = mWorldIn;
-		mWorldOld = mWorldOldIn;
 	}
 
 	// 接触判定とスリスリ動かす制御を行う
-	nRet = CheckCollisionMove(mWorld, mWorldOld, vHit, vNormal, fRadius);    // -- 2022.11.14
-	if ( nRet != 0)   // 接触して移動したときは、2度目の接触判定を行う
+	nRet = checkCollisionMove(vOld, vNow, vHit, vNormal, fRadius);    // -- 2022.11.14
+	if ( nRet != 0)   // 接触して移動したときは、2度目の接触判定と移動を行う
 	{
-		CheckCollisionMove(mWorld, mWorldOld, vHit, vNormal, fRadius);    // -- 2022.11.14
+		checkCollisionMove(vOld, vNow, vHit, vNormal, fRadius);    // -- 2022.11.14
 	}
 
 	// 移動マップの事後処理を行う
 	if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 	{
 		// コリジョンマップが移動しているときは、マップ移動の行列を掛けて元の値に戻す
-		mWorldIn = mWorld * m_mWorld;
+		position = XMVector3TransformCoord(vNow, m_mWorld);
 	}
 	else {
 		// コリジョンマップが移動していないときは、そのまま使用する
-		mWorldIn = mWorld;
+		position = vNow;
 	}
 	
-	return nRet;
+	if (nRet != 0) bRet = true;
+
+	return bRet;
 }
 
 //-----------------------------------------------------------------------------
 // オブジェクトのレイとメッシュ接触判定用配列との接触判定とスリスリ動かす制御
-//																		2022.11.14
+//																		2024.9.10
 //  
 //	重力を考えず、接触判定と適切な位置への移動を行う
 //  
-//  MATRIX4X4& mWorld            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOld  オブジェクトの一つ前のマトリックス		
+//  const VECTOR3& positionOld   オブジェクトの1つ前の位置
+//  VECTOR3& position            オブジェクトの現在位置(in/out)
 //  VECTOR3 &vHit				 接触点の座標（出力）
 //  VECTOR3 &vNormal			 接触点の法線ベクトル（出力）
 //  float fRadius                オブジェクトの半径
@@ -1007,8 +991,9 @@ int CCollision::isCollisionMove(MATRIX4X4& mWorldIn, const MATRIX4X4& mWorldOldI
 //  戻り値　int nRet
 //		接触したとき　		１
 //		接触していないとき	０
+//		なお、内部で近接のとき　２
 //-----------------------------------------------------------------------------
-int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
+int CCollision::checkCollisionMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
 {
 	int      nRet = 0;
 	int      n, i;
@@ -1018,9 +1003,9 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 
 	VECTOR3  vNow, vOld;
 
-	// ワールドマトリックスから位置を得る
-	vNow = GetPositionVector(mWorld);
-	vOld = GetPositionVector(mWorldOld);
+	// 位置を得る
+	vOld = positionOld;
+	vNow = position;
 
 	VECTOR3  vVert[3], vFaceNorm, vInsPt, vMove;
 	float    fNowDist, fOldDist, fLayDist;
@@ -1042,7 +1027,7 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 			if (m_ChkColMesh[n].ChkBlkArray[i].ppChkFace == nullptr) break;	// 配列にデータがないとき
 
 			// 配列の対象とする開始点と終了点のブロック番号を求める
-			GetMeshLimit(n, i, vNow, vOld, fRadius, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
+			getMeshLimit(n, i, vNow, vOld, fRadius, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
 
 			// 配列の検索を開始する
 			for (y = nStartY; y <= nEndY; y++) {
@@ -1062,10 +1047,10 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 							vFaceNorm = p->pFace->vNormal;
 
 							// 直線の３角形ポリゴン法線方向の距離を求める
-							GetDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
+							getDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
 
 							// ３角形平面と移動後点が近接しているかのチェックを行う
-							if (CheckNear(vVert, vNow, vFaceNorm, fNowDist, fRadius, vInsPt) == 1)
+							if (checkNear(vVert, vNow, vFaceNorm, fNowDist, fRadius, vInsPt) == 1)
 							{
 								nRet = 2;   // 近接している
 
@@ -1078,8 +1063,8 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 									if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか    // -- 2022.11.14
 									{
 										// コリジョンマップが移動しているときは、実際の描画位置に戻して出力する
-										vHit = GetPositionVector(XMMatrixTranslation(vInsPt.x, vInsPt.y, vInsPt.z) * m_mWorld);
-										vNormal = GetPositionVector(XMMatrixTranslation(vFaceNorm.x, vFaceNorm.y, vFaceNorm.z) * GetRotateMatrix(m_mWorld)); // -- 2022.11.14
+										vHit = XMVector3TransformCoord(vInsPt, m_mWorld);
+										vNormal = XMVector3TransformCoord(vFaceNorm, m_mWorld); // -- 2022.11.14
 										vNormal = normalize(vNormal);
 									}
 									else {
@@ -1090,7 +1075,7 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 							}
 							else {
 								// ３角形ポリゴンと直線（レイ）との接触判定を行う
-								if (CheckLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
+								if (checkLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
 								{
 									nRet = 1;   // 接触している
 
@@ -1104,8 +1089,8 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 										if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか    // -- 2022.11.14
 										{
 											// コリジョンマップが移動しているときは、実際の描画位置に戻して出力する
-											vHit = GetPositionVector(XMMatrixTranslation(vInsPt.x, vInsPt.y, vInsPt.z) * m_mWorld);
-											vNormal = GetPositionVector(XMMatrixTranslation(vFaceNorm.x, vFaceNorm.y, vFaceNorm.z) * GetRotateMatrix(m_mWorld)); // -- 2022.11.14
+											vHit = XMVector3TransformCoord(vInsPt, m_mWorld);
+											vNormal = XMVector3TransformCoord(vFaceNorm, m_mWorld); // -- 2022.11.14
 											vNormal = normalize(vNormal);
 										}
 										else {
@@ -1139,9 +1124,7 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 		}
 
 		// 判定後の移動処理
-		mWorld._41 = vMove.x;
-		mWorld._42 = vMove.y;
-		mWorld._43 = vMove.z;
+		position = vMove;
 
 		nRet = 1;   // 全て接触とする
 	}
@@ -1151,100 +1134,101 @@ int CCollision::CheckCollisionMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld
 
 //-----------------------------------------------------------------------------
 // オブジェクトのレイとメッシュ接触判定用配列との接触判定とスリスリ動かす制御
-//																		2022.11.14
+//																		2024.9.10
 //	高低差と重力を考慮した、接触判定と移動を行う
 //  先ず①壁の判定（２度行う）を行い、次に②高さ判定、最後に③床判定を行う
 //  
-//  MATRIX4X4& mWorldIn            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOldIn  オブジェクトの一つ前のマトリックス
-//  float fRadius                  オブジェクトの半径（省略値は0.2）
+//  const VECTOR3& positionOld   オブジェクトの1つ前の位置
+//  VECTOR3& position            オブジェクトの現在位置(in/out)
+//  float fRadius                オブジェクトの半径（省略値は0.2）
 //  
-//  戻り値　int  nRetFloor
-//		エラー		= -1
-//		面上を移動	= 1
-//		着地		= 2
-//		落下中		= 3
+//  戻り値　CollRet  RetFloor
+//		エラー		= clError
+//		面上を移動	= clMove
+//		着地		= clLand
+//		落下中		= clFall
 //-----------------------------------------------------------------------------
-int CCollision::isCollisionMoveGravity(MATRIX4X4& mWorldIn, const MATRIX4X4& mWorldOldIn, float fRadius)
+CollRet CCollision::IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, float fRadius)
 {
 	VECTOR3 vHit, vNormal;
-	return isCollisionMoveGravity(mWorldIn, mWorldOldIn, vHit, vNormal, fRadius);
+	return IsCollisionMoveGravity(positionOld, position, vHit, vNormal, fRadius);
 }
 //-----------------------------------------------------------------------------
 // オブジェクトのレイとメッシュ接触判定用配列との接触判定とスリスリ動かす制御
-//																		2022.11.14
+//																		2024.9.10
 //	高低差と重力を考慮した、接触判定と移動を行う
 //  先ず①壁の判定（２度行う）を行い、次に②高さ判定、最後に③床判定を行う
 //  
-//  MATRIX4X4& mWorldIn            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOldIn  オブジェクトの一つ前のマトリックス
+//  const VECTOR3& positionOld     オブジェクトの1つ前の位置
+//  VECTOR3& position              オブジェクトの現在位置(in/out)
 //  VECTOR3 &vHit				   接触点の座標（出力）
 //  VECTOR3 &vNormal			   接触点の法線ベクトル（出力）
 //  float fRadius                  オブジェクトの半径（省略値は0.2）
 //  
-//  戻り値　int  nRetFloor
-//		エラー		= -1
-//		面上を移動	= 1
-//		着地		= 2
-//		落下中		= 3
+//  戻り値　CollRet  RetFloor
+//		エラー		= clError
+//		面上を移動	= clMove
+//		着地		= clLand
+//		落下中		= clFall
 //-----------------------------------------------------------------------------
-int CCollision::isCollisionMoveGravity(MATRIX4X4& mWorldIn, const MATRIX4X4& mWorldOldIn, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
+CollRet CCollision::IsCollisionMoveGravity(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
 {
-	int nRetFloor = 0, nRetWall = 0;
+	CollRet  RetFloor = clError;
+	int nRetWall = 0;
 
-	MATRIX4X4 mWorld, mWorldOld;
+	VECTOR3 vOld = positionOld;
+	VECTOR3 vNow = position;
 
 	// 移動マップの事前処理を行う
 	if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 	{
 		// コリジョンマップが移動しているときは、キャラクターが逆に移動していると見なして判定をする
 		// このために、キャラクターの位置マトリックスにマップ移動の逆行列を掛けて判定を行う
-		mWorld = mWorldIn * m_mWorldInv;
-		mWorldOld = mWorldOldIn * m_mWorldInv;
+		vOld = XMVector3TransformCoord(vOld, m_mWorldInv);
+		vNow = XMVector3TransformCoord(vNow, m_mWorldInv);
 	}
 	else {
 		// コリジョンマップが移動していないときは、キャラクターの位置をそのまま使用する
-		mWorld = mWorldIn;
-		mWorldOld = mWorldOldIn;
 	}
 
 	// 高さ判定変数の初期化
-	InitHeightCheck();
+	initHeightCheck();
 
 	//	メッシュの壁との接触判定と適切な位置への移動
-	nRetWall = CheckWallMove(mWorld, mWorldOld, vHit, vNormal, fRadius);    // -- 2022.11.14
+	nRetWall = checkWallMove(vOld, vNow, vHit, vNormal, fRadius);    // -- 2022.11.14
 
 	if (nRetWall != 0)   // 接触して移動したときは、2度目の接触判定を行う
 	{
-		CheckWallMove(mWorld, mWorldOld, vHit, vNormal, fRadius);    // -- 2022.11.14
+		checkWallMove(vOld, vNow, vHit, vNormal, fRadius);    // -- 2022.11.14
 	}
 	
 	// 床との接触判定と上下移動
 	// なお、UNDERFOOTLIMIT（0.05f)は、床からの高さ
-	CheckHeight(mWorld, mWorldOld, UNDERFOOTLIMIT);	//	現在位置より低い面の中で一番高い面を探す
-	nRetFloor = CheckFloorMove(mWorld, mWorldOld);	//	床を判定し床に沿って移動や、着地をさせる。戻り値 -1:エラー 1:面上を移動 2:着地 3:落下中
+	checkHeight(vOld, vNow, UNDERFOOTLIMIT);	//	現在位置より低い面の中で一番高い面を探す
+	RetFloor = checkFloorMove(vOld, vNow);	//	床を判定し床に沿って移動や、着地をさせる。戻り値 clError:-1エラー clMove:面上を移動1 clLand:着地2 clFall:落下中3
 	
 	// 移動マップの事後処理を行う
 	if (m_bMoveFlag)  // コリジョンマップが移動しているかどうか
 	{
 		// コリジョンマップが移動しているときは、マップ移動の行列を掛けて元の値に戻す
-		mWorldIn = mWorld * m_mWorld;
+		vNow = XMVector3TransformCoord(vNow, m_mWorld);
 
-		if (nRetWall == 0 && (nRetFloor == 1 || nRetFloor == 2))  // 壁に接触していなくて、移動マップに着地しているとき // -- 2019.9.3
+		if (nRetWall == 0 && (RetFloor == clMove || RetFloor == clLand))  // 壁に接触していなくて、移動マップに着地しているとき
 		{
 			// 移動マップの水平移動の処理
 			// 水平方向に移動増分だけ移動させる
 			VECTOR3 vMM = GetPositionVector(m_mWorld) - GetPositionVector(m_mWorldOld);
-			mWorldIn._41 += vMM.x;
-			mWorldIn._43 += vMM.z;
+			vNow.x += vMM.x;
+			vNow.z += vMM.z;
+			position = vNow;
 		}
 	}
 	else {
 		// コリジョンマップが移動していないときは、そのまま使用する
-		mWorldIn = mWorld;
+		position = vNow;
 	}
 
-	return nRetFloor;
+	return RetFloor;
 }
 
 //-----------------------------------------------------------------------------
@@ -1253,8 +1237,8 @@ int CCollision::isCollisionMoveGravity(MATRIX4X4& mWorldIn, const MATRIX4X4& mWo
 // 壁と判定された三角形ポリゴンのみ接触判定を行う
 // 接触判定と適切な位置への移動（ＸＺ方向のみ）を行う
 //  
-//  MATRIX4X4& mWorld            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOld  オブジェクトの一つ前のマトリックス		
+//  const VECTOR3& positionOld   オブジェクトの1つ前の位置
+//  VECTOR3& position            オブジェクトの現在位置(in/out)
 //  VECTOR3 &vHit				 接触点の座標（出力）
 //  VECTOR3 &vNormal			 接触点の法線ベクトル（出力）
 //  float fRadius                オブジェクトの半径
@@ -1263,7 +1247,7 @@ int CCollision::isCollisionMoveGravity(MATRIX4X4& mWorldIn, const MATRIX4X4& mWo
 //		接触したとき　		１
 //		接触していないとき	０
 //-----------------------------------------------------------------------------
-int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
+int CCollision::checkWallMove(const VECTOR3& positionOld, VECTOR3& position, VECTOR3& vHit, VECTOR3& vNormal, float fRadius)
 {
 	int      nRet = 0;
 	int      n, i;
@@ -1271,9 +1255,9 @@ int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VEC
 	int      nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ;
 	ChkFace* p;
 
-	// ワールドマトリックスから位置を得る
-	VECTOR3  vNow = GetPositionVector(mWorld);
-	VECTOR3  vOld = GetPositionVector(mWorldOld);
+	// 位置を得る
+	VECTOR3  vOld = positionOld;
+	VECTOR3  vNow = position;
 
 	VECTOR3  vVert[3], vFaceNorm, vInsPt, vMove;
 	float    fNowDist, fOldDist, fLayDist;
@@ -1299,7 +1283,7 @@ int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VEC
 			if (m_ChkColMesh[n].ChkBlkArray[i].ppChkFace == nullptr) break;	// 配列にデータがないとき
 
 			// 配列の対象とする開始点と終了点のブロック番号を求める
-			GetMeshLimit(n, i, vNow, vOld, fRadius, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
+			getMeshLimit(n, i, vNow, vOld, fRadius, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
 
 			// 配列の検索を開始する
 			for (y = nStartY; y <= nEndY; y++) {
@@ -1326,10 +1310,10 @@ int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VEC
 								vFaceNorm = p->pFace->vNormal;
 
 								// 直線の３角形ポリゴン法線方向の距離を求める
-								GetDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
+								getDistNormal(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist);
 
 								// ３角形平面と移動後点が近接しているかのチェックを行う
-								if (CheckNear(vVert, vNow, vFaceNorm, fNowDist, fRadius, vInsPt) == 1)
+								if (checkNear(vVert, vNow, vFaceNorm, fNowDist, fRadius, vInsPt) == 1)
 								{
 									nRet = 2;   // 近接している
 
@@ -1354,7 +1338,7 @@ int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VEC
 								}
 								else {
 									// ３角形ポリゴンと直線（レイ）との接触判定を行う
-									if (CheckLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
+									if (checkLay(vVert, vNow, vOld, vFaceNorm, fNowDist, fOldDist, fLayDist, vInsPt) == 1)
 									{
 										nRet = 1;   // 接触している
 
@@ -1404,8 +1388,9 @@ int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VEC
 		}
 
 		// 判定後の移動処理。ＸＺ方向のみ移動し、Ｙ方向には移動させない
-		mWorld._41 = vMove.x;
-		mWorld._43 = vMove.z;
+		vNow.x = vMove.x;
+		vNow.z = vMove.z;
+		position = vNow;
 
 		nRet = 1;   // 全て接触とする
 	}
@@ -1421,7 +1406,7 @@ int CCollision::CheckWallMove(MATRIX4X4& mWorld, const MATRIX4X4& mWorldOld, VEC
 //
 //	引数・戻り値　なし
 //----------------------------------------------------------------------------
-void CCollision::InitHeightCheck()
+void CCollision::initHeightCheck()
 {
 	m_vVertexH[0] = VECTOR3(0.0f, 0.0f, 0.0f);
 	m_vVertexH[2] = m_vVertexH[1] = m_vVertexH[0];
@@ -1433,20 +1418,20 @@ void CCollision::InitHeightCheck()
 
 //----------------------------------------------------------------------------
 //	現在位置より低い面の中で一番高い面を探す
-//																			2019.8.6
+//																			2024.9.10
 //
 //	＊この関数の目的は、床が交差しているとき、適切な床に着地させるために必要である
 //	　実行後、「高さ判定変数」に値が設定される。
 //
-//  MATRIX4X4& mWorld            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOld  オブジェクトの一つ前のマトリックス		
+//  const VECTOR3& positionOld   オブジェクトの1つ前の位置
+//  VECTOR3& position            オブジェクトの現在位置(in/out)
 //	const float& fObjheight      オブジェクトの中心の高さUNDERFOOTLIMIT
 //
 //	戻り値 bool bRet
 //		true  = より高い面を発見した
 //		false = 発見してない
 //----------------------------------------------------------------------------
-bool CCollision::CheckHeight(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld, const float fObjheight)
+bool CCollision::checkHeight(const VECTOR3& positionOld, VECTOR3& position, const float fObjheight)
 {
 	bool     bRet = false;
 	int      n, i;
@@ -1456,8 +1441,8 @@ bool CCollision::CheckHeight(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld, con
 	const    float  fHeightRadius = 1.0f;  // 高さ判定時のキャラクタの半径を最低1.0とする
 
 	// ワールドマトリックスから位置を得る
-	VECTOR3  vNow = GetPositionVector(mWorld);
-	VECTOR3  vOld = GetPositionVector(mWorldOld);
+	VECTOR3  vOld = positionOld;
+	VECTOR3  vNow = position;
 	VECTOR3  vVert[3], vFaceNorm;
 
 	struct ColFace*  pWIndex = nullptr;
@@ -1480,7 +1465,7 @@ bool CCollision::CheckHeight(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld, con
 			if (m_ChkColMesh[n].ChkBlkArray[i].ppChkFace == nullptr) break;	// 配列にデータがないとき
 
 			// 配列の対象とする開始点と終了点のブロック番号を求める
-			GetMeshLimit(n, i, vNow, vOld, fRadius, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
+			getMeshLimit(n, i, vNow, vOld, fRadius, nStartX, nEndX, nStartY, nEndY, nStartZ, nEndZ);
 
 			// 配列の検索を開始する
 			for (y = nStartY; y <= nEndY; y++)
@@ -1567,22 +1552,22 @@ bool CCollision::CheckHeight(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld, con
 //																		2019.8.6
 //　（注意）この関数は、HeightCheck実行後に呼び出すこと！！
 //				
-//  MATRIX4X4& mWorld            オブジェクトの現在のマトリックス(in,out)
-//  const MATRIX4X4&  mWorldOld  オブジェクトの一つ前のマトリックス		
+//  const VECTOR3& positionOld   オブジェクトの1つ前の位置
+//  VECTOR3& position            オブジェクトの現在位置(in/out)
 //				
-//	戻り値 int nRet
-//		エラー		= -1
-//		面上を移動	= 1
-//		着地		= 2
-//		落下中		= 3
+//  戻り値　CollRet  RetFloor
+//		エラー		= clError
+//		面上を移動	= clMove
+//		着地		= clLand
+//		落下中		= clFall
 //----------------------------------------------------------------------------
-int CCollision::CheckFloorMove(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld)
+CollRet CCollision::checkFloorMove(const VECTOR3& positionOld, VECTOR3& position)
 {
-	int  nRet = -1;
+	CollRet  Ret = clError;
 
-	// ワールドマトリックスから位置を得る
-	VECTOR3  vNow = GetPositionVector(mWorld);
-	VECTOR3  vOld = GetPositionVector(mWorldOld);
+	// 位置を得る
+	VECTOR3  vOld = positionOld;
+	VECTOR3  vNow = position;
 
 	// ジャンプで上昇中かどうか判定する。(現在高さより上昇しているか)
 	// （誤差を考慮して0.0001fを調整する）
@@ -1593,48 +1578,46 @@ int CCollision::CheckFloorMove(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld)
 
 	//vOld = vNow;   // ?????
 
-	if (m_pIndex && m_fHeight == vNow.y) {		// 面上を水平に移動中のとき  // -- 2019.9.3
-		nRet = 1;
+	if (m_pIndex && m_fHeight == vNow.y) {		// 面上を水平に移動中のとき
+		Ret = clMove;
 	}
-	else if (!bJumpUp && m_pIndex && m_fHeight >= vNow.y) {  // -- 2019.9.3
+	else if (!bJumpUp && m_pIndex && m_fHeight >= vNow.y) {
 		// ジャンプ上昇中でなくて、床が移動後の高さより高いとき（着地したとき）
 		if (m_vNormalH.y > GROUND) {
 			// 床に着地した
-			// （誤差は考慮しない）// -- 2019.9.1
+			// （誤差は考慮しない）
 			vNow.y = m_fHeight;
-			nRet = 2;
+			Ret = clLand;	 // 着地
 		}
 		else {
 			// 壁に着地した
 			// （誤差を考慮し0.000001fを調整する）
 			vNow.y = m_fHeight + 0.000001f;
-			nRet = 3;
+			Ret = clFall;	// 落下中
 		}
 	}
 	else {
-		if (!bJumpUp && m_pIndex && m_vNormalH.y > GROUND && m_fHeight <= MaxY && m_fHeight >= MinY + LOWFLOORLIMIT)  // -- 2019.9.3
+		if (!bJumpUp && m_pIndex && m_vNormalH.y > GROUND && m_fHeight <= MaxY && m_fHeight >= MinY + LOWFLOORLIMIT)
 		{
 			// ジャンプ上昇中でなくて、床が移動前と移動後の高さの間にあるとき。または、床が足下LOWFLOORLIMIT(-0.2m)以内の時
 			vNow.y = m_fHeight;	// 移動後の高さを床の高さに補正する
-			nRet = 2;
-			//MessageBox(0, _T("CheckFloorMove()   nRet=2") , nullptr, MB_OK);
+			Ret = clLand; 	 // 着地
+			//MessageBox(0, _T("CheckFloorMove()   Ret=2 clLand") , nullptr, MB_OK);
 		}
 		else {
 			// ジャンプ上昇中または、落下中のとき
-			nRet = 3;
-			//MessageBox(0, _T("CheckFloorMove()   nRet=3") , nullptr, MB_OK);
+			Ret = clFall;	// 落下中
+			//MessageBox(0, _T("CheckFloorMove()   Ret=3 clFall") , nullptr, MB_OK);
 		}
 	}
 
 	// 床に合わせた上下移動の処理
-	if (nRet > 0)
+	if (Ret >= clMove)	 // エラーではないとき
 	{
-		mWorld._41 = vNow.x;
-		mWorld._42 = vNow.y;
-		mWorld._43 = vNow.z;
+		position = vNow;
 	}
 
-	return nRet;
+	return Ret;
 }
 
 
@@ -1653,7 +1636,7 @@ int CCollision::CheckFloorMove(MATRIX4X4& mWorld, const MATRIX4X4&  mWorldOld)
 //  戻り値
 //      なし
 //-----------------------------------------------------------------------------
-void  CCollision::GetDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, float& fNowDist, float& fOldDist, float& fLayDist)
+void  CCollision::getDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, float& fNowDist, float& fOldDist, float& fLayDist)
 {
 	float   fFaceDist = dot(vFaceNorm, vVec[0]);		// 原点から三角形平面までの距離
 	fNowDist = dot(vFaceNorm, vNow) - fFaceDist;		// 移動後点と三角形平面との距離。正の時は表側、負の時は裏側
@@ -1678,7 +1661,7 @@ void  CCollision::GetDistNormal(const VECTOR3 vVec[], const VECTOR3& vNow, const
 //		接触したとき　		１
 //		接触していないとき	０
 //-----------------------------------------------------------------------------
-int  CCollision::CheckLay(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, const float& fNowDist, const float& fOldDist, const float& fLayDist, VECTOR3& vHit)
+int  CCollision::checkLay(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vOld, const VECTOR3& vFaceNorm, const float& fNowDist, const float& fOldDist, const float& fLayDist, VECTOR3& vHit)
 {
 	int nRet = 0;
 
@@ -1723,7 +1706,7 @@ int  CCollision::CheckLay(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTO
 //		接触したとき　		１
 //		接触していないとき	０
 //-----------------------------------------------------------------------------
-int  CCollision::CheckNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vFaceNorm, const float& fNowDist, float fRadius, VECTOR3& vHit)
+int  CCollision::checkNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECTOR3& vFaceNorm, const float& fNowDist, float fRadius, VECTOR3& vHit)
 {
 	int nRet = 0;
 
@@ -1761,7 +1744,6 @@ int  CCollision::CheckNear(const VECTOR3 vVec[], const VECTOR3& vNow, const VECT
 //------------------------------------------------------------------------
 void CCollision::InitWorldMatrix(const MATRIX4X4& mWorld)
 {
-	m_mWorldBase = mWorld;
 	m_mWorldOld  = mWorld;
 	m_mWorld     = mWorld;
 	m_mWorldInv  = XMMatrixInverse(nullptr, m_mWorld);
