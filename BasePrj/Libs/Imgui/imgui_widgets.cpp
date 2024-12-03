@@ -3501,7 +3501,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         else
         {
             state->ID = id;
-            state->ScrollX = 0.0f;
+            state->scrollX = 0.0f;
             stb_textedit_initialize_state(&state->Stb, !is_multiline);
             if (!is_multiline && focus_requested_by_code)
                 select_all = true;
@@ -3596,7 +3596,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         g.WantTextInputNextFrame = 1;
 
         // Edit in progress
-        const float mouse_x = (io.MousePos.x - frame_bb.Min.x - style.FramePadding.x) + state->ScrollX;
+        const float mouse_x = (io.MousePos.x - frame_bb.Min.x - style.FramePadding.x) + state->scrollX;
         const float mouse_y = (is_multiline ? (io.MousePos.y - draw_window->DC.CursorPos.y - style.FramePadding.y) : (g.FontSize*0.5f));
 
         const bool is_osx = io.ConfigMacOSXBehaviors;
@@ -4019,14 +4019,14 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (!(flags & ImGuiInputTextFlags_NoHorizontalScroll))
             {
                 const float scroll_increment_x = inner_size.x * 0.25f;
-                if (cursor_offset.x < state->ScrollX)
-                    state->ScrollX = IM_FLOOR(ImMax(0.0f, cursor_offset.x - scroll_increment_x));
-                else if (cursor_offset.x - inner_size.x >= state->ScrollX)
-                    state->ScrollX = IM_FLOOR(cursor_offset.x - inner_size.x + scroll_increment_x);
+                if (cursor_offset.x < state->scrollX)
+                    state->scrollX = IM_FLOOR(ImMax(0.0f, cursor_offset.x - scroll_increment_x));
+                else if (cursor_offset.x - inner_size.x >= state->scrollX)
+                    state->scrollX = IM_FLOOR(cursor_offset.x - inner_size.x + scroll_increment_x);
             }
             else
             {
-                state->ScrollX = 0.0f;
+                state->scrollX = 0.0f;
             }
 
             // Vertical scroll
@@ -4045,7 +4045,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         }
 
         // Draw selection
-        const ImVec2 draw_scroll = ImVec2(state->ScrollX, 0.0f);
+        const ImVec2 draw_scroll = ImVec2(state->scrollX, 0.0f);
         if (render_selection)
         {
             const ImWchar* text_selected_begin = text_begin + ImMin(state->Stb.select_start, state->Stb.select_end);

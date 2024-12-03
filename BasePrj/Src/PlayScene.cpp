@@ -5,6 +5,7 @@
 #include "PlayDisplay.h"
 #include "SplitScreenLastDraw.h"
 #include "Player.h"
+#include "Dust.h"
 
 PlayScene::PlayScene()
 {
@@ -28,6 +29,10 @@ PlayScene::PlayScene()
 	Player* p4 = new Player(3);
 	p4->SetPosition(2, 0, 2);
 	p4->SetTag("Player4");
+
+	new Dust(0, VECTOR3(10, 1, 0));
+	new Dust(1, VECTOR3(10, 1, 10));
+	new Dust(2, VECTOR3(10, 1, -10));
 
 	new Camera();
 	//new Stage(4);

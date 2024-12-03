@@ -29,5 +29,5 @@ private:
 	CSprite* sprite;
 	CSpriteImage* selectBackImage;	//セレクト画面背景イメージ
 	float ScrollSpeed;				//背景スクロール速度
-	float offX;						//背景画像位置X
+	float scrollX;						//背景画像位置X
 };

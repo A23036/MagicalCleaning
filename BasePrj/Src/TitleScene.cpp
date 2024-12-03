@@ -60,7 +60,7 @@ void TitleScene::Update()
 			SceneManager::ChangeScene("EditScene");
 		}
 	}
-	else if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, DIJ_B)) {
+	else if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, DIJ_B)) {
 		animNum = aFinish;
 	}
 	

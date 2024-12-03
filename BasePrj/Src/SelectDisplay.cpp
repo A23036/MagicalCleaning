@@ -9,7 +9,7 @@ SelectDisplay::SelectDisplay()
 
 	ColorPosY = WINDOW_HEIGHT * 2/5;		//キャラ選択カラー位置Y
 	ColorIconSize = 64;						//キャラ選択カラーサイズ
-	ColorIconDispSize = 100;				//キャラ選択カラー表示サイズ
+	ColorIconDispSize = 80;					//キャラ選択カラー表示サイズ
 	UiSpace = 50;							//キャラ選択カラー幅
 	GuideUiPosY = WINDOW_HEIGHT - 100;		//操作方法ガイドUI位置Y
 	BackUiPos = VECTOR2(20,20);	//戻るUI位置
@@ -17,6 +17,13 @@ SelectDisplay::SelectDisplay()
 	for (int i = 0; i < 4; i++) {
 		playerEntry[i] = false;
 	}
+
+	//カラー選択初期値
+	selectColor[0] = 0;	//赤
+	selectColor[1] = 1; //青
+	selectColor[2] = 4; //緑
+	selectColor[3] = 5; //紫
+
 }
 
 SelectDisplay::~SelectDisplay()
@@ -27,11 +34,40 @@ SelectDisplay::~SelectDisplay()
 
 void SelectDisplay::Update()
 {
+	//カーソルの移動
+	auto di = GameDevice()->m_pDI;
+
+	if(di->CheckJoy(KD_DAT,5))
+
+	//選択カラーごとの位置情報の設定
+	for (int i = 0; i < MAXPLAYER; i++) {
+		switch (selectColor[i]) {
+		case Red:
+			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 - UiSpace - ColorIconDispSize, ColorPosY);
+			break;
+		case Blue:
+			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2, ColorPosY);
+			break;
+		case Yellow:
+			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 + UiSpace + ColorIconDispSize, ColorPosY);
+			break;
+		case Green:
+			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 - UiSpace - ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
+			break;
+		case Purple:
+			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2, ColorPosY + UiSpace + ColorIconDispSize);
+			break;
+		case Black:
+			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 + UiSpace + ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
+			break;
+		}
+	}
+	
 }
 
 void SelectDisplay::Draw()
 {
-	//前面UIの描画
+	//UIイメージの設定
 	sprite->SetImage(selectUiImage);
 
 	//戻るアイコン
@@ -66,5 +102,8 @@ void SelectDisplay::Draw()
 	//黒
 	sprite->SetSrc(96 + ColorIconSize * 2, 128 + ColorIconSize, ColorIconSize, ColorIconSize, ColorIconDispSize, ColorIconDispSize);
 	sprite->Draw(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 + UiSpace + ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
+
+
+	//コントローラーごとのカーソルの描画
 
 }

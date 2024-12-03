@@ -1,11 +1,13 @@
 #pragma once
 #include "Object3D.h"
 #include "Player.h"
+#include "Stage.h"
 
 class Dust : public Object3D {
 public:
 	Dust(int number,VECTOR3 pos);
 	~Dust();
+	void Start() override;
 	void Update();
 	void Draw() override;
 
@@ -16,6 +18,10 @@ public:
 	void AddDamage(Player* player,int damage);
 
 private:
+	Stage* st;
+
+	VECTOR3 posOld;
+
 	int maxHp;
 	int hp;
 	int dustNum;

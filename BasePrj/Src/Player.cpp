@@ -58,7 +58,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	mesh->LoadAnimation(aFall, (f + "/fall.anmx").c_str(), true);
 	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
-	//mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
+	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -81,6 +81,9 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	isFly = false;
 	canFly = false;
 	finishAtkAnim = false;
+	atkComboFlg = false;
+
+	comboWaitFrm = 20;
 
 	msNum = 0;
 	jnNum = 0;
@@ -95,6 +98,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	carWeight	= CarWeightT[cwNum];
 
 	selectPower = 0;
+	anmFrame = 0;
 }
 
 Player::~Player()
@@ -166,6 +170,9 @@ void Player::Update()
 	case sAttack2:
 		ImGui::Text("sAttack2");
 		break;
+	case sAttack3:
+		ImGui::Text("sAttack3");
+		break;
 	case sStop:
 		ImGui::Text("sStop");
 		break;
@@ -195,10 +202,10 @@ void Player::Update()
 		UpdateAttack1();
 		break;
 	case sAttack2:
-		UpdateAttack1();
+		UpdateAttack2();
 		break;
 	case sAttack3:
-		UpdateAttack1();
+		UpdateAttack3();
 		break;
 	case sStop:
 		return;
@@ -287,7 +294,6 @@ void Player::Update()
 	//当たり判定処理 // -- 2024.12.2
 	st->MapCol()->IsCollisionMoveGravity(posOld, transform.position);
 	
-	
 	// ImGuiウィンドウの位置とサイズを設定
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
@@ -323,7 +329,7 @@ void Player::Update()
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
-	/*
+	
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
 	for (Dust* dust : dusts) {
@@ -341,7 +347,7 @@ void Player::Update()
 			transform.position += pushVec * pushLen;
 		}
 	}
-	*/
+	
 	// DustBoxにめり込まないようにする
 	// 自分の座標は、transform.position
 	// DustBoxの座標を知る
@@ -628,12 +634,7 @@ void Player::UpdateOnGround()
 		animator->SetPlaySpeed(1.0f * atkSpeed);
 		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
-	}
-	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 1, playerNum)) { //攻撃ボタン
-		animator->MergePlay(aAttack2,0);
-		animator->SetPlaySpeed(1.0f * atkSpeed);
-		transform.rotation.y += 10 * DegToRad; //正面方向に回転させる
-		state = sAttack2;
+		anmFrame = 0;
 	}
 }
 
@@ -733,24 +734,24 @@ void Player::UpdateJump()
 
 void Player::UpdateAttack1()
 {	
+	anmFrame++;
+
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
 	if (!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
 		finishAtkAnim = true;
 		//エフェクトの再生
-		VECTOR3 forward = VECTOR3(0, 0, atkRange); // 回転してない時の移動量
+		VECTOR3 forward = VECTOR3(0, 0, 1.1f*atkRange); // 回転してない時の移動量
 		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
 		forward = forward * rotY; // キャラの向いてる方への移動量
-		forward += transform.position;
-		new SlashEffect(forward,atkRange);
+		VECTOR3 pos = forward + transform.position;
+		new SlashEffect(pos,atkRange);
 
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
-			VECTOR3 forward = VECTOR3(0, 0, atkRange); // 回転してない時の移動量
-			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-			forward = forward * rotY; // キャラの向いてる方への移動量
+			
 			atkCol.center = transform.position + forward; //攻撃判定の球を作る
 			atkCol.radius = 1.0f * atkRange;
 			VECTOR3 pushVec = atkCol.center - dCol.center;
@@ -762,58 +763,125 @@ void Player::UpdateAttack1()
 		}
 	}
 	
+	auto di = GameDevice()->m_pDI;
+	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃中の選考入力受付
+		atkComboFlg = true;
+		anmFrame = 0;
+	}
+
+	if (anmFrame >= comboWaitFrm) { //連続入力後一定時間で連続攻撃フラグ解除
+		atkComboFlg = false;
+	}
+
 	if (animator->Finished())
 	{
 		//攻撃アニメーションの終了
 		finishAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
 		transform.rotation.y -= 15 * DegToRad; //回転を戻す
-		state = sOnGround;
+		if (atkComboFlg) { //連続攻撃
+			animator->MergePlay(aAttack2, 0);
+			animator->SetPlaySpeed(1.0f * atkSpeed);
+			transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
+			state = sAttack2;
+			anmFrame = 0;
+		}
+		else {
+			//地上状態へ
+			state = sOnGround;
+		}
+		atkComboFlg = false;
 	}
-
+	
 }
 
 void Player::UpdateAttack2()
 {
-	/*
-	// ゴミに攻撃を当てる
-	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
-	VECTOR3 tipPos = VECTOR3(0.9966, 0.6536, 0.140);
-	MATRIX4X4 mat = transform.matrix();// 世界(ワールド)の中で、プレイヤーの位置と向き
-	MATRIX4X4 bone = mesh->GetFrameMatrices(34); // プレイヤーの原点からの手首の位置(34は手首)
-	VECTOR3 start = VECTOR3(0, 0, 0) * bone * mat;
-	VECTOR3 end = tipPos * bone * mat;
-
-	for (Dust* d : dusts)
-	{
-		if (d->HitLineToMesh(start, end)) {
-			d->AddDamage(1); //ゴミに当てた
-		}
-		if (animator->Finished())
-		{
-			//攻撃アニメーションの終了
-			state = sOnGround;
-		}
-	}*/
+	anmFrame++;
 
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 
-	if (!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
+	if (!finishAtkAnim && animator->CurrentFrame() >= 20.0f / atkSpeed) { //攻撃のヒットしたタイミング
 		finishAtkAnim = true;
+		//エフェクトの再生
+		VECTOR3 forward = VECTOR3(0, 0, 1.1f * atkRange); // 回転してない時の移動量
+		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
+		forward = forward * rotY; // キャラの向いてる方への移動量
+		VECTOR3 pos = forward + transform.position;
+		new SlashEffect(pos, atkRange);
+
 		for (Dust* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
-			VECTOR3 forward = VECTOR3(0, 0, 1.0f); // 回転してない時の移動量
-			MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-			forward = forward * rotY; // キャラの向いてる方への移動量
+
 			atkCol.center = transform.position + forward; //攻撃判定の球を作る
 			atkCol.radius = 1.0f * atkRange;
 			VECTOR3 pushVec = atkCol.center - dCol.center;
 			float rSum = atkCol.radius + dCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
-				d->AddDamage(this,1); //ダメージを与える
+				d->AddDamage(this, 1); //ダメージを与える
+			}
+		}
+	}
+
+	auto di = GameDevice()->m_pDI;
+	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃中の選考入力受付
+		atkComboFlg = true;
+		anmFrame = 0;
+	}
+
+	if (anmFrame >= comboWaitFrm) { //連続入力後一定時間で連続攻撃フラグ解除
+		atkComboFlg = false;
+	}
+
+	if (animator->Finished())
+	{
+		//攻撃アニメーションの終了
+		finishAtkAnim = false;
+		animator->SetPlaySpeed(1.0f);
+		transform.rotation.y -= 15 * DegToRad; //回転を戻す
+		if (atkComboFlg) { //連続攻撃
+			animator->MergePlay(aAttack3, 0);
+			animator->SetPlaySpeed(1.0f * atkSpeed);
+			//transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
+			state = sAttack3;
+			anmFrame = 0;
+		}
+		else {
+			//地上状態へ
+			state = sOnGround;
+		}
+		atkComboFlg = false;
+	}
+}
+
+void Player::UpdateAttack3()
+{
+	// ゴミに攻撃を当てる
+	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
+
+	if (!finishAtkAnim && animator->CurrentFrame() >= 30.0f / atkSpeed) { //攻撃のヒットしたタイミング
+		finishAtkAnim = true;
+		//エフェクトの再生
+		VECTOR3 forward = VECTOR3(0, 0, 1.1f * atkRange); // 回転してない時の移動量
+		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
+		forward = forward * rotY; // キャラの向いてる方への移動量
+		VECTOR3 pos = forward + transform.position;
+		new SlashEffect(pos, atkRange);
+
+		for (Dust* d : dusts) {
+			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
+			SphereCollider atkCol = Collider();			//攻撃判定の球
+
+			atkCol.center = transform.position + forward; //攻撃判定の球を作る
+			atkCol.radius = 1.0f * atkRange;
+			VECTOR3 pushVec = atkCol.center - dCol.center;
+			float rSum = atkCol.radius + dCol.radius;
+			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+				// 当たってる
+				d->AddDamage(this, 1); //ダメージを与える
 			}
 		}
 	}
@@ -823,12 +891,10 @@ void Player::UpdateAttack2()
 		//攻撃アニメーションの終了
 		finishAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
+		//transform.rotation.y -= 15 * DegToRad; //回転を戻す
 		state = sOnGround;
+		atkComboFlg = false;
 	}
-}
-
-void Player::UpdateAttack3()
-{
 }
 
 //　プレイヤーの持つ箒
@@ -869,6 +935,7 @@ void Broom::Update()
 
 	case sAttack1:
 	case sAttack2:
+	case sAttack3:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, 0);
 		break;

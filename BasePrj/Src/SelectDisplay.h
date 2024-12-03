@@ -24,11 +24,22 @@ private:
 	VECTOR2 BackUiPos;		//戻るUI位置
 
 	bool playerEntry[4];	//プレイヤーのエントリー状態
+	int selectColor[4];		//プレイヤーごとの選択中カラー
+	VECTOR2 cursorPos[4];	//カーソル位置
 	
 	enum Dir{
 		UP = 0,
 		RIGHT,
 		DOWN,
 		LEFT,
+	};
+
+	enum Color {
+		Red = 0,
+		Blue,
+		Yellow,
+		Green,
+		Purple,
+		Black,
 	};
 };

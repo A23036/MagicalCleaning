@@ -30,3 +30,13 @@ float EasingCalc::easeOutBounce(float x) //ç≈å„Ç…ÇÕÇÀÇÈ
 		return n1 * x * x + 0.984375f;
 	}
 }
+
+float EasingCalc::easeOutExpo(float x) //ã}â¡ë¨Ç©ÇÁå∏ë¨
+{
+	if (x == 1.0f) {
+		return 1.0f;
+	}
+	else {
+		return 1.0f - pow(2.0f, -10.0f * x);
+	}
+}

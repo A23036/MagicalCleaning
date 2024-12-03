@@ -73,6 +73,12 @@ private:
 	Camera* cm;
 	list<Player*> otherPlayers;
 
+	void UpdateOnGround();	//地上処理
+	void UpdateJump();		//空中処理
+	void UpdateAttack1();	//攻撃1中処理
+	void UpdateAttack2();	//攻撃2中処理
+	void UpdateAttack3();	//攻撃3中処理
+
 	float deltaTime;
 	float GRAVITY;		//重力加速度
 	float JUMP_POWER;	//ジャンプ力
@@ -86,6 +92,8 @@ private:
 	bool isDash;		//ダッシュ中判定
 	bool isFly;			//飛行中判定
 	bool canFly;		//飛行可能判定
+	bool atkComboFlg;	//連続攻撃判定
+	int	 comboWaitFrm;	//コンボ先行入力フレームs
 
 	bool finishAtkAnim;
 
@@ -140,12 +148,6 @@ private:
 	VECTOR3 posOld;	//直前のプレイヤー位置
 
 	int selectPower; //選択中能力
-
-	void UpdateOnGround();	//地上処理
-	void UpdateJump();		//空中処理
-	void UpdateAttack1();	//攻撃1中処理
-	void UpdateAttack2();	//攻撃2中処理
-	void UpdateAttack3();	//攻撃3中処理
 
 	int anmFrame; // アニメーションのフレームを数える
 

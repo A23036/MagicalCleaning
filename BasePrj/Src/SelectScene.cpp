@@ -20,7 +20,7 @@ SelectScene::SelectScene()
 
 	sd = new SelectDisplay();
 
-	offX = 0.0f;
+	scrollX = 0.0f;
 }
 
 SelectScene::~SelectScene()
@@ -41,19 +41,19 @@ void SelectScene::Update()
 void SelectScene::Draw()
 {
 	// 背景スクロール処理
-	sprite->Draw(selectBackImage, int(-offX), 0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-	sprite->Draw(selectBackImage, WINDOW_WIDTH - int(offX), 0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	sprite->Draw(selectBackImage, int(-scrollX), 0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	sprite->Draw(selectBackImage, WINDOW_WIDTH - int(scrollX), 0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	GameDevice()->m_pFont->Draw(400, 20, _T("SELECT SCENE"), 32, RGB(255, 0, 0));
 
-	offX += ScrollSpeed;
+	scrollX += ScrollSpeed;
 	
 	// スクロール方向を考慮
-	if (ScrollSpeed > 0 && offX >= WINDOW_WIDTH) {
-		offX = 0;
+	if (ScrollSpeed > 0 && scrollX >= WINDOW_WIDTH) {
+		scrollX = 0;
 	}
-	else if (ScrollSpeed < 0 && offX <= 0) {
-		offX = WINDOW_WIDTH;
+	else if (ScrollSpeed < 0 && scrollX <= 0) {
+		scrollX = WINDOW_WIDTH;
 	}
 
 	GameDevice()->m_mView = XMMatrixLookAtLH(

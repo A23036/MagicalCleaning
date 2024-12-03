@@ -21,7 +21,7 @@ Stage::Stage()
 	chipZ = 10;
 
 	//ランダムなマップチップ配列の作成
-	GenerateRandomMap(15,size);
+	//GenerateRandomMap(15,size);
 
 	SetTag("STAGEOBJ");
 

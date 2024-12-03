@@ -30,10 +30,16 @@ Dust::~Dust()
 {
 }
 
+void Dust::Start()
+{
+	st = ObjectManager::FindGameObject<Stage>();
+}
+
 void Dust::Update()
 {
-	Stage* st = ObjectManager::FindGameObject<Stage>();
-	if (!(st->IsLandBlock(transform.position))) {
+	posOld = transform.position;
+
+	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
 		transform.position.y -= 0.05f;
 	}
 }

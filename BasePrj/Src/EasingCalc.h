@@ -6,4 +6,5 @@ class EasingCalc
 public:
 	float easeOutBack(float x);		//ÅŒã‚É­‚µ”ò‚Ño‚µ‚Ä‚©‚ç–ß‚é
 	float easeOutBounce(float x);	//ÅŒã‚É‚Í‚Ë‚é
+	float easeOutExpo(float x);		//‹}‰Á‘¬‚©‚çŒ¸‘¬
 };

@@ -14,7 +14,7 @@ PowerUpEffect::PowerUpEffect(Object3D* parentModel,VECTOR3 pos)
     lifeTime = 0.25f;
     fadeTime = 0.25f;
     curTime = 0;
-    rotSpeed = 0.3f;
+    rotSpeed = 0.2f;
     upSpeed = 0.03f;
     frm = 0;
 
