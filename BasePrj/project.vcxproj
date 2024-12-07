@@ -284,6 +284,7 @@
     <ClInclude Include="Libs\Imgui\imstb_truetype.h" />
     <ClInclude Include="Src\Animator.h" />
     <ClInclude Include="Src\BBox.h" />
+    <ClInclude Include="Src\Block.h" />
     <ClInclude Include="Src\BlockFileName.h" />
     <ClInclude Include="Src\Camera.h" />
     <ClInclude Include="Src\CapsuleCollider.h" />
@@ -294,6 +295,7 @@
     <ClInclude Include="Src\DInput.h" />
     <ClInclude Include="Src\Direct3D.h" />
     <ClInclude Include="Src\Displace.h" />
+    <ClInclude Include="Src\Particle.h" />
     <ClInclude Include="Src\PlayDisplay.h" />
     <ClInclude Include="Src\Dust.h" />
     <ClInclude Include="Src\DustBox.h" />
@@ -313,6 +315,7 @@
     <ClInclude Include="Src\Player.h" />
     <ClInclude Include="Src\PlayScene.h" />
     <ClInclude Include="Src\PowerUpEffect.h" />
+    <ClInclude Include="Src\ReafEffect.h" />
     <ClInclude Include="Src\resource.h" />
     <ClInclude Include="Src\ResourceManager.h" />
     <ClInclude Include="Src\ResultScene.h" />
@@ -341,6 +344,7 @@
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Animator.cpp" />
     <ClCompile Include="Src\BBox.cpp" />
+    <ClCompile Include="Src\Block.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\Coin.cpp" />
     <ClCompile Include="Src\Collision.cpp" />
@@ -349,6 +353,7 @@
     <ClCompile Include="Src\DInput.cpp" />
     <ClCompile Include="Src\Direct3D.cpp" />
     <ClCompile Include="Src\Displace.cpp" />
+    <ClCompile Include="Src\Particle.cpp" />
     <ClCompile Include="Src\PlayDisplay.cpp" />
     <ClCompile Include="Src\Dust.cpp" />
     <ClCompile Include="Src\DustBox.cpp" />
@@ -366,6 +371,7 @@
     <ClCompile Include="Src\Player.cpp" />
     <ClCompile Include="Src\PlayScene.cpp" />
     <ClCompile Include="Src\PowerUpEffect.cpp" />
+    <ClCompile Include="Src\ReafEffect.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\ResultScene.cpp" />
     <ClCompile Include="Src\SceneBase.cpp" />

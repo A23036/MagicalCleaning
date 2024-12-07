@@ -2,7 +2,6 @@
 #include "CsvReader.h"
 #include "BlockFileName.h"
 #include "Player.h"
-#include "Camera.h"
 #include "Coin.h"
 #include "Dust.h"
 #include "DustBox.h"
@@ -26,16 +25,35 @@ Stage::Stage()
 	SetTag("STAGEOBJ");
 
 	mesh = new CFbxMesh();
-	mesh->Load("data/Map2/map50Field1.mesh");
+	//mesh->Load("data/Map2/map50Field1.mesh");
 
+	//meshes.push_back(mesh);
 	//meshCol = new MeshCollider();
 	//meshCol->MakeFromMesh(mesh); //メッシュを作成
 
 	mapCol = new CCollision;	// -- 2024.12.2
-	mapCol->AddFbxLoad(mesh);	// -- 2024.12.2 
+	//mapCol->AddFbxLoad(mesh);	// -- 2024.12.2 
+	
+	mesh->Load("data/Map2/MapChip/stage01.mesh");
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 0)); //移動させる場合、引数を追加
+	meshes.push_back(mesh);
 
+	mesh = new CFbxMesh();
 
-	this->SetPosition(0, 0, 0); //移動させる場合、mapCol->AddFbxLoad(mesh)に引数を追加
+	mesh->Load("data/Map2/MapChip/stage02.mesh");
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(50, 0, 0)); //移動させる場合、引数を追加
+	meshes.push_back(mesh);
+
+	mesh = new CFbxMesh();
+
+	mesh->Load("data/Map2/MapChip/stage01.mesh");
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 50)); //移動させる場合、引数を追加
+	meshes.push_back(mesh);
+	mesh = new CFbxMesh();
+
+	mesh->Load("data/Map2/MapChip/stage02.mesh");
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(50, 0, 50)); //移動させる場合、引数を追加
+	meshes.push_back(mesh);
 }
 
 Stage::Stage(int stageNumber)
@@ -49,7 +67,7 @@ Stage::Stage(int stageNumber)
 	boxCollider = new MeshCollider();
 	boxCollider->MakeFromFile("data/models/boxCol.mesh");
 	
-	cm = ObjectManager::FindGameObject<Camera>();
+	//cm = ObjectManager::FindGameObject<Camera>();
 
 	Load(stageNumber);
 }
@@ -120,7 +138,24 @@ void Stage::Draw()
 		}
 	}
 	*/
-	mesh->Render(transform.matrix());
+	int i = 0;
+	for (CFbxMesh* m : meshes) {
+		switch (i) {
+		case 0:
+			m->Render(XMMatrixTranslation(0, 0, 0));
+			break;
+		case 1:
+			m->Render(XMMatrixTranslation(50, 0, 0));
+			break;
+		case 2:
+			m->Render(XMMatrixTranslation(0, 0, 50));
+			break;
+		case 3:
+			m->Render(XMMatrixTranslation(50, 0, 50));
+			break;
+		}
+		i++;
+	}
 }
 
 void Stage::Load() 
@@ -421,7 +456,7 @@ void Stage::GenerateRandomMap(int totalMaps, int size)
 			if (mapChips[j][i] != -1) {	//空でない場合continue
 				continue;
 			}
-			mapChips[j][i] = Random(10, totalMaps + 10);
+			mapChips[j][i] = Random(10, totalMaps);
 		}
 	}
 

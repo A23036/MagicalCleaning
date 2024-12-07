@@ -25,6 +25,12 @@ private:
 	int maxHp;
 	int hp;
 	int dustNum;
+	float size;
+
+	float SmallSize;
+	float MidiumSize;
+	float BigSize;
+	float MaxScale;
 
 	enum DustID {
 		Small = 0,

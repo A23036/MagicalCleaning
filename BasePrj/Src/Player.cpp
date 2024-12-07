@@ -110,6 +110,7 @@ Player::~Player()
 void Player::Start()
 {
 	otherPlayers = ObjectManager::FindGameObjects<Player>();
+	blocks = ObjectManager::FindGameObjects<Block>();
 	dc = ObjectManager::FindGameObject<DataCarrier>();
 	st = ObjectManager::FindGameObject<Stage>();
 	cm = ObjectManager::FindGameObject<Camera>();
@@ -292,8 +293,15 @@ void Player::Update()
 	//}
 
 	//当たり判定処理 // -- 2024.12.2
+	//ステージ
 	st->MapCol()->IsCollisionMoveGravity(posOld, transform.position);
-	
+
+	//ブロック
+	/*
+	for (Block* block : blocks) {
+		block->BlockCol()->IsCollisionMoveGravity(posOld, transform.position);
+	}
+	*/
 	// ImGuiウィンドウの位置とサイズを設定
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
@@ -478,7 +486,7 @@ void Player::CsvLoad()
 SphereCollider Player::Collider()
 {
 	SphereCollider col;
-	col.center = transform.position + VECTOR3(0, 0.6f, 0);
+	col.center = transform.position + VECTOR3(0, 0.58f, 0);
 	col.radius = 0.58f;
 	return col;
 }
@@ -555,7 +563,7 @@ void Player::UpdateOnGround()
 		state = sJump;
 		return;
 	}
-	*/
+	*/   
 
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↓
 	

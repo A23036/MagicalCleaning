@@ -3,6 +3,7 @@
 #include "CsvReader.h"
 #include "SplitScreen.h"
 #include "DataCarrier.h"
+#include "Stage.h"
 
 using namespace std;
 
@@ -29,6 +30,9 @@ private:
 
 	CsvReader* csv;
 	DataCarrier* dc;
+	Stage* st;
+
+	VECTOR3 posOld;
 
 	VECTOR3 CameraPos = VECTOR3(0, 0, 0);	// カメラ位置
 	VECTOR3 LookPos = VECTOR3(0, 1, 0);		// カメラ注視点

@@ -6,6 +6,9 @@
 #include "DataCarrier.h"
 #include "Stage.h"
 #include "Camera.h"
+#include "Block.h"
+
+using namespace std;
 
 enum State { //プレイヤー状態
 	sStandby = 0,
@@ -72,6 +75,7 @@ private:
 	Stage* st;
 	Camera* cm;
 	list<Player*> otherPlayers;
+	list<Block*> blocks;
 
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理
@@ -93,7 +97,7 @@ private:
 	bool isFly;			//飛行中判定
 	bool canFly;		//飛行可能判定
 	bool atkComboFlg;	//連続攻撃判定
-	int	 comboWaitFrm;	//コンボ先行入力フレームs
+	int	 comboWaitFrm;	//コンボ先行入力フレーム
 
 	bool finishAtkAnim;
 

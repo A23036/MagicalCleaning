@@ -9,10 +9,7 @@ Camera::Camera()
 
 	ObjectManager::SetVisible(this, false);		// 自体は表示しない
 	SetDrawOrder(-1000);
-
-	ssObj = ObjectManager::FindGameObject<SplitScreen>();
-	dc = ObjectManager::FindGameObject<DataCarrier>();
-	
+	/*
 	while (view.size() < ssObj->MultiSize())
 	{
 		MATRIX4X4 m = XMMatrixIdentity();
@@ -21,7 +18,7 @@ Camera::Camera()
 		eyePt.emplace_back(v);
 		lookatPt.emplace_back(v);
 	}
-
+	*/
 	// 配列要素の初期化
 	for (int i = 0; i < MAXPLAYER; i++) {
 		rotationY[i] = 0.0f;
@@ -44,11 +41,24 @@ void Camera::Start()
 		string s = "Player" + to_string(i+1);
 		player[i] = ObjectManager::FindGameObjectWithTag<Player>(s);
 	}
+
+	st = ObjectManager::FindGameObject<Stage>();
+	ssObj = ObjectManager::FindGameObject<SplitScreen>();
+	dc = ObjectManager::FindGameObject<DataCarrier>();
+
+	while (view.size() < ssObj->MultiSize())
+	{
+		MATRIX4X4 m = XMMatrixIdentity();
+		view.emplace_back(m);
+		VECTOR3 v = VECTOR3(0, 0, 0);
+		eyePt.emplace_back(v);
+		lookatPt.emplace_back(v);
+	}
 }
 
 void Camera::Update()
 {
-
+	posOld = transform.position;
 	if (ssObj->Multi())
 	{
 		// 多画面のとき
@@ -267,7 +277,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 
 	// カメラが壁にめり込まないようにする
-	
+	/*
 	VECTOR3 start = pos;
 	start.y = 1.0;
 	VECTOR3 end = transform.position;
@@ -280,6 +290,18 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 			hit += push;
 			end = hit;
 		}
+	}*/
+	VECTOR3 start = pos;
+	//start.y = CameraPos.y;
+	VECTOR3 end = transform.position;
+	VECTOR3 hit;
+	VECTOR3 normal;
+	if (st->MapCol()->IsCollisionLay(start, end, hit, normal)) {
+		VECTOR3 move = pos - transform.position; // 前に出す方向のベクトルを作る
+		VECTOR3 push = XMVector3Normalize(move) * 0.1; // そのベクトルの長さを0.1にする
+		hit += push;
+		end.x = hit.x;
+		end.z = hit.z;
 	}
 	
 	transform.position = end;

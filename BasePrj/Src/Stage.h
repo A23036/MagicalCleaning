@@ -3,7 +3,6 @@
 #include "Object3D.h"
 #include "CsvReader.h"
 #include "MeshCollider.h"
-#include "Camera.h"
 #include "Collision.h"
 
 using namespace std;
@@ -25,12 +24,11 @@ public:
 	CCollision* MapCol() {	return mapCol;	}	// -- 2024.12.2
 private:
 	CFbxMesh* mesh;
-	vector<CFbxMesh*> meshes;		// 可変の配列
+	vector<CFbxMesh*> meshes;		// メッシュの配列
 	MeshCollider* boxCollider;
 	vector<vector<vector<int>>> map;	// マップデータの三次元配列
 	vector<vector<int>> mapChips;		// マップチップデータの二次元配列
 	CsvReader* csv;
-	Camera* cm;
 
 	CCollision* mapCol;	// -- 2024.12.2
 

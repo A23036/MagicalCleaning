@@ -6,6 +6,7 @@
 #include "SplitScreenLastDraw.h"
 #include "Player.h"
 #include "Dust.h"
+#include "Block.h"
 
 PlayScene::PlayScene()
 {
@@ -34,6 +35,13 @@ PlayScene::PlayScene()
 	new Dust(1, VECTOR3(10, 1, 10));
 	new Dust(2, VECTOR3(10, 1, -10));
 
+	/*
+	for (int i = 1; i < 10; i++) {
+		for (int j = 1; j < 10; j++) {
+			new Block(0, VECTOR3(5*i, 0.5, 5*j));
+		}
+	}
+	*/
 	new Camera();
 	//new Stage(4);
 	
