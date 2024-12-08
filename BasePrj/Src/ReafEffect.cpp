@@ -51,8 +51,8 @@ void ReafEffect::Update()
             controls.push_back(con);
         }
     }
-
-    // 減衰率を定義（徐々に減速）
+     
+    // 減衰率
     const float damping = 0.98f;
 
     // 既存のチップを更新

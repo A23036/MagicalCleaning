@@ -2,7 +2,7 @@
 
 SlashEffect::SlashEffect(VECTOR3 pos, float scale)
 {
-    ObjectManager::SetDrawOrder(this, -1000); //Å‰‚É•`‰æ
+    ObjectManager::SetDrawOrder(this, -1001); //Å‰‚É•`‰æ
 
     //SetTag("EFFECT");
     mesh = new CFbxMesh();

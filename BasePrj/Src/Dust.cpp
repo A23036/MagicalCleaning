@@ -86,6 +86,7 @@ SphereCollider Dust::Collider(int n)
 
 void Dust::AddDamage(Player* player,int damage)
 {
+	//葉っぱの飛び散るエフェクトの再生
 	new ReafEffect(transform.position, VECTOR3(size, size, size));
 	player->AddMP(1);
 	player->AddScore(1);

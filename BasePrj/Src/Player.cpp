@@ -59,6 +59,8 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
 	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
+	mesh->LoadAnimation(aChargeReady, (f + "/chargeReady.anmx").c_str(), false);
+	mesh->LoadAnimation(aCharge, (f + "/charge.anmx").c_str(), true);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -82,6 +84,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	canFly = false;
 	finishAtkAnim = false;
 	atkComboFlg = false;
+	isMagicReady = false;
 
 	comboWaitFrm = 20;
 
@@ -151,7 +154,7 @@ void Player::Update()
 	}
 	ImGui::End();
 	*/
-	
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 160));
 	ImGui::Begin("state");
@@ -179,7 +182,7 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-	
+	*/
 
 	if (dc->GetIsPlay()) {
 		animator->Update();
@@ -192,6 +195,7 @@ void Player::Update()
 
 	switch (state) {
 	case sStandby:
+	case sStop:
 		return;
 	case sOnGround:
 		UpdateOnGround();
@@ -208,13 +212,15 @@ void Player::Update()
 	case sAttack3:
 		UpdateAttack3();
 		break;
-	case sStop:
-		return;
+	case sCharge:
+		UpdateCharge();
+		break;
 	default:
 		break;
 	}
 	
-	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 3, playerNum)) { //能力強化
+	
+	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 2, playerNum)) { //能力強化
 		switch (selectPower) {
 		case pMS:
 			if (mp >= MoveSpeedC[msNum] && msNum < MsTableNum - 1)
@@ -628,7 +634,7 @@ void Player::UpdateOnGround()
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
-	if ((di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 2, playerNum) )) { //ジャンプ
+	if ((di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 1, playerNum) )) { //ジャンプ
 		speedY = JUMP_POWER;
 		if (!isDash) {
 			animator->MergePlay(aJump, 0);
@@ -637,12 +643,17 @@ void Player::UpdateOnGround()
 		jumpCount++;
 		state = sJump;
 	}
-	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃ボタン
+	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃
 		animator->MergePlay(aAttack1,0);
 		animator->SetPlaySpeed(1.0f * atkSpeed);
 		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
 		anmFrame = 0;
+	}
+	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 3, playerNum)) { //MP変換
+		animator->MergePlay(aChargeReady, 0);
+		animator->SetPlaySpeed(1.0f);
+		state = sCharge;
 	}
 }
 
@@ -706,7 +717,7 @@ void Player::UpdateJump()
 
 	}
 
-	if (di->CheckJoy(KD_TRG, 2, playerNum) && jumpCount <= jumpNum) {
+	if (di->CheckJoy(KD_TRG, 1, playerNum) && jumpCount <= jumpNum) {
 		speedY = JUMP_POWER;
 		isDash = false;
 		if (jumpCount % 2 == 0) {
@@ -905,6 +916,21 @@ void Player::UpdateAttack3()
 	}
 }
 
+void Player::UpdateCharge()
+{
+	auto di = GameDevice()->m_pDI;
+	if (di->CheckKey(KD_UTRG, DIK_M) || di->CheckJoy(KD_UTRG, 3, playerNum)) {
+		state = sOnGround;
+		isMagicReady = false;
+		return;
+	}
+	
+	if (animator->PlayingID() == aChargeReady && animator->Finished()) {
+		animator->MergePlay(aCharge, 0);
+		isMagicReady = true;
+	}
+}
+
 //　プレイヤーの持つ箒
 Broom::Broom(Object3D* parentModel, int num)
 {
@@ -947,6 +973,9 @@ void Broom::Update()
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(0, 0, 0);
 		break;
+	case sCharge:
+		transform.position = VECTOR3(0, 0, 0);
+		transform.rotation = VECTOR3(45 * DegToRad, 0, 0);
 	}
 }
 

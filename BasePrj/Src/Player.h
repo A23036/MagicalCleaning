@@ -17,6 +17,7 @@ enum State { //プレイヤー状態
 	sAttack1,
 	sAttack2,
 	sAttack3,
+	sCharge,
 	sStop,
 };
 
@@ -82,6 +83,7 @@ private:
 	void UpdateAttack1();	//攻撃1中処理
 	void UpdateAttack2();	//攻撃2中処理
 	void UpdateAttack3();	//攻撃3中処理
+	void UpdateCharge();	//MP変換中処理
 
 	float deltaTime;
 	float GRAVITY;		//重力加速度
@@ -98,6 +100,7 @@ private:
 	bool canFly;		//飛行可能判定
 	bool atkComboFlg;	//連続攻撃判定
 	int	 comboWaitFrm;	//コンボ先行入力フレーム
+	bool isMagicReady;	//MP変換予備動作完了フラグ
 
 	bool finishAtkAnim;
 
@@ -144,6 +147,8 @@ private:
 		aAttack1,
 		aAttack2,
 		aAttack3,
+		aChargeReady,
+		aCharge,
 	};
 
 	int state;		//プレイヤー状態
