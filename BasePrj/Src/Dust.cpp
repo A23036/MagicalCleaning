@@ -1,7 +1,6 @@
 #include "Dust.h"
 #include "Stage.h"
 #include "Player.h"
-#include "ReafEffect.h"
 
 Dust::Dust(int number, VECTOR3 pos)
 {
@@ -53,6 +52,7 @@ void Dust::Update()
 	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
 		transform.position.y -= 0.05f;
 	}
+
 }
 
 void Dust::Draw()
@@ -87,9 +87,12 @@ SphereCollider Dust::Collider(int n)
 void Dust::AddDamage(Player* player,int damage)
 {
 	//葉っぱの飛び散るエフェクトの再生
-	new ReafEffect(transform.position, VECTOR3(size, size, size));
-	player->AddMP(1);
-	player->AddScore(1);
+	new LeafEffect(transform.position, VECTOR3(size, size, size),10);
+
+	if (player->GetLeaf()+1 <= player->GetCarWeight()) {
+		player->AddLeaf(10);
+	}
+	//player->AddScore(1);
 	hp -= damage;
 
 	if (hp <= 0)

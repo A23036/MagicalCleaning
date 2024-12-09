@@ -1,6 +1,6 @@
  p,data,,x,y,z,,,,,,,
 Camera,CameraPos,,0,2,-5,,,,,,,
-Camera,LookPos,,0,1,1,,,,,,,
+Camera,LookPos,,0,0.5,1,,,,,,,
 Camera,ChangeTime,,0.5,,,,,,,,,
 Camera,RotateSpeed,,0.05,,,,,,,,,
 ,,,,,,,,,,,,

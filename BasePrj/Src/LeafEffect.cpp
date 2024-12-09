@@ -1,6 +1,6 @@
-#include "ReafEffect.h"
+#include "LeafEffect.h"
 
-ReafEffect::ReafEffect(VECTOR3 pos,VECTOR3 scale)
+LeafEffect::LeafEffect(VECTOR3 pos,VECTOR3 scale, int num)
 {
     ObjectManager::SetDrawOrder(this, -1000); //最初に描画
 
@@ -16,27 +16,29 @@ ReafEffect::ReafEffect(VECTOR3 pos,VECTOR3 scale)
 	ChipControl con;
 	con.velocity = VECTOR3(0.01f, 0.01f, 0.0f);
 	controls.push_back(con);
+    leafNum = num;
 	lifeTime = 2.0f;
 	frm = 0;
+    isFinish = false;
 
 	//useAddBlend = true; // 加算半透明
 }
 
-ReafEffect::~ReafEffect()
+LeafEffect::~LeafEffect()
 {
 }
 
-void ReafEffect::Update()
+void LeafEffect::Update()
 {
     if (frm * (1.0f / 60.0f) >= lifeTime) {
+        isFinish = true;
         DestroyMe();
         return;
     }
 
     // 最初のフレームで複数のオブジェクトを生成
     if (frm == 0) {
-        const int spawnCount = 10; // 一度に生成する数
-        for (int i = 0; i < spawnCount; i++) {
+        for (int i = 0; i <= leafNum; i++) {
             // チップの設定
             Chip c;
             c.scale = 1.0f;

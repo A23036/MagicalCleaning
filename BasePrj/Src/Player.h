@@ -55,8 +55,10 @@ public:
 
 	SphereCollider Collider() override;
 
+	int GetLeaf() { return leaf; };
 	int GetMP() { return mp; };
 	int GetWeight() { return weight; };
+	int GetCarWeight() { return carWeight; };
 	int GetScore() { return score; };
 	int GetPlayerNum() { return playerNum; };
 	int GetPlayerState() { return state; };
@@ -66,6 +68,7 @@ public:
 	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
 	void SetPlayerCurState(int state);
+	void AddLeaf(int n);
 	void AddMP(int n);
 	void AddWeight(int n);
 	void AddScore(int n);
@@ -91,8 +94,9 @@ private:
 	float MOVE_SPEED;	//基本移動速度
 
 	int playerNum;		//プレイヤー番号
-	int score;
-	int mp;				//MP
+	int score;			//スコア
+	int leaf;			//葉っぱ所持数
+	int mp;				//MP所持数
 	int weight;			//運搬重量
 	int jumpCount;		//現在ジャンプ回数
 	bool isDash;		//ダッシュ中判定
@@ -101,6 +105,8 @@ private:
 	bool atkComboFlg;	//連続攻撃判定
 	int	 comboWaitFrm;	//コンボ先行入力フレーム
 	bool isMagicReady;	//MP変換予備動作完了フラグ
+	float chargeSpeed;	//MP変換スピード
+	int chargeFrm;		//MP変換経過フレーム
 
 	bool finishAtkAnim;
 

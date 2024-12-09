@@ -2,6 +2,7 @@
 #include "Object3D.h"
 #include "Player.h"
 #include "Stage.h"
+#include "LeafEffect.h"
 
 class Dust : public Object3D {
 public:

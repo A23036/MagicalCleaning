@@ -8,6 +8,7 @@
 #include "DustBox.h"
 #include "SlashEffect.h"
 #include "PowerUpEffect.h"
+#include "LeafEffect.h"
 
 Player::Player()
 {
@@ -75,9 +76,12 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 
 	speedY = 0;
 	score = 0;
+	leaf = 0;
 	mp = 100;
 	weight = 0;
 	jumpCount = 0;
+	chargeSpeed = 0;
+	chargeFrm = 0;
 
 	isDash = false;
 	isFly = false;
@@ -525,6 +529,11 @@ void Player::SetPlayerCurState(int state)
 	prevState = state;
 }
 
+void Player::AddLeaf(int n)
+{
+	leaf += n;
+}
+
 void Player::AddMP(int n)
 {
 	mp += n;
@@ -654,6 +663,7 @@ void Player::UpdateOnGround()
 		animator->MergePlay(aChargeReady, 0);
 		animator->SetPlaySpeed(1.0f);
 		state = sCharge;
+		chargeSpeed = 1.0f; //MP変換速度初期値
 	}
 }
 
@@ -928,6 +938,21 @@ void Player::UpdateCharge()
 	if (animator->PlayingID() == aChargeReady && animator->Finished()) {
 		animator->MergePlay(aCharge, 0);
 		isMagicReady = true;
+	}
+
+	if (isMagicReady) {
+
+		if (chargeSpeed <= (chargeFrm * (1.0f / 60.0f)) && leaf > 0) {
+			new LeafEffect(transform.position,VECTOR3(0.5f, 0.5f, 0.5f),1);
+			mp++;	//MP加算
+			leaf--; //葉っぱを減らす
+			if (chargeSpeed > 0.1f) {
+				chargeSpeed -= 0.1f;
+			}
+			chargeFrm = 0;
+		}
+
+		chargeFrm++;
 	}
 }
 

@@ -357,7 +357,7 @@
     <ClInclude Include="Src\Block.h">
       <Filter>ソース ファイル\14_Map</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ReafEffect.h">
+    <ClInclude Include="Src\LeafEffect.h">
       <Filter>ソース ファイル\13_Effect</Filter>
     </ClInclude>
     <ClInclude Include="Src\Particle.h">
@@ -521,7 +521,7 @@
     <ClCompile Include="Src\Particle.cpp">
       <Filter>ソース ファイル\13_Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ReafEffect.cpp">
+    <ClCompile Include="Src\LeafEffect.cpp">
       <Filter>ソース ファイル\13_Effect</Filter>
     </ClCompile>
   </ItemGroup>

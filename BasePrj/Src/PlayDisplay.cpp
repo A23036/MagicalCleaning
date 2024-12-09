@@ -99,8 +99,11 @@ void PlayDisplay::Draw()
 
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 	char str[64]; //文字列を用意
+	sprintf_s<64>(str, "Leaf:%3d", pl->GetLeaf());
+	GameDevice()->m_pFont->Draw(WINDOW_WIDTH * 1 / 7, WINDOW_HEIGHT - 120, str, 50, RGB(255, 0, 0));
+	
 	sprintf_s<64>(str, "MP:%3d", pl->GetMP());
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH * 1/4 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 0,0));
+	GameDevice()->m_pFont->Draw(WINDOW_WIDTH * 1/3 , WINDOW_HEIGHT - 120, str, 50, RGB(255, 0,0));
 
 	switch (pl->GetSelectPower()){ //選択中パワー表記
 	case pMS:
