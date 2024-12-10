@@ -354,9 +354,6 @@
     <ClInclude Include="Src\PowerUpEffect.h">
       <Filter>ソース ファイル\13_Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Block.h">
-      <Filter>ソース ファイル\14_Map</Filter>
-    </ClInclude>
     <ClInclude Include="Src\LeafEffect.h">
       <Filter>ソース ファイル\13_Effect</Filter>
     </ClInclude>
@@ -514,9 +511,6 @@
     </ClCompile>
     <ClCompile Include="Src\PowerUpEffect.cpp">
       <Filter>ソース ファイル\13_Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Block.cpp">
-      <Filter>ソース ファイル\14_Map</Filter>
     </ClCompile>
     <ClCompile Include="Src\Particle.cpp">
       <Filter>ソース ファイル\13_Effect</Filter>

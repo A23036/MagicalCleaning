@@ -6,7 +6,6 @@
 #include "DataCarrier.h"
 #include "Stage.h"
 #include "Camera.h"
-#include "Block.h"
 
 using namespace std;
 
@@ -68,6 +67,8 @@ public:
 	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
 	void SetPlayerCurState(int state);
+	void SetBlowVec(VECTOR3 vec);
+	void SetSpeedY(float y);
 	void AddLeaf(int n);
 	void AddMP(int n);
 	void AddWeight(int n);
@@ -79,7 +80,6 @@ private:
 	Stage* st;
 	Camera* cm;
 	list<Player*> otherPlayers;
-	list<Block*> blocks;
 
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理
@@ -107,6 +107,7 @@ private:
 	bool isMagicReady;	//MP変換予備動作完了フラグ
 	float chargeSpeed;	//MP変換スピード
 	int chargeFrm;		//MP変換経過フレーム
+	VECTOR3 blowVec;	//吹っ飛ばしベクトル
 
 	bool finishAtkAnim;
 

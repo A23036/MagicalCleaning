@@ -284,7 +284,6 @@
     <ClInclude Include="Libs\Imgui\imstb_truetype.h" />
     <ClInclude Include="Src\Animator.h" />
     <ClInclude Include="Src\BBox.h" />
-    <ClInclude Include="Src\Block.h" />
     <ClInclude Include="Src\BlockFileName.h" />
     <ClInclude Include="Src\Camera.h" />
     <ClInclude Include="Src\CapsuleCollider.h" />
@@ -344,7 +343,6 @@
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Animator.cpp" />
     <ClCompile Include="Src\BBox.cpp" />
-    <ClCompile Include="Src\Block.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\Coin.cpp" />
     <ClCompile Include="Src\Collision.cpp" />
