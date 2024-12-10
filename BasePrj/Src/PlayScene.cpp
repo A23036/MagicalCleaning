@@ -128,7 +128,7 @@ void PlayScene::UpdateReady()
 
 void PlayScene::UpdatePose()
 {
-	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 2, 0)) {
+	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 9, 0)) {
 		state = sGamePlay;
 		isPlay = true;
 	}
@@ -145,7 +145,7 @@ void PlayScene::UpdateGamePlay()
 	}
 	
 	//ƒ|[ƒY
-	if (GameDevice()->m_pDI->CheckJoy(KD_DAT, 6) && GameDevice()->m_pDI->CheckJoy(KD_DAT, 7)) {
+	if (GameDevice()->m_pDI->CheckJoy(KD_DAT, 9)) {
 		state = sPose;
 		isPlay = false;
 	}

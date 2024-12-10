@@ -17,14 +17,14 @@ Particle::Particle()
 
 Particle::~Particle()
 {
-//	SAFE_DELETE(vertexBuffer);
-//	SAFE_DELETE(texture);
+	SAFE_RELEASE(vertexBuffer);
+	SAFE_RELEASE(texture);
 }
 
 void Particle::LoadTexture(std::string filename, const VECTOR2& _uv)
 {
-	SAFE_DELETE(texture);
-	SAFE_DELETE(vertexBuffer);
+	SAFE_RELEASE(texture);
+	SAFE_RELEASE(vertexBuffer);
 	GameDevice()->m_pD3D->CreateShaderResourceViewFromFile(filename.c_str(), &texture);
 	uvSize = _uv;
 	static const Info verts[] = {

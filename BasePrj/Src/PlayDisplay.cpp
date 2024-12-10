@@ -105,8 +105,8 @@ void PlayDisplay::Draw()
 
 	//Leaf、MP、能力表示----------
 	//UIベース
-	sprite->SetSrc(playUiImage, 0, 112, 332, 48,332*2,48*2);
-	sprite->Draw(WINDOW_WIDTH * 1 / 4, WINDOW_HEIGHT - 130);
+	sprite->SetSrc(playUiImage, 0, 112, 412, 48,412 * 2,48 * 2);
+	sprite->Draw(200, WINDOW_HEIGHT - 130);
 
 	//Leaf表示
 	//Leaf所持数を割合ゲージで表示
@@ -115,52 +115,66 @@ void PlayDisplay::Draw()
 	rate = (float)pl->GetLeaf() / (float)pl->GetCarWeight();
 	offY = 48 * rate;
 	sprite->SetSrc(playUiImage, 0, 160 + 48 - offY, 48, 48, 48 * 2, 48 * 2);
-	sprite->Draw(WINDOW_WIDTH * 1 / 4, WINDOW_HEIGHT - 130 + 48*2 - offY*2);
+	sprite->Draw(200, WINDOW_HEIGHT - 130 + 48*2 - offY*2);
 	
 	//Leaf所持数の表示
 	sprintf_s<64>(str, "%3d", pl->GetLeaf());
 	//文字影
-	font->Draw(WINDOW_WIDTH * 1 / 4 - 10, WINDOW_HEIGHT - 115, str, 70, RGB(0, 0, 120));
+	font->Draw(200 - 10, WINDOW_HEIGHT - 115, str, 70, RGB(0, 0, 120));
 
 	if (rate == 1) { //Leafが所持上限の時赤文字
-		font->Draw(WINDOW_WIDTH * 1 / 4 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 0, 0));
+		font->Draw(200 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 0, 0));
 	}
 	else {
-		font->Draw(WINDOW_WIDTH * 1 / 4 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 255, 255));
+		font->Draw(200 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 255, 255));
 	}
 	
 	//MP表示
 	sprintf_s<64>(str, "%3d", pl->GetMP());
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH * 1/3 + 25, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
+	GameDevice()->m_pFont->Draw(340, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
 
 	int offX;
 	rate = (float)pl->GetMP() / (float)pl->GetPowerCost(pl->GetSelectPower());
 	if (rate >= 1.0f) {
 		rate = 1.0f;
 	}
-	offX = 156 * rate;
+	offX = 236 * rate;
 	sprite->SetSrc(playUiImage, 172, 166, offX, 4, offX*2, 4*2);
-	sprite->Draw(WINDOW_WIDTH * 1 / 4 + 172*2, WINDOW_HEIGHT - 130 + 80);
+	sprite->Draw(200 + 172*2, WINDOW_HEIGHT - 130 + 80);
 
 	
-	switch (pl->GetSelectPower()){ //選択中パワー表記
+	switch (pl->GetSelectPower()){ //選択中パワー描画(アイコンと文字)
 	case pMS:
-		sprintf_s<64>(str, "MoveSpeed");
+		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 90, 90);
+		sprite->Draw(660, 610);
+		sprite->SetSrc(playUiImage, 0, 68, 68, 40, 68*2.5, 40*2.5);
+		sprite->Draw(760, 605);
 		break;
 	case pJN:
-		sprintf_s<64>(str, "JumpNum");
+		sprite->SetSrc(playUiImage, 64, 0, 64, 64, 90, 90);
+		sprite->Draw(660, 610);
+		sprite->SetSrc(playUiImage, 72, 68, 68, 40, 68 * 2.5, 40 * 2.5);
+		sprite->Draw(760, 605);
 		break;
 	case pAS:
-		sprintf_s<64>(str, "AtkSpeed");
+		sprite->SetSrc(playUiImage, 128, 0, 64, 64, 90, 90);
+		sprite->Draw(660, 610);
+		sprite->SetSrc(playUiImage, 144, 68, 68, 40, 68 * 2.5, 40 * 2.5);
+		sprite->Draw(760, 605);
 		break;
 	case pAR:
-		sprintf_s<64>(str, "AtkRange");
+		sprite->SetSrc(playUiImage, 192, 0, 64, 64, 90, 90);
+		sprite->Draw(660, 610);
+		sprite->SetSrc(playUiImage, 216, 68, 68, 40, 68 * 2.5, 40 * 2.5);
+		sprite->Draw(760, 605);
 		break;
 	case pCW:
-		sprintf_s<64>(str, "CarWeight");
+		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 90, 90);
+		sprite->Draw(660, 610);
+		sprite->SetSrc(playUiImage, 288, 68, 68, 40, 68 * 2.5, 40 * 2.5);
+		sprite->Draw(760, 605);
 		break;
 	}
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 + 40, WINDOW_HEIGHT - 110, str, 50, RGB(255, 0,0));
 	
 	
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 320, WINDOW_HEIGHT - 120, _T("COST"), 40, RGB(255, 255, 255));
