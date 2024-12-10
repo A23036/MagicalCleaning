@@ -7,7 +7,7 @@ Dust::Dust(int number, VECTOR3 pos)
 	SetTag("STAGEOBJ");
 	mesh = new CFbxMesh();
 
-	mesh->Load("data/Reaf/reaf.mesh");
+	mesh->Load("data/Leaf/leaf.mesh");
 	transform.position = pos;
 
 	SmallSize = 0.5f;
@@ -90,7 +90,7 @@ void Dust::AddDamage(Player* player,int damage)
 	new LeafEffect(transform.position, VECTOR3(size, size, size),10);
 
 	if (player->GetLeaf()+1 <= player->GetCarWeight()) {
-		player->AddLeaf(10);
+		player->AddLeaf(1);
 	}
 	//player->AddScore(1);
 	hp -= damage;

@@ -5,7 +5,7 @@ LeafEffect::LeafEffect(VECTOR3 pos,VECTOR3 scale, int num)
     ObjectManager::SetDrawOrder(this, -1000); //最初に描画
 
 	// 画像ファイルをロード
-	LoadTexture("data/Reaf/reafchip.png", VECTOR2(1, 1));
+	LoadTexture("data/Leaf/leafchip.png", VECTOR2(1, 1));
 	//表示する座標
 	transform.position = pos;
 	transform.scale = scale;
@@ -17,7 +17,7 @@ LeafEffect::LeafEffect(VECTOR3 pos,VECTOR3 scale, int num)
 	con.velocity = VECTOR3(0.01f, 0.01f, 0.0f);
 	controls.push_back(con);
     leafNum = num;
-	lifeTime = 2.0f;
+	lifeTime = 1.5f;
 	frm = 0;
     isFinish = false;
 
@@ -31,6 +31,8 @@ LeafEffect::~LeafEffect()
 void LeafEffect::Update()
 {
     if (frm * (1.0f / 60.0f) >= lifeTime) {
+        chips.clear();
+        controls.clear();
         isFinish = true;
         DestroyMe();
         return;

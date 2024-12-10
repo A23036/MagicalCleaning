@@ -1,4 +1,5 @@
 #include "Particle.h"
+#include <algorithm>
 
 namespace {
 	struct Info {
@@ -11,6 +12,7 @@ Particle::Particle()
 {
 	useAddBlend = false;
 	texture = nullptr;
+	//vertexBuffer = nullptr;
 }
 
 Particle::~Particle()
@@ -68,8 +70,26 @@ void Particle::Draw()
 		UINT mask = 0xffffffff;
 		d3d->m_pDeviceContext->OMSetBlendState(d3d->m_pBlendStateAdd, NULL, mask);
 	}
+	
+	std::list<Chip> drawChips;
+	// Chipをカメラとの距離の降順に並び替える
+	for (auto& c : chips) {
+		// 描画中心位置の移動をする
+		VECTOR3 off = VECTOR3(-c.offset.x, c.offset.y, -c.offset.z) + transform.position;
 
-	for (auto c : chips) {
+		//カメラからの距離?
+		off = off * XMMatrixTranspose(world * GameDevice()->m_mView * GameDevice()->m_mProj);
+
+		c.order = off.z;
+		drawChips.push_back(c);
+	}
+
+	// 距離に応じたソート
+	drawChips.sort([](const Chip& a, const Chip& b) {
+		return a.order > b.order; // 降順
+		});
+
+	for (auto c : drawChips) {
 		//ビルボードの、視点を向くワールドトランスフォームを求める
 		// 描画中心位置の移動をする
 		MATRIX4X4 off = XMMatrixTranslation(-c.offset.x, c.offset.y, -c.offset.z);

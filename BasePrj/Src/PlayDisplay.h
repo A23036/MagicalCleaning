@@ -17,7 +17,8 @@ public:
 
 private:
 	CSprite* sprite;
-	CSpriteImage* countDownImage;		//カウントダウンイメージ
+	CSpriteImage* countDownImage;	//カウントダウンイメージ
+	CSpriteImage* playUiImage;		//プレイ画面UIイメージ
 	DataCarrier* dc;
 	EasingCalc* ec;
 

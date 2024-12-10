@@ -145,19 +145,15 @@ void Player::Update()
 		child->SetPos(bone);
 	}
 	
-	/*
-	ImGui::SetNextWindowPos(ImVec2(0, 50));
-	ImGui::SetNextWindowSize(ImVec2(100, 60));
-	ImGui::Begin("isFly");
-	if (isDash) {
-		ImGui::Text("Fly");
-	}
-	else
-	{
-		ImGui::Text("notFly");
+	
+	ImGui::SetNextWindowPos(ImVec2(600, 0));
+	ImGui::SetNextWindowSize(ImVec2(100, 120));
+	ImGui::Begin("Player");
+	if (ImGui::Button("DataLoad")) {
+		CsvLoad();
 	}
 	ImGui::End();
-	*/
+	
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 160));

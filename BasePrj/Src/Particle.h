@@ -15,6 +15,7 @@ public:
 		float scale;
 		VECTOR2 uv;
 		float alpha;
+		float order; //ƒJƒƒ‰‚Æ‚Ì‹——£
 		Chip() {
 			offset = VECTOR3(0, 0, 0);
 			scale = 1.0f;
