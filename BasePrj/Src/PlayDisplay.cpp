@@ -145,34 +145,64 @@ void PlayDisplay::Draw()
 	
 	switch (pl->GetSelectPower()){ //選択中パワー描画(アイコンと文字)
 	case pMS:
-		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 90, 90);
-		sprite->Draw(660, 610);
-		sprite->SetSrc(playUiImage, 0, 68, 68, 40, 68*2.5, 40*2.5);
-		sprite->Draw(760, 605);
+		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 90, 90);		//アイコン
+		sprite->Draw(680, 610);
+		sprite->SetSrc(playUiImage, 0, 68, 68, 40, 68*2.5, 40*2.5); //文字
+		sprite->Draw(780, 605);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);			//左右のパワーは半透明
+		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 40, 40);	//左のパワー
+		sprite->Draw(580, 660);
+		sprite->SetSrc(playUiImage, 64, 0, 64, 64, 40, 40);		//右のパワー
+		sprite->Draw(970, 660);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);				//透明度を戻す
 		break;
 	case pJN:
 		sprite->SetSrc(playUiImage, 64, 0, 64, 64, 90, 90);
-		sprite->Draw(660, 610);
+		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 72, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(760, 605);
+		sprite->Draw(780, 605);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
+		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 40, 40);
+		sprite->Draw(580, 660);
+		sprite->SetSrc(playUiImage, 128, 0, 64, 64, 40, 40);
+		sprite->Draw(970, 660);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 		break;
 	case pAS:
 		sprite->SetSrc(playUiImage, 128, 0, 64, 64, 90, 90);
-		sprite->Draw(660, 610);
+		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 144, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(760, 605);
+		sprite->Draw(780, 605);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
+		sprite->SetSrc(playUiImage, 64, 0, 64, 64, 40, 40);
+		sprite->Draw(580, 660);
+		sprite->SetSrc(playUiImage, 192, 0, 64, 64, 40, 40);
+		sprite->Draw(970, 660);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 		break;
 	case pAR:
 		sprite->SetSrc(playUiImage, 192, 0, 64, 64, 90, 90);
-		sprite->Draw(660, 610);
+		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 216, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(760, 605);
+		sprite->Draw(780, 605);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
+		sprite->SetSrc(playUiImage, 128, 0, 64, 64, 40, 40);
+		sprite->Draw(580, 660);
+		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 40, 40);
+		sprite->Draw(970, 660);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 		break;
 	case pCW:
 		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 90, 90);
-		sprite->Draw(660, 610);
+		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 288, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(760, 605);
+		sprite->Draw(780, 605);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
+		sprite->SetSrc(playUiImage, 192, 0, 64, 64, 40, 40);
+		sprite->Draw(580, 660);
+		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 40, 40);
+		sprite->Draw(970, 660);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 		break;
 	}
 	

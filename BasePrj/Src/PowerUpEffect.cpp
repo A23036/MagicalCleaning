@@ -1,6 +1,6 @@
 #include "PowerUpEffect.h"
 
-PowerUpEffect::PowerUpEffect(Object3D* parentModel,VECTOR3 pos)
+PowerUpEffect::PowerUpEffect(Object3D* parentModel,VECTOR3 pos,int num)
 {
     ObjectManager::SetDrawOrder(this, -1000); //Å‰‚É•`‰æ
 
@@ -9,6 +9,26 @@ PowerUpEffect::PowerUpEffect(Object3D* parentModel,VECTOR3 pos)
     //SetTag("EFFECT");
     mesh = new CFbxMesh();
     mesh->Load("data/Effect/PowerUpEffect.mesh");
+    
+    switch (num) { //‹­‰»”\—Í‚²‚Æ‚ÉF‚ð•ÏX
+    case 0:
+        mesh->m_vDiffuse = VECTOR4(0.2156, 0.1921, 0.9607, 1);
+        break;
+    case 1:
+        mesh->m_vDiffuse = VECTOR4(0.9607, 0.1921, 0.9333, 1);
+        break;
+    case 2:
+        mesh->m_vDiffuse = VECTOR4(0.9333, 0.9607, 0.1921, 1);
+        break;
+    case 3:
+        mesh->m_vDiffuse = VECTOR4(0.9607, 0.2156, 0.1921, 1);
+        break;
+    case 4:
+        mesh->m_vDiffuse = VECTOR4(0.1921, 0.9607, 0.2156, 1);
+        break;
+    default:
+        break;
+    }
 
     transform.position = pos;
     lifeTime = 0.25f;

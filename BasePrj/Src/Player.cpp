@@ -117,7 +117,6 @@ Player::~Player()
 void Player::Start()
 {
 	otherPlayers = ObjectManager::FindGameObjects<Player>();
-	blocks = ObjectManager::FindGameObjects<Block>();
 	dc = ObjectManager::FindGameObject<DataCarrier>();
 	st = ObjectManager::FindGameObject<Stage>();
 	cm = ObjectManager::FindGameObject<Camera>();
@@ -228,7 +227,7 @@ void Player::Update()
 				mp -= MoveSpeedC[msNum];
 				msNum++;
 				moveSpeed = MoveSpeedT[msNum];
-				new PowerUpEffect(this,transform.position);
+				new PowerUpEffect(this,transform.position,selectPower);
 			}
 			break;
 		case pJN:
@@ -236,7 +235,7 @@ void Player::Update()
 			{
 				mp -= JumpNumC[jnNum];
 				jnNum++;
-				new PowerUpEffect(this, transform.position);
+				new PowerUpEffect(this, transform.position, selectPower);
 				if (jnNum == JnTableNum - 1) {
 					canFly = true;
 				}
@@ -251,7 +250,7 @@ void Player::Update()
 				mp -= AtkSpeedC[asNum];
 				asNum++;
 				atkSpeed = AtkSpeedT[asNum];
-				new PowerUpEffect(this, transform.position);
+				new PowerUpEffect(this, transform.position, selectPower);
 			}
 			break;
 		case pAR:
@@ -260,7 +259,7 @@ void Player::Update()
 				mp -= AtkRangeC[arNum];
 				arNum++;
 				atkRange = AtkRangeT[arNum];
-				new PowerUpEffect(this, transform.position);
+				new PowerUpEffect(this, transform.position, selectPower);
 			}
 			break;
 		case pCW:
@@ -269,7 +268,7 @@ void Player::Update()
 				mp -= CarWeightC[cwNum];
 				cwNum++;
 				carWeight = CarWeightT[cwNum];
-				new PowerUpEffect(this, transform.position);
+				new PowerUpEffect(this, transform.position, selectPower);
 			}
 			break;
 		}
@@ -302,12 +301,6 @@ void Player::Update()
 	//ステージ
 	st->MapCol()->IsCollisionMoveGravity(posOld, transform.position);
 
-	//ブロック
-	/*
-	for (Block* block : blocks) {
-		block->BlockCol()->IsCollisionMoveGravity(posOld, transform.position);
-	}
-	*/
 	// ImGuiウィンドウの位置とサイズを設定
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 60));

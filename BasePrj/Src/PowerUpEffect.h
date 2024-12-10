@@ -3,7 +3,7 @@
 
 class PowerUpEffect : public Object3D {
 public:
-	PowerUpEffect(Object3D* parentModel,VECTOR3 pos);
+	PowerUpEffect(Object3D* parentModel,VECTOR3 pos,int num);
 	~PowerUpEffect();
 	void Update();
 
