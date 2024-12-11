@@ -1,6 +1,7 @@
 #include "Dust.h"
 #include "Stage.h"
 #include "Player.h"
+#include "PlayScene.h"
 
 Dust::Dust(int number, VECTOR3 pos)
 {
@@ -50,7 +51,7 @@ void Dust::Update()
 	posOld = transform.position;
 
 	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
-		transform.position.y -= 0.05f;
+		transform.position.y -= 0.2f;
 	}
 
 }
@@ -97,11 +98,13 @@ void Dust::AddDamage(Player* player,int damage)
 
 	if (hp <= 0)
 	{
-		//player->AddMP(maxHp);
-		//player->AddScore(maxHp);
+		SceneBase* scene = SceneManager::CurrentScene(); // 現在の PlayScene のインスタンス参照を取得
+		PlayScene* play = dynamic_cast<PlayScene*>(scene);
+		play->DustDestroyed(this); // PlayScene に通知
+		
 		DestroyMe();
+
 		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
-		new Dust(dustNum, pos);
 	}
 
 	size -= (MaxScale - 0.5f) / (float)maxHp;

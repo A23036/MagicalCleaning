@@ -4,6 +4,7 @@
 #include "SplitScreenLastDraw.h"
 #include "DataCarrier.h"
 #include "CsvReader.h"
+#include "Dust.h"
 
 class PlayScene : public SceneBase
 {
@@ -14,6 +15,7 @@ public:
 	void Draw() override;
 
 	void CsvLoad();
+	void DustDestroyed(Dust* dust);
 
 private:
 	PlayDisplay* pd;
@@ -26,10 +28,15 @@ private:
 	int GameTime;	//ゲーム時間
 	bool isPlay;	//ゲーム中フラグ
 
+	static const int MAX_DUST_NUM = 20; //最大生成ゴミ数
+	std::vector<Dust*> dustArray;
+
 	void UpdateReady();
 	void UpdatePose();
 	void UpdateGamePlay();
 	void UpdateFinish();
+	VECTOR3 GetRandomPosition();
+	int GetRandomSize();
 
 	enum GameState {
 		sReady = 0,	//開始前カウントダウン

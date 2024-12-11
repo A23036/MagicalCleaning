@@ -6,6 +6,7 @@
 #include "SplitScreenLastDraw.h"
 #include "Player.h"
 #include "Dust.h"
+#include "Sky.h"
 
 PlayScene::PlayScene()
 {
@@ -16,26 +17,22 @@ PlayScene::PlayScene()
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrierはシングルトンで生成
 	
 	new Stage();
+	new Sky();
 
 	Player* p1 = new Player(0);
-	p1->SetPosition(0, 0, 0);
+	p1->SetPosition(-30, 0, -20);
 	p1->SetTag("Player1");
 	Player* p2 = new Player(1);
-	p2->SetPosition(0, 0, 2);
+	p2->SetPosition(-10, 0, -25);
 	p2->SetTag("Player2");
 	Player* p3 = new Player(2);
-	p3->SetPosition(2, 0, 0);
+	p3->SetPosition(10, 0, -30);
 	p3->SetTag("Player3");
 	Player* p4 = new Player(3);
-	p4->SetPosition(2, 0, 2);
+	p4->SetPosition(30, 0, -40);
 	p4->SetTag("Player4");
 
-	new Dust(0, VECTOR3(10, 1, 0));
-	new Dust(1, VECTOR3(10, 1, 10));
-	new Dust(2, VECTOR3(10, 1, -10));
-
 	new Camera();
-	//new Stage(4);
 	
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
@@ -135,6 +132,27 @@ void PlayScene::UpdateGamePlay()
 		state = sFinish;
 		isPlay = false;
 	}
+
+	// 配列の初期化と Dust の生成
+	if (dustArray.empty())
+	{
+		for (int i = 0; i < MAX_DUST_NUM; ++i)
+		{
+			int size = GetRandomSize();
+			VECTOR3 position = GetRandomPosition();
+			dustArray.push_back(new Dust(size, position));
+		}
+	}
+
+	// インスタンスがなくなったら再生成
+	if (dustArray.size() < MAX_DUST_NUM) {
+		for (int i = 0; i < (MAX_DUST_NUM - dustArray.size()); i++) {
+			int size = GetRandomSize();
+			VECTOR3 position = GetRandomPosition();
+			Dust* d = new Dust(size, position);
+			dustArray.push_back(d);
+		}
+	}
 	
 	//ポーズ
 	if (GameDevice()->m_pDI->CheckJoy(KD_DAT, 9)) {
@@ -159,5 +177,37 @@ void PlayScene::UpdateFinish()
 		}
 		dc->SetWinnerId(winner); // 勝者を保存
 		SceneManager::ChangeScene("ResultScene");
+	}
+}
+
+VECTOR3 PlayScene::GetRandomPosition()
+{
+	int x = Random(-40,40);		// -40 ~ 40
+	int z = Random(-40, 40);	// -40 ~ 40
+	int y = Random(10, 15);		// 10~15
+	return VECTOR3(x, y, z);
+}
+
+int PlayScene::GetRandomSize()
+{
+	int size = Random(0, 20);
+	if (size > 19) {
+		return 2;
+	}
+	else if (size > 15) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+void PlayScene::DustDestroyed(Dust* dust)
+{
+	// 配列内から該当の Dust を削除
+	auto it = std::find(dustArray.begin(), dustArray.end(), dust);
+	if (it != dustArray.end())
+	{
+		dustArray.erase(it); // 配列から削除
 	}
 }

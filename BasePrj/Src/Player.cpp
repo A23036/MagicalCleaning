@@ -165,7 +165,7 @@ void Player::Update()
 	}
 	ImGui::End();
 	
-	/*
+	
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 160));
 	ImGui::Begin("state");
@@ -193,7 +193,7 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-	*/
+	
 
 	if (dc->GetIsPlay()) {
 		animator->Update();
@@ -309,6 +309,11 @@ void Player::Update()
 	//	transform.position += push;
 	//}
 
+	//落下処理
+	if (transform.position.y <= -30.0f) {
+		transform.position = VECTOR3(0, 20, 0);
+	}
+
 	//当たり判定処理 // -- 2024.12.2
 	//ステージ
 	st->MapCol()->IsCollisionMoveGravity(posOld, transform.position);
@@ -316,8 +321,9 @@ void Player::Update()
 	//吹っ飛び
 	transform.position += blowVec;
 
+
 	// ImGuiウィンドウの位置とサイズを設定
-	
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 60));
 	ImGui::SetNextWindowSize(ImVec2(120, 400));
 	ImGui::Begin("PlayerPos");
@@ -326,7 +332,7 @@ void Player::Update()
 	ImGui::InputFloat("Z", &transform.position.z);
 	ImGui::InputFloat("speedY", &speedY);
 	ImGui::End();
-	/*
+	
 	// 入力ボタン確認
 	ImGui::SetNextWindowPos(ImVec2(0, 220));
 	ImGui::SetNextWindowSize(ImVec2(200, 120));
@@ -887,6 +893,25 @@ void Player::UpdateAttack2()
 				d->AddDamage(this, 1); //ダメージを与える
 			}
 		}
+		//他プレイヤーへの攻撃判定
+		for (Player* p : otherPlayers) {
+			SphereCollider pCol = p->Collider(); //他プレイヤーの判定球
+			SphereCollider atkCol = Collider();		//攻撃判定の球
+			atkCol.center = transform.position + forward; //攻撃判定の球を作る
+			atkCol.radius = 1.0f * atkRange;
+			VECTOR3 pushVec = pCol.center - atkCol.center;
+
+			float rSum = atkCol.radius + pCol.radius;
+			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+				// 当たってる
+				pushVec = XMVector3Normalize(pushVec);
+				pushVec *= 0.1f;
+				pushVec.y = 0.201f;
+				p->SetBlowVec(pushVec);
+				p->SetSpeedY(pushVec.y);
+				p->SetPlayerState(sJump);
+			}
+		}
 	}
 
 	auto di = GameDevice()->m_pDI;
@@ -945,6 +970,25 @@ void Player::UpdateAttack3()
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
 				d->AddDamage(this, 1); //ダメージを与える
+			}
+		}
+		//他プレイヤーへの攻撃判定
+		for (Player* p : otherPlayers) {
+			SphereCollider pCol = p->Collider(); //他プレイヤーの判定球
+			SphereCollider atkCol = Collider();		//攻撃判定の球
+			atkCol.center = transform.position + forward; //攻撃判定の球を作る
+			atkCol.radius = 1.0f * atkRange;
+			VECTOR3 pushVec = pCol.center - atkCol.center;
+
+			float rSum = atkCol.radius + pCol.radius;
+			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+				// 当たってる
+				pushVec = XMVector3Normalize(pushVec);
+				pushVec *= 0.1f;
+				pushVec.y = 0.201f;
+				p->SetBlowVec(pushVec);
+				p->SetSpeedY(pushVec.y);
+				p->SetPlayerState(sJump);
 			}
 		}
 	}

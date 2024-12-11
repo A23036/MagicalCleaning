@@ -35,24 +35,29 @@ Stage::Stage()
 	//mapCol->AddFbxLoad(mesh);	// -- 2024.12.2 
 	
 	mesh->Load("data/Map2/MapChip/stage01.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 0)); //移動させる場合、引数を追加
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(-25, 0, -25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
 
 	mesh = new CFbxMesh();
 
 	mesh->Load("data/Map2/MapChip/stage02.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(50, 0, 0)); //移動させる場合、引数を追加
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(25, 0, -25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
 
 	mesh = new CFbxMesh();
 
 	mesh->Load("data/Map2/MapChip/stage01.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 50)); //移動させる場合、引数を追加
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(-25, 0, 25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
 	mesh = new CFbxMesh();
 
 	mesh->Load("data/Map2/MapChip/stage02.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(50, 0, 50)); //移動させる場合、引数を追加
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(25, 0, 25)); //移動させる場合、引数を追加
+	meshes.push_back(mesh);
+	mesh = new CFbxMesh();
+
+	mesh->Load("data/Map2/MapChip/stage_wall.mesh");
+	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 0)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
 }
 
@@ -142,16 +147,19 @@ void Stage::Draw()
 	for (CFbxMesh* m : meshes) {
 		switch (i) {
 		case 0:
-			m->Render(XMMatrixTranslation(0, 0, 0));
+			m->Render(XMMatrixTranslation(-25, 0,-25));
 			break;
 		case 1:
-			m->Render(XMMatrixTranslation(50, 0, 0));
+			m->Render(XMMatrixTranslation(25, 0, -25));
 			break;
 		case 2:
-			m->Render(XMMatrixTranslation(0, 0, 50));
+			m->Render(XMMatrixTranslation(-25, 0, 25));
 			break;
 		case 3:
-			m->Render(XMMatrixTranslation(50, 0, 50));
+			m->Render(XMMatrixTranslation(25, 0, 25));
+			break;
+		case 4:
+			m->Render(XMMatrixTranslation(0, 0, 0));
 			break;
 		}
 		i++;
