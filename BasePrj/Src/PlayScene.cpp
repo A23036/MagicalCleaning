@@ -36,7 +36,14 @@ PlayScene::PlayScene()
 	
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
-	
+	list<Player*> players;
+	players.push_back(p1);
+	players.push_back(p2);
+	players.push_back(p3);
+	players.push_back(p4);
+
+	ssld->SetPlayers(players);
+
 	timer = 0;
 	frm = 0;
 	isPlay = false;
@@ -155,7 +162,7 @@ void PlayScene::UpdateGamePlay()
 	}
 	
 	//ƒ|[ƒY
-	if (GameDevice()->m_pDI->CheckJoy(KD_DAT, 9)) {
+	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 9)) {
 		state = sPose;
 		isPlay = false;
 	}

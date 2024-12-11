@@ -22,6 +22,10 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
 	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI.png"));
+
+	mapImage1 = new CSpriteImage(_T("data/Image/Play/map/stage1.png"));
+	mapImage2 = new CSpriteImage(_T("data/Image/Play/map/stage2.png"));
+
 	sprite = new CSprite();
 
 }
@@ -29,6 +33,8 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 SplitScreenLastDraw::~SplitScreenLastDraw()
 {
 	SAFE_DELETE(frameUiImage);
+	SAFE_DELETE(mapImage1);
+	SAFE_DELETE(mapImage2);
 	SAFE_DELETE(sprite);
 }
 
@@ -69,6 +75,64 @@ void SplitScreenLastDraw::Draw()
 
 			//画面分割枠描画
 			sprite->Draw(frameUiImage, 0, 0, 1024, 576, 1024, 576, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+
+			//マップ描画
+			//sprite->Draw(mapImage1, 608, 264, 50, 50, 50, 50);
+			//sprite->Draw(mapImage1, 608, 264+50, 50, 50, 50, 50);
+
+			//player位置表示
+			int posX,posY;
+
+			for (Player* pl : players){
+
+				//左端 610 右端 745
+				posX = 610;
+				//上端 335 下端 465
+				posY = 465;
+
+				// ミニマップの描画範囲 (左端, 右端, 上端, 下端)
+				const int mapLeft = 610;
+				const int mapRight = 745;
+				const int mapTop = 335;
+				const int mapBottom = 465;
+
+				// ワールド座標系の範囲 (-50 ~ 50)
+				const float worldMin = -50.0f;
+				const float worldMax = 50.0f;
+
+				// ミニマップ上のX座標計算 (ワールドXをミニマップの範囲に変換)
+				float normalizedX = (pl->Position().x - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
+				int posX = mapLeft + static_cast<int>(normalizedX * (mapRight - mapLeft)); // マップ座標
+
+				// ミニマップ上のY座標計算 (ワールドZをミニマップの範囲に変換)
+				float normalizedZ = (pl->Position().z - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
+				int posY = mapBottom - static_cast<int>(normalizedZ * (mapBottom - mapTop)); // マップ座標
+
+				switch (pl->GetPlayerNum()) { //プレイヤーごとのカラー変更
+				case 0:
+					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
+					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(255, 0, 0));
+					break;
+				case 1:
+					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
+					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(0, 0, 255));
+					break;
+				case 2:
+					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
+					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(255, 255, 0));
+					break;
+				case 3:
+					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
+					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(0, 255, 0));
+					break;
+				default:
+					break;
+				}
+			}
+
+
+			//sprite->DrawRect()
 
 			//ゲーム時間表示
 			int minutes = gameTime / 60;
@@ -118,6 +182,8 @@ void SplitScreenLastDraw::Draw()
 
 }
 
+
+
 void SplitScreenLastDraw::SetState(int state)
 {
 	gameState = state;
@@ -126,4 +192,9 @@ void SplitScreenLastDraw::SetState(int state)
 void SplitScreenLastDraw::SetGameTime(int time)
 {
 	gameTime = time;
+}
+
+void SplitScreenLastDraw::SetPlayers(list<Player*> players)
+{
+	this->players = players;
 }
