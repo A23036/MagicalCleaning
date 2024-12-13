@@ -136,12 +136,13 @@ void Camera::Update()
 			updateCamera(0, VECTOR3(0, 0, 0), VECTOR3(0, 0, 0));
 		}
 	}
-
+	/*
 	ImGui::Begin("Camera");
 	if (ImGui::Button("DataLoad")) {
 		CsvLoad();
 	}
 	ImGui::End();
+	*/
 }
 
 void Camera::Draw()

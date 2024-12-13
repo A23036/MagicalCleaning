@@ -90,10 +90,7 @@ void Dust::AddDamage(Player* player,int damage)
 	//葉っぱの飛び散るエフェクトの再生
 	new LeafEffect(transform.position, VECTOR3(size, size, size),10);
 
-	if (player->GetLeaf()+1 <= player->GetCarWeight()) {
-		player->AddLeaf(1);
-	}
-	//player->AddScore(1);
+	player->AddLeaf(1);
 	hp -= damage;
 
 	if (hp <= 0)

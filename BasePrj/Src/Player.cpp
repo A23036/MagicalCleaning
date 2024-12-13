@@ -77,7 +77,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 100;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
@@ -156,7 +156,7 @@ void Player::Update()
 		child->SetPos(bone);
 	}
 	
-	
+	/*
 	ImGui::SetNextWindowPos(ImVec2(600, 0));
 	ImGui::SetNextWindowSize(ImVec2(100, 120));
 	ImGui::Begin("Player");
@@ -193,7 +193,7 @@ void Player::Update()
 		break;
 	}
 	ImGui::End();
-	
+	*/
 
 	if (dc->GetIsPlay()) {
 		animator->Update();
@@ -549,9 +549,19 @@ void Player::SetSpeedY(float y)
 	speedY = y;
 }
 
+void Player::ResetLeaf()
+{
+	leaf = 0;
+}
+
 void Player::AddLeaf(int n)
 {
-	leaf += n;
+	if (leaf + n > carWeight) { //所持上限までしか加算しない
+		leaf = carWeight;
+	}
+	else {
+		leaf += n;
+	}
 }
 
 void Player::AddMP(int n)
@@ -828,6 +838,9 @@ void Player::UpdateAttack1()
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);
 				p->SetPlayerState(sJump);
+				AddLeaf(p->GetLeaf());
+				p->ResetLeaf();
+				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
 			}
 		}
 	}
@@ -910,6 +923,9 @@ void Player::UpdateAttack2()
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);
 				p->SetPlayerState(sJump);
+				AddLeaf(p->GetLeaf());
+				p->ResetLeaf();
+				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
 			}
 		}
 	}
@@ -989,6 +1005,9 @@ void Player::UpdateAttack3()
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);
 				p->SetPlayerState(sJump);
+				AddLeaf(p->GetLeaf());
+				p->ResetLeaf();
+				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
 			}
 		}
 	}
@@ -1022,7 +1041,8 @@ void Player::UpdateCharge()
 
 		if (chargeSpeed <= (chargeFrm * (1.0f / 60.0f)) && leaf > 0) {
 			new LeafEffect(transform.position,VECTOR3(0.5f, 0.5f, 0.5f),1);
-			mp++;	//MP加算
+			mp++;		//MP加算
+			score++;	//スコア加算
 			leaf--; //葉っぱを減らす
 			if (chargeSpeed > 0.1f) {
 				chargeSpeed -= 0.1f;

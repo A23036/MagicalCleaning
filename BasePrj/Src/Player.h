@@ -69,6 +69,7 @@ public:
 	void SetPlayerCurState(int state);
 	void SetBlowVec(VECTOR3 vec);
 	void SetSpeedY(float y);
+	void ResetLeaf();
 	void AddLeaf(int n);
 	void AddMP(int n);
 	void AddWeight(int n);

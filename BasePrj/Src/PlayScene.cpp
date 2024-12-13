@@ -91,7 +91,7 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-	GameDevice()->m_pFont->Draw(750, 15, _T("PLAY SCENE"), 32, RGB(255, 0, 0));	
+	//GameDevice()->m_pFont->Draw(750, 15, _T("PLAY SCENE"), 32, RGB(255, 0, 0));	
 }
 
 void PlayScene::CsvLoad()
@@ -120,6 +120,17 @@ void PlayScene::UpdateReady()
 		state = sGamePlay;
 		isPlay = true;
 	}
+
+	// 配列の初期化と Dust の生成
+	if (dustArray.empty())
+	{
+		for (int i = 0; i < MAX_DUST_NUM; ++i)
+		{
+			int size = GetRandomSize();
+			VECTOR3 position = GetRandomPosition();
+			dustArray.push_back(new Dust(size, position));
+		}
+	}
 }
 
 void PlayScene::UpdatePose()
@@ -140,16 +151,7 @@ void PlayScene::UpdateGamePlay()
 		isPlay = false;
 	}
 
-	// 配列の初期化と Dust の生成
-	if (dustArray.empty())
-	{
-		for (int i = 0; i < MAX_DUST_NUM; ++i)
-		{
-			int size = GetRandomSize();
-			VECTOR3 position = GetRandomPosition();
-			dustArray.push_back(new Dust(size, position));
-		}
-	}
+	
 
 	// インスタンスがなくなったら再生成
 	if (dustArray.size() < MAX_DUST_NUM) {

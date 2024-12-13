@@ -5,7 +5,8 @@ class Sky : public Object3D {
 public:
 	Sky();
 	~Sky();
-	void Update();
+	void Update() override;
+	void Draw() override;
 private:
 	float rotate;
 };

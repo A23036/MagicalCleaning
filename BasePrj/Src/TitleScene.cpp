@@ -162,20 +162,21 @@ void TitleScene::Draw()
 			int n = sprite->GetSrcWidth() / 2;
 			int a = n;
 		}
-		GameDevice()->m_pFont->Draw(400, 15, _T("TITLE SCENE"), 32, RGB(255, 0, 0));
-		GameDevice()->m_pFont->Draw(400, 100, _T("[S]key : SELECT SCENE"), 32, RGB(255, 0, 0));
-		GameDevice()->m_pFont->Draw(400, 130, _T("[V]Key : VIEW MAP SCENE"), 32, RGB(255, 0, 0));
-		GameDevice()->m_pFont->Draw(400, 160, _T("[P]Key : PLAY SCENE"), 32, RGB(255, 0, 0));
+		//GameDevice()->m_pFont->Draw(400, 15, _T("TITLE SCENE"), 32, RGB(255, 0, 0));
+		//GameDevice()->m_pFont->Draw(400, 100, _T("[S]key : SELECT SCENE"), 32, RGB(255, 0, 0));
+		//GameDevice()->m_pFont->Draw(400, 130, _T("[V]Key : VIEW MAP SCENE"), 32, RGB(255, 0, 0));
+		//GameDevice()->m_pFont->Draw(400, 160, _T("[P]Key : PLAY SCENE"), 32, RGB(255, 0, 0));
 		
 		break;
 
 	}
 
 	//　デバッグ用アニメーションタイム表示
+	/*
 	char str[64];
 	sprintf_s<64>(str, "%.1f", animFrm * (1.0f / 60.0f));
 	GameDevice()->m_pFont->Draw(0, 0, str, 50, RGB(255, 255, 255));
-	
+	*/
 	animFrm++;
 }
 

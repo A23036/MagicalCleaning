@@ -109,21 +109,20 @@ void SplitScreenLastDraw::Draw()
 				float normalizedZ = (pl->Position().z - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
 				int posY = mapBottom - static_cast<int>(normalizedZ * (mapBottom - mapTop)); // マップ座標
 
+				//キャラクターアイコンベース
+				sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
+				sprite->DrawRect(posX + 1, posY + 1, 8, 8, RGB(255, 255, 255));
 				switch (pl->GetPlayerNum()) { //プレイヤーごとのカラー変更
 				case 0:
-					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
 					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(255, 0, 0));
 					break;
 				case 1:
-					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
 					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(0, 0, 255));
 					break;
 				case 2:
-					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
 					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(255, 255, 0));
 					break;
 				case 3:
-					sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
 					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(0, 255, 0));
 					break;
 				default:
@@ -140,18 +139,9 @@ void SplitScreenLastDraw::Draw()
 
 			char str[64];
 
+			
 			switch (gameState) {
 			case sReady:
-				/*
-				if (seconds <= 2) { //カウントダウン数字
-					sprintf_s(str, "%d", 3 - seconds);
-					GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 100, RGB(0, 0, 255));
-				}
-				else {	//「GO!」
-					sprintf_s(str, "GO!");
-					GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 66, WINDOW_HEIGHT / 2 - 98, str, 100, RGB(0, 0, 255));
-				}
-				*/
 				sprintf_s(str, "State:Ready");
 				break;
 
@@ -173,8 +163,8 @@ void SplitScreenLastDraw::Draw()
 				break;
 			}
 
-			GameDevice()->m_pFont->Draw(0, 0, str, 30, RGB(255, 255, 255));
-
+			//GameDevice()->m_pFont->Draw(0, 0, str, 30, RGB(255, 255, 255));
+			
 			// -----------------------------------------------------------------
 			GameDevice()->m_mProj = saveProj;	  // プロジェクションマトリックスを元に戻す
 		}

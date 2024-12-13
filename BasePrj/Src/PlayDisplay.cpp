@@ -206,7 +206,6 @@ void PlayDisplay::Draw()
 		break;
 	}
 	
-	
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 320, WINDOW_HEIGHT - 120, _T("COST"), 40, RGB(255, 255, 255));
 	sprintf_s<64>(str, "%3d", pl->GetPowerCost(pl->GetSelectPower()));
 
@@ -216,9 +215,20 @@ void PlayDisplay::Draw()
 	else{
 		GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 80, str, 40, RGB(255, 0, 0));
 	}
-	/*
+	
 	//スコア
-	sprintf_s<64>(str, "Score:%3d", pl->GetScore() );
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 70, 30, str, 50, RGB(255, 255, 0));
-	*/
+	sprite->SetSrc(75, 175, 176, 32, 176 * 1.5, 32 * 1.5);
+	sprite->Draw(WINDOW_WIDTH/2 - sprite->GetSrcWidth()-30,40);
+	sprintf_s<64>(str, "%3d", pl->GetScore() );
+	
+	// テキスト幅を計算する
+	int textWidth = strlen(str) * 60;
+
+	// 描画位置を右揃えに調整
+	int xPosition = (WINDOW_WIDTH / 2 - 130) + textWidth;
+
+	// テキストを描画
+	GameDevice()->m_pFont->Draw(xPosition+5, 32+5, str, 60, RGB(0,0,0));
+	GameDevice()->m_pFont->Draw(xPosition, 32, str, 60, RGB(255, 255, 255));
+	
 }
