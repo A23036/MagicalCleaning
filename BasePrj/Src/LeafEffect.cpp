@@ -11,11 +11,11 @@ LeafEffect::LeafEffect(VECTOR3 pos,VECTOR3 scale, int num)
 	transform.scale = scale;
 	// チップを追加
     
-	Chip c;
-	chips.push_back(c); //追加
-	ChipControl con;
-	con.velocity = VECTOR3(0.01f, 0.01f, 0.0f);
-	controls.push_back(con);
+	//Chip c;
+	//chips.push_back(c); //追加
+	//ChipControl con;
+	//con.velocity = VECTOR3(0.01f, 0.01f, 0.0f);
+	//controls.push_back(con);
     leafNum = num;
 	lifeTime = 1.5f;
 	frm = 0;
@@ -40,7 +40,7 @@ void LeafEffect::Update()
 
     // 最初のフレームで複数のオブジェクトを生成
     if (frm == 0) {
-        for (int i = 0; i <= leafNum; i++) {
+        for (int i = 0; i < leafNum; i++) {
             // チップの設定
             Chip c;
             c.scale = 1.0f;

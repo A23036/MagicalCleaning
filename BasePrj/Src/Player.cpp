@@ -230,8 +230,8 @@ void Player::Update()
 		break;
 	}
 	
-	
-	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 2, playerNum)) { //能力強化
+	auto di = GameDevice()->m_pDI;
+	if ((di->CheckKey(KD_TRG, DIK_UP) && playerNum == 0) || di->CheckJoy(KD_TRG, 2, playerNum)) { //能力強化
 		switch (selectPower) {
 		case pMS:
 			if (mp >= MoveSpeedC[msNum] && msNum < MsTableNum - 1)
@@ -287,13 +287,13 @@ void Player::Update()
 	}
 	
 	
-	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 4, playerNum)) { //強化能力変更
+	if ((di->CheckKey(KD_TRG, DIK_LEFT) && playerNum == 0) || di->CheckJoy(KD_TRG, 4, playerNum)) { //強化能力変更
 		selectPower--;
 		if (selectPower < 0) {
 			selectPower = 4;
 		}
 	}
-	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 5, playerNum)) { //強化能力変更
+	if ((di->CheckKey(KD_TRG, DIK_RIGHT) && playerNum == 0) || di->CheckJoy(KD_TRG, 5, playerNum)) { //強化能力変更
 		selectPower++;
 		if (selectPower > 4) {
 			selectPower = 0;
@@ -673,7 +673,7 @@ void Player::UpdateOnGround()
 	}
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
 
-	if ((di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckJoy(KD_TRG, 1, playerNum) )) { //ジャンプ
+	if ((di->CheckKey(KD_TRG, DIK_SPACE) && playerNum == 0) || di->CheckJoy(KD_TRG, 1, playerNum) ) { //ジャンプ
 		speedY = JUMP_POWER;
 		if (!isDash) {
 			animator->MergePlay(aJump, 0);
@@ -682,14 +682,14 @@ void Player::UpdateOnGround()
 		jumpCount++;
 		state = sJump;
 	}
-	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃
+	if ((di->CheckKey(KD_TRG, DIK_N) && playerNum == 0) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃
 		animator->MergePlay(aAttack1,0);
 		animator->SetPlaySpeed(1.0f * atkSpeed);
 		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
 		anmFrame = 0;
 	}
-	if (di->CheckKey(KD_TRG, DIK_M) || di->CheckJoy(KD_TRG, 3, playerNum)) { //MP変換
+	if ((di->CheckKey(KD_TRG, DIK_M) && playerNum == 0) || di->CheckJoy(KD_TRG, 3, playerNum)) { //MP変換
 		animator->MergePlay(aChargeReady, 0);
 		animator->SetPlaySpeed(1.0f);
 		state = sCharge;
