@@ -62,6 +62,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
 	mesh->LoadAnimation(aChargeReady, (f + "/chargeReady.anmx").c_str(), false);
 	mesh->LoadAnimation(aCharge, (f + "/charge.anmx").c_str(), true);
+	mesh->LoadAnimation(aBlow, (f + "/blow.anmx").c_str(), true);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -85,6 +86,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 
 	isDash = false;
 	isFly = false;
+	isBlow = false;
 	canFly = false;
 	finishAtkAnim = false;
 	atkComboFlg = false;
@@ -225,6 +227,9 @@ void Player::Update()
 		break;
 	case sCharge:
 		UpdateCharge();
+		break;
+	case sBlow:
+		UpdateBlow();
 		break;
 	default:
 		break;
@@ -534,7 +539,7 @@ void Player::SetPlayerState(int state)
 	this->state = state;
 }
 
-void Player::SetPlayerCurState(int state)
+void Player::SetPlayerPrevState(int state)
 {
 	prevState = state;
 }
@@ -547,6 +552,11 @@ void Player::SetBlowVec(VECTOR3 vec)
 void Player::SetSpeedY(float y)
 {
 	speedY = y;
+}
+
+void Player::SetIsBlow(bool isBlow)
+{
+	this->isBlow = isBlow;
 }
 
 void Player::ResetLeaf()
@@ -837,7 +847,11 @@ void Player::UpdateAttack1()
 				pushVec.y = 0.201f;
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);
-				p->SetPlayerState(sJump);
+				p->SetPlayerState(sBlow);
+				p->SetPlayerPrevState(sBlow);
+				p->SetIsBlow(true);
+				p->animator->MergePlay(aBlow, 0);
+				p->animator->SetPlaySpeed(2.0f);
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
@@ -922,7 +936,11 @@ void Player::UpdateAttack2()
 				pushVec.y = 0.201f;
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);
-				p->SetPlayerState(sJump);
+				p->SetPlayerState(sBlow);
+				p->SetPlayerPrevState(sBlow);
+				p->SetIsBlow(true);
+				p->animator->MergePlay(aBlow, 0);
+				p->animator->SetPlaySpeed(2.0f);
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
@@ -1004,7 +1022,11 @@ void Player::UpdateAttack3()
 				pushVec.y = 0.201f;
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);
-				p->SetPlayerState(sJump);
+				p->SetPlayerState(sBlow);
+				p->SetPlayerPrevState(sBlow);
+				p->SetIsBlow(true);
+				p->animator->MergePlay(aBlow, 0);
+				p->animator->SetPlaySpeed(2.0f);
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
@@ -1051,6 +1073,67 @@ void Player::UpdateCharge()
 		}
 
 		chargeFrm++;
+	}
+}
+
+void Player::UpdateBlow()
+{
+	transform.position.y += speedY * deltaTime;
+	speedY -= GRAVITY * deltaTime;	// 重力
+
+	if (isBlow && speedY <= -0.2f) { //吹っ飛びアニメーションの解除
+		animator->MergePlay(aFall, 0); //落下アニメーション
+		isBlow = false;
+	}
+
+	auto di = GameDevice()->m_pDI;
+	// コントローラースティックの入力を取得
+	// 正規化して -1.0～1.0 の範囲にする
+	float ix = di->GetJoyState(playerNum).lX / 1000.0f;
+	float iy = di->GetJoyState(playerNum).lY / 1000.0f;
+
+	// キーボード操作を取得(1Pのみ動かせる)
+	if (di->CheckKey(KD_DAT, DIK_W) && playerNum == 0) {
+		iy = -1.0f; // 前進
+	}
+	if (di->CheckKey(KD_DAT, DIK_S) && playerNum == 0) {
+		iy = 1.0f;  // 後退
+	}
+	if (di->CheckKey(KD_DAT, DIK_A) && playerNum == 0) {
+		ix = -1.0f; // 左移動
+	}
+	if (di->CheckKey(KD_DAT, DIK_D) && playerNum == 0) {
+		ix = 1.0f;  // 右移動
+	}
+
+	// スティックが入力されているか確認
+	if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
+		// 入力に基づいて移動方向を設定
+		VECTOR3 inputDirection = VECTOR3(ix, 0, -iy); // Z軸方向は反転
+
+		// カメラのY軸回転を取得
+		float cameraYRotation = cm->GetRotY(playerNum);
+
+		// カメラの回転に基づく移動ベクトルの計算
+		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
+		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
+		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+
+		// 移動の適用
+		transform.position += moveDirection * moveSpeed * deltaTime;
+
+		// プレイヤーの回転をカメラ基準で方向を向かせる
+		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
+
+	}
+
+	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) != clFall) {
+		// 吹っ飛び終了
+		isFly = false;
+		state = sOnGround;
+		jumpCount = 0;
+		speedY = 0;
+		blowVec = VECTOR3(0, 0, 0);
 	}
 }
 

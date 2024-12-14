@@ -17,6 +17,7 @@ enum State { //プレイヤー状態
 	sAttack2,
 	sAttack3,
 	sCharge,
+	sBlow,
 	sStop,
 };
 
@@ -66,9 +67,10 @@ public:
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
-	void SetPlayerCurState(int state);
+	void SetPlayerPrevState(int state);
 	void SetBlowVec(VECTOR3 vec);
 	void SetSpeedY(float y);
+	void SetIsBlow(bool isBlow);
 	void ResetLeaf();
 	void AddLeaf(int n);
 	void AddMP(int n);
@@ -88,6 +90,7 @@ private:
 	void UpdateAttack2();	//攻撃2中処理
 	void UpdateAttack3();	//攻撃3中処理
 	void UpdateCharge();	//MP変換中処理
+	void UpdateBlow();		//吹っ飛ばされ中処理
 
 	float deltaTime;
 	float GRAVITY;		//重力加速度
@@ -102,6 +105,7 @@ private:
 	int jumpCount;		//現在ジャンプ回数
 	bool isDash;		//ダッシュ中判定
 	bool isFly;			//飛行中判定
+	bool isBlow;		//吹っ飛び中判定
 	bool canFly;		//飛行可能判定
 	bool atkComboFlg;	//連続攻撃判定
 	int	 comboWaitFrm;	//コンボ先行入力フレーム
@@ -157,6 +161,7 @@ private:
 		aAttack3,
 		aChargeReady,
 		aCharge,
+		aBlow,
 	};
 
 	int state;		//プレイヤー状態
