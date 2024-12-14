@@ -56,16 +56,16 @@ void PlayDisplay::Draw()
 	//ゲーム開始時のカウントダウン表示
 	if (gameState == sReady) { 
 		if (gameTime == 0) {
-			sprite->SetSrc(countDownImage, 128, 0, 64, 64);
+			sprite->SetSrc(countDownImage, 132, 0, 66, 66);
 		}
 		if (gameTime == 1) {
-			sprite->SetSrc(countDownImage, 64, 0, 64, 64);
+			sprite->SetSrc(countDownImage, 66, 0, 66, 66);
 		}
 		if (gameTime == 2) {
-			sprite->SetSrc(countDownImage, 0, 0, 64, 64);
+			sprite->SetSrc(countDownImage, 0, 0, 66, 66);
 		}
 		if (gameTime == 3) {
-			sprite->SetSrc(countDownImage, 192, 0, 184, 64);
+			sprite->SetSrc(countDownImage, 198, 0, 186, 66);
 		}
 		int width, height;
 		VECTOR2 center;
