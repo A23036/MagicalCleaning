@@ -16,6 +16,7 @@ public:
 
 	void CsvLoad();
 	void DustDestroyed(Dust* dust);
+	void CalcRank();
 
 private:
 	PlayDisplay* pd;
@@ -23,10 +24,18 @@ private:
 	DataCarrier* dc;
 	CsvReader* csv;
 
+	list<Player*> players;
+
+	Player* p1;
+	Player* p2;
+	Player* p3;
+	Player* p4;
+
 	int timer;		//ゲーム経過時間(秒)
 	int frm;		//ゲーム経過時間(フレーム)
 	int GameTime;	//ゲーム時間
 	bool isPlay;	//ゲーム中フラグ
+	int rank[MAXPLAYER];	//順位
 
 	static const int MAX_DUST_NUM = 20; //最大生成ゴミ数
 	std::vector<Dust*> dustArray;

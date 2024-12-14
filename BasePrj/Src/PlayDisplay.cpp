@@ -142,8 +142,8 @@ void PlayDisplay::Draw()
 	sprite->SetSrc(playUiImage, 172, 166, offX, 4, offX*2, 4*2);
 	sprite->Draw(200 + 172*2, WINDOW_HEIGHT - 130 + 80);
 
-	
-	switch (pl->GetSelectPower()){ //選択中パワー描画(アイコンと文字)
+	//選択中パワー描画(アイコンと文字)
+	switch (pl->GetSelectPower()){ 
 	case pMS:
 		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 90, 90);		//アイコン
 		sprite->Draw(680, 610);
@@ -206,9 +206,9 @@ void PlayDisplay::Draw()
 		break;
 	}
 	
+	//MPコスト表示
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 320, WINDOW_HEIGHT - 120, _T("COST"), 40, RGB(255, 255, 255));
 	sprintf_s<64>(str, "%3d", pl->GetPowerCost(pl->GetSelectPower()));
-
 	if (pl->GetPowerCost(pl->GetSelectPower()) <= pl->GetMP()) { //mpが足りていたらコストを白色表示
 		GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 80, str, 40, RGB(255, 255, 255));
 	}
@@ -216,7 +216,7 @@ void PlayDisplay::Draw()
 		GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 80, str, 40, RGB(255, 0, 0));
 	}
 	
-	//スコア
+	//スコア表示
 	sprite->SetSrc(75, 175, 176, 32, 176 * 1.5, 32 * 1.5);
 	sprite->Draw(WINDOW_WIDTH/2 - sprite->GetSrcWidth()-30,40);
 	sprintf_s<64>(str, "%3d", pl->GetScore() );
@@ -225,10 +225,39 @@ void PlayDisplay::Draw()
 	int textWidth = strlen(str) * 60;
 
 	// 描画位置を右揃えに調整
-	int xPosition = (WINDOW_WIDTH / 2 - 130) + textWidth;
+	int PosX = (WINDOW_WIDTH / 2 - 130) + textWidth;
 
 	// テキストを描画
-	GameDevice()->m_pFont->Draw(xPosition+5, 32+5, str, 60, RGB(0,0,0));
-	GameDevice()->m_pFont->Draw(xPosition, 32, str, 60, RGB(255, 255, 255));
-	
+	GameDevice()->m_pFont->Draw(PosX+5, 32+5, str, 60, RGB(0,0,0));
+	GameDevice()->m_pFont->Draw(PosX, 32, str, 60, RGB(255, 255, 255));
+
+	//順位表示
+	int posX, posY = 565;
+	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
+	case 0:
+	case 2:
+		posX = 50;
+		break;
+	case 1:
+	case 3:
+		posX = 1160;
+		break;
+	}
+
+	switch (dc->GetRank(pl->GetPlayerNum())) { //順位ごとのスプライト変更
+	case 1: 
+		sprite->SetSrc(playUiImage, 2, 225, 146, 150, 146, 150);
+		break;
+	case 2:
+		sprite->SetSrc(playUiImage, 152, 225, 146, 150, 146, 150);
+		break;
+	case 3:
+		sprite->SetSrc(playUiImage, 301, 225, 146, 150, 146, 150);
+		break;
+	case 4:
+		sprite->SetSrc(playUiImage, 352, 225, 146, 150, 146, 150);
+		break;
+	}
+
+	sprite->Draw(posX,posY);
 }

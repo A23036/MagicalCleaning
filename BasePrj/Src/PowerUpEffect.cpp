@@ -44,6 +44,7 @@ PowerUpEffect::PowerUpEffect(Object3D* parentModel,VECTOR3 pos,int num)
 
 PowerUpEffect::~PowerUpEffect()
 {
+    SAFE_DELETE(mesh);
 }
 
 void PowerUpEffect::Update()

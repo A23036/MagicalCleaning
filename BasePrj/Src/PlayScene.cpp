@@ -19,16 +19,16 @@ PlayScene::PlayScene()
 	new Stage();
 	new Sky();
 
-	Player* p1 = new Player(0);
+	p1 = new Player(0);
 	p1->SetPosition(-30, 0, -20);
 	p1->SetTag("Player1");
-	Player* p2 = new Player(1);
+	p2 = new Player(1);
 	p2->SetPosition(-10, 0, -25);
 	p2->SetTag("Player2");
-	Player* p3 = new Player(2);
+	p3 = new Player(2);
 	p3->SetPosition(10, 0, -30);
 	p3->SetTag("Player3");
-	Player* p4 = new Player(3);
+	p4 = new Player(3);
 	p4->SetPosition(30, 0, -40);
 	p4->SetTag("Player4");
 
@@ -36,7 +36,7 @@ PlayScene::PlayScene()
 	
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
-	list<Player*> players;
+	
 	players.push_back(p1);
 	players.push_back(p2);
 	players.push_back(p3);
@@ -61,6 +61,9 @@ void PlayScene::Update()
 	dc->SetGameState(state);
 	dc->SetGameTime(timer);
 	dc->SetIsPlay(isPlay);
+
+	CalcRank();			//順位計算
+	dc->SetRank(rank);	//データ格納
 
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
 		SceneManager::ChangeScene("TitleScene");
@@ -218,5 +221,24 @@ void PlayScene::DustDestroyed(Dust* dust)
 	if (it != dustArray.end())
 	{
 		dustArray.erase(it); // 配列から削除
+	}
+}
+
+void PlayScene::CalcRank()
+{
+	int i = 0, j = 0, max = -1;
+	int arr[MAXPLAYER];
+	arr[0] = p1->GetScore();
+	arr[1] = p2->GetScore();
+	arr[2] = p3->GetScore();
+	arr[3] = p4->GetScore();
+
+	for (i = 0; i < MAXPLAYER; i++) {
+		rank[i] = 1;
+		for (j = 0; j < MAXPLAYER; j++) {
+			if (arr[j] > arr[i]) { //自分より大きいスコアがある場合、順位を1つ下げる
+				rank[i]++; 
+			}
+		}
 	}
 }

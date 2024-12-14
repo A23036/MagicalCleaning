@@ -116,6 +116,7 @@ Player::~Player()
 {
 	SAFE_DELETE(mesh);
 	SAFE_DELETE(animator);
+	SAFE_DELETE(csv);
 }
 
 void Player::Start()
@@ -151,7 +152,7 @@ void Player::Update()
 		else {
 			bone = mesh->GetFrameMatrices(0);// プレイヤーの原点からの右手の位置(0は右手)
 		}
-		if (animator->PlayingID() == aFly || isFly) {
+		if (isDash || isFly) {
 			bone = mesh->GetFrameMatrices(2);//プレイヤーのルート位置
 		}
 		
@@ -556,6 +557,8 @@ void Player::SetSpeedY(float y)
 
 void Player::SetIsBlow(bool isBlow)
 {
+	isDash = false; 
+	isFly = false;
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
 	}
@@ -700,12 +703,14 @@ void Player::UpdateOnGround()
 		animator->SetPlaySpeed(1.0f * atkSpeed);
 		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		state = sAttack1;
+		isDash = false;
 		anmFrame = 0;
 	}
 	if ((di->CheckKey(KD_TRG, DIK_M) && playerNum == 0) || di->CheckJoy(KD_TRG, 3, playerNum)) { //MP変換
 		animator->MergePlay(aChargeReady);
 		animator->SetPlaySpeed(1.0f);
 		state = sCharge;
+		isDash = false;
 		chargeSpeed = 1.0f; //MP変換速度初期値
 		mcEffect = new MagicCircleEffect(transform.position, 0);
 	}
@@ -1160,6 +1165,7 @@ Broom::Broom(Object3D* parentModel, int num)
 
 Broom::~Broom()
 {
+	SAFE_DELETE(mesh);
 }
 
 void Broom::Update()
@@ -1170,7 +1176,6 @@ void Broom::Update()
 	switch (pl->GetPlayerState()) {
 	case sOnGround:
 	case sJump:
-	case sBlow:
 		if (pl->GetIsDash() || pl->GetIsFly()) {
 			transform.position = VECTOR3(7 * 0.01, -10 * 0.01, -35 * 0.01);
 			transform.rotation = VECTOR3(77 * DegToRad, 75 * DegToRad, 90 * DegToRad);
@@ -1180,7 +1185,10 @@ void Broom::Update()
 			transform.rotation = VECTOR3(0, 0, -70 * DegToRad);
 		}
 		break;
-
+	case sBlow:
+		transform.position = VECTOR3(0, 0, 0);
+		transform.rotation = VECTOR3(0, 0, -70 * DegToRad);
+		break;
 	case sAttack1:
 	case sAttack2:
 	case sAttack3:
@@ -1190,6 +1198,7 @@ void Broom::Update()
 	case sCharge:
 		transform.position = VECTOR3(0, 0, 0);
 		transform.rotation = VECTOR3(45 * DegToRad, 0, 0);
+		break;
 	}
 }
 

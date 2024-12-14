@@ -35,3 +35,10 @@ void DataCarrier::SetWinnerId(int id)
 {
 	winnerId = id;
 }
+
+void DataCarrier::SetRank(int rank[MAXPLAYER])
+{
+	for (int i = 0; i < MAXPLAYER; i++) {
+		this->rank[i] = rank[i];
+	}
+}

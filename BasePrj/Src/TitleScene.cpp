@@ -39,6 +39,7 @@ TitleScene::~TitleScene()
 	SAFE_DELETE(titleText3Image);
 	SAFE_DELETE(sprite);
 	SAFE_DELETE(easing);
+	SAFE_DELETE(csv);
 }
 
 void TitleScene::Update()
