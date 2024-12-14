@@ -294,6 +294,7 @@
     <ClInclude Include="Src\DInput.h" />
     <ClInclude Include="Src\Direct3D.h" />
     <ClInclude Include="Src\Displace.h" />
+    <ClInclude Include="Src\MagicCircleEffect.h" />
     <ClInclude Include="Src\Particle.h" />
     <ClInclude Include="Src\PlayDisplay.h" />
     <ClInclude Include="Src\Dust.h" />
@@ -352,6 +353,7 @@
     <ClCompile Include="Src\DInput.cpp" />
     <ClCompile Include="Src\Direct3D.cpp" />
     <ClCompile Include="Src\Displace.cpp" />
+    <ClCompile Include="Src\MagicCircleEffect.cpp" />
     <ClCompile Include="Src\Particle.cpp" />
     <ClCompile Include="Src\PlayDisplay.cpp" />
     <ClCompile Include="Src\Dust.cpp" />

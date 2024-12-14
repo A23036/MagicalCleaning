@@ -6,6 +6,7 @@
 #include "DataCarrier.h"
 #include "Stage.h"
 #include "Camera.h"
+#include "MagicCircleEffect.h"
 
 using namespace std;
 
@@ -83,6 +84,7 @@ private:
 	Stage* st;
 	Camera* cm;
 	list<Player*> otherPlayers;
+	MagicCircleEffect* mcEffect;
 
 	void UpdateOnGround();	//’nãˆ—
 	void UpdateJump();		//‹ó’†ˆ—

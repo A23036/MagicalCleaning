@@ -78,8 +78,8 @@ void PlayDisplay::Draw()
 		float timeRate = animTime / 1.0f;
 		float rate = ec->easeOutBack(timeRate); // ŠŠ‚ç‚©‚ÈŠg‘å
 
-		float rotation = (rotGoal + rotStart) * rate - rotStart;	// ‰ñ“]
-		float scale = (ScaleGoal + ScaleStart) * rate - ScaleStart;	// Šg‘å”{—¦
+		float rotation = (rotGoal - rotStart) * rate + rotStart;	// ‰ñ“]
+		float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// Šg‘å”{—¦
 
 		// ‰ñ“]’†S‚ğ‰æ‘œ‚Ì’†S‚É‚·‚é‚½‚ß‚Ì•â³
 		float pivotX = width / 2.0f;

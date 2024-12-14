@@ -78,7 +78,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 100;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
@@ -556,6 +556,9 @@ void Player::SetSpeedY(float y)
 
 void Player::SetIsBlow(bool isBlow)
 {
+	if (mcEffect != nullptr) {
+		mcEffect->SetIsFinish();
+	}
 	this->isBlow = isBlow;
 }
 
@@ -700,10 +703,11 @@ void Player::UpdateOnGround()
 		anmFrame = 0;
 	}
 	if ((di->CheckKey(KD_TRG, DIK_M) && playerNum == 0) || di->CheckJoy(KD_TRG, 3, playerNum)) { //MP変換
-		animator->MergePlay(aChargeReady, 0);
+		animator->MergePlay(aChargeReady);
 		animator->SetPlaySpeed(1.0f);
 		state = sCharge;
 		chargeSpeed = 1.0f; //MP変換速度初期値
+		mcEffect = new MagicCircleEffect(transform.position, 0);
 	}
 }
 
@@ -1051,11 +1055,13 @@ void Player::UpdateCharge()
 	if (di->CheckKey(KD_UTRG, DIK_M) || di->CheckJoy(KD_UTRG, 3, playerNum)) {
 		state = sOnGround;
 		isMagicReady = false;
+		mcEffect->SetIsFinish();
 		return;
 	}
 	
 	if (animator->PlayingID() == aChargeReady && animator->Finished()) {
-		animator->MergePlay(aCharge, 0);
+		animator->SetPlaySpeed(1.0f);
+		animator->MergePlay(aCharge);
 		isMagicReady = true;
 	}
 
@@ -1081,8 +1087,9 @@ void Player::UpdateBlow()
 	transform.position.y += speedY * deltaTime;
 	speedY -= GRAVITY * deltaTime;	// 重力
 
-	if (isBlow && speedY <= -0.2f) { //吹っ飛びアニメーションの解除
+	if (isBlow && speedY <= -0.2f) { //吹っ飛びアニメーションの解除(落下し始めてから少したってから)
 		animator->MergePlay(aFall, 0); //落下アニメーション
+		animator->SetPlaySpeed(1.0f);
 		isBlow = false;
 	}
 
@@ -1163,6 +1170,7 @@ void Broom::Update()
 	switch (pl->GetPlayerState()) {
 	case sOnGround:
 	case sJump:
+	case sBlow:
 		if (pl->GetIsDash() || pl->GetIsFly()) {
 			transform.position = VECTOR3(7 * 0.01, -10 * 0.01, -35 * 0.01);
 			transform.rotation = VECTOR3(77 * DegToRad, 75 * DegToRad, 90 * DegToRad);

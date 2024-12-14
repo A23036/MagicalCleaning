@@ -76,7 +76,7 @@ void TitleScene::Draw()
 		timeRate = animTime / AnimTime[aWait];
 		rate = timeRate; //線形補完
 
-		alpha = (AlphaGoal + AlphaStart) * rate - AlphaStart;
+		alpha = (AlphaGoal -AlphaStart) * rate + AlphaStart;
 
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT,alpha);
 		if (animTime >= AnimTime[aWait]) {
@@ -90,8 +90,8 @@ void TitleScene::Draw()
 
 		timeRate = animTime / AnimTime[aBroom];
 		rate = easing->easeOutBack(timeRate);
-		rot = (RotateGoal + RotateStart) * rate - RotateStart;
-		scale = (ScaleGoal + ScaleStart) * rate - ScaleStart;
+		rot = (RotateGoal - RotateStart) * rate + RotateStart;
+		scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;
 
 		//スプライトの表示用ワールド行列を作成
 		sprite->SetImage(broomImage);
@@ -112,7 +112,7 @@ void TitleScene::Draw()
 
 		timeRate = animTime / AnimTime[aText1];
 		rate = easing->easeOutBack(timeRate);
-		trans = (TransGoal + TransStart) * rate - TransStart;
+		trans = (TransGoal - TransStart) * rate + TransStart;
 
 		sprite->Draw(titleText1Image, 0, trans, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -129,7 +129,7 @@ void TitleScene::Draw()
 
 		timeRate = animTime / AnimTime[aText2];
 		rate = easing->easeOutBounce(timeRate);
-		scale = (ScaleGoal + ScaleStart) * rate - ScaleStart;
+		scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;
 		trans = 1 - scale;
 
 		sprite->Draw(titleText2Image, WINDOW_WIDTH/2 * trans, WINDOW_HEIGHT/2 * trans, 
