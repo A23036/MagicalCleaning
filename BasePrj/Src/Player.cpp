@@ -658,8 +658,13 @@ void Player::UpdateOnGround()
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
 		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
-		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
-
+		if (sqrt(ix * ix + iy * iy) > 1.0f) {
+			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED; // 斜め移動が直進より早くならないよう補正
+		}
+		else {
+			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		}
+		
 		// 移動の適用
 		transform.position += moveDirection * moveSpeed * deltaTime;
 
@@ -766,14 +771,17 @@ void Player::UpdateJump()
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
 		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
-		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED* sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
-
+		if (sqrt(ix * ix + iy * iy) > 1.0f) {
+			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED; // 斜め移動が直進より早くならないよう補正
+		}
+		else {
+			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		}
 		// 移動の適用
 		transform.position += moveDirection * moveSpeed * deltaTime;
 
 		// プレイヤーの回転をカメラ基準で方向を向かせる
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
-
 	}
 
 	if (di->CheckJoy(KD_TRG, 1, playerNum) && jumpCount <= jumpNum) {
@@ -1129,7 +1137,12 @@ void Player::UpdateBlow()
 		// カメラの回転に基づく移動ベクトルの計算
 		MATRIX4X4 cameraRotY = XMMatrixRotationY(cameraYRotation);
 		VECTOR3 moveDirection = XMVector3TransformNormal(inputDirection, cameraRotY);
-		moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		if (sqrt(ix * ix + iy * iy) > 1.0f) {
+			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED; // 斜め移動が直進より早くならないよう補正
+		}
+		else {
+			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // 傾き具合に応じた速度
+		}
 
 		// 移動の適用
 		transform.position += moveDirection * moveSpeed * deltaTime;

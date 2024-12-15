@@ -7,10 +7,10 @@ Camera,RotateSpeed,,0.05,,,,,,,,,
 Player,Gravity,,0.005,,,,,,,,,
 Player,JumpPower,,0.1,,,,,,,,,
 Player,MoveSpeed,,0.05,,,,,,,,,
-Player,MoveSpeedT,,1,1.1,1.2,1.3,1.5,1.7,1.9,2.2,2.5,3
+Player,MoveSpeedT,,1,1.5,1.6,1.7,1.8,2.3,2.4,2.5,3,4
 Player,JumpNumT,,0,1,2,3,4,,,,,
-Player,AtkSpeedT,,1,1.1,1.2,1.3,1.5,1.7,1.9,2.2,2.5,3
-Player,AtkRangeT,,1,1.5,2,3,4,,,,,
+Player,AtkSpeedT,,1,1.2,1.3,1.4,1.5,1.7,1.9,2.2,2.5,3
+Player,AtkRangeT,,1,2,2.5,3,4,,,,,
 Player,CarWeightT,,5,10,15,20,30,40,50,80,90,100
 ,,,,,,,,,,,,
 Player,MoveSpeedC,,1,1,1,2,2,2,3,3,3,5
