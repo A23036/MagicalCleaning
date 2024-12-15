@@ -535,6 +535,42 @@ int Player::GetPowerCost(int selectPower)
 	}
 }
 
+int Player::GetPowerLv(int selectPower)
+{
+	switch (selectPower) {
+	case pMS:
+		return msNum;
+	case pJN:
+		return jnNum;
+	case pAS:
+		return asNum;
+	case pAR:
+		return arNum;
+	case pCW:
+		return cwNum;
+	default:
+		return 0;
+	}
+}
+
+int Player::GetMaxPowerLv(int selectPower)
+{
+	switch (selectPower) {
+	case pMS:
+		return MsTableNum;
+	case pJN:
+		return JnTableNum;
+	case pAS:
+		return AsTableNum;
+	case pAR:
+		return ArTableNum;
+	case pCW:
+		return CwTableNum;
+	default:
+		return 0;
+	}
+}
+
 void Player::SetPlayerState(int state)
 {
 	this->state = state;

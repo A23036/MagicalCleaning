@@ -51,6 +51,8 @@ void PlayDisplay::Update()
 void PlayDisplay::Draw()
 {
 	char str[64]; //文字列
+	int posX = 0, posY = 0;
+
 	auto font = GameDevice()->m_pFont;
 
 	//ゲーム開始時のカウントダウン表示
@@ -110,12 +112,11 @@ void PlayDisplay::Draw()
 
 	//Leaf表示
 	//Leaf所持数を割合ゲージで表示
-	int offY;
 	float rate;		
 	rate = (float)pl->GetLeaf() / (float)pl->GetCarWeight();
-	offY = 48 * rate;
-	sprite->SetSrc(playUiImage, 0, 160 + 48 - offY, 48, 48, 48 * 2, 48 * 2);
-	sprite->Draw(200, WINDOW_HEIGHT - 130 + 48*2 - offY*2);
+	posY = 48 * rate;
+	sprite->SetSrc(playUiImage, 0, 160 + 48 - posY, 48, 48, 48 * 2, 48 * 2);
+	sprite->Draw(200, WINDOW_HEIGHT - 130 + 48*2 - posY*2);
 	
 	//Leaf所持数の表示
 	sprintf_s<64>(str, "%3d", pl->GetLeaf());
@@ -133,13 +134,12 @@ void PlayDisplay::Draw()
 	sprintf_s<64>(str, "%3d", pl->GetMP());
 	GameDevice()->m_pFont->Draw(340, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
 
-	int offX;
 	rate = (float)pl->GetMP() / (float)pl->GetPowerCost(pl->GetSelectPower());
 	if (rate >= 1.0f) {
 		rate = 1.0f;
 	}
-	offX = 236 * rate;
-	sprite->SetSrc(playUiImage, 172, 166, offX, 4, offX*2, 4*2);
+	posX = 236 * rate;
+	sprite->SetSrc(playUiImage, 172, 166, posX, 4, posX*2, 4*2);
 	sprite->Draw(200 + 172*2, WINDOW_HEIGHT - 130 + 80);
 
 	//選択中パワー描画(アイコンと文字)
@@ -206,6 +206,26 @@ void PlayDisplay::Draw()
 		break;
 	}
 	
+	//能力レベル表示
+
+	int level;
+	level = pl->GetPowerLv(pl->GetSelectPower());
+	if (level == pl->GetMaxPowerLv(pl->GetSelectPower()) - 1) { //能力レベルMAX
+		//ベース
+		sprite->SetSrc(playUiImage, 275, 175, 34, 16, 34 * 2, 16 * 2);
+		sprite->Draw(1030, 620);
+		sprite->SetSrc(playUiImage, 275, 215, 34, 16, 34 * 2, 16 * 2);
+		sprite->Draw(1100, 620);
+	}
+	else {
+		//ベース
+		sprite->SetSrc(playUiImage, 275, 175, 34, 16, 34 * 2, 16 * 2);
+		sprite->Draw(1050, 620);
+		posX = level * 14;
+		sprite->SetSrc(playUiImage, 275+posX, 195, 12, 16, 12 * 2, 16 * 2);
+		sprite->Draw(1120, 620);
+	}
+
 	//MPコスト表示
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 320, WINDOW_HEIGHT - 120, _T("COST"), 40, RGB(255, 255, 255));
 	sprintf_s<64>(str, "%3d", pl->GetPowerCost(pl->GetSelectPower()));
@@ -232,7 +252,7 @@ void PlayDisplay::Draw()
 	GameDevice()->m_pFont->Draw(PosX, 32, str, 60, RGB(255, 255, 255));
 
 	//順位表示
-	int posX, posY = 565;
+	posY = 565;
 	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
 	case 0:
 	case 2:

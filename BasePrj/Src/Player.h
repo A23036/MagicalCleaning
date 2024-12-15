@@ -65,6 +65,8 @@ public:
 	int GetPlayerState() { return state; };
 	int GetSelectPower() { return selectPower; };
 	int GetPowerCost(int selectPower);
+	int GetPowerLv(int selectPower);
+	int GetMaxPowerLv(int selectPower);
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
