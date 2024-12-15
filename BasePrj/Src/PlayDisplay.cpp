@@ -214,6 +214,7 @@ void PlayDisplay::Draw()
 		//ベース
 		sprite->SetSrc(playUiImage, 275, 175, 34, 16, 34 * 2, 16 * 2);
 		sprite->Draw(1030, 620);
+		//「MAX」文字
 		sprite->SetSrc(playUiImage, 275, 215, 34, 16, 34 * 2, 16 * 2);
 		sprite->Draw(1100, 620);
 	}
@@ -221,8 +222,9 @@ void PlayDisplay::Draw()
 		//ベース
 		sprite->SetSrc(playUiImage, 275, 175, 34, 16, 34 * 2, 16 * 2);
 		sprite->Draw(1050, 620);
+		//レベルに応じた数字
 		posX = level * 14;
-		sprite->SetSrc(playUiImage, 275+posX, 195, 12, 16, 12 * 2, 16 * 2);
+		sprite->SetSrc(playUiImage, 289+posX, 195, 12, 16, 12 * 2, 16 * 2);
 		sprite->Draw(1120, 620);
 	}
 

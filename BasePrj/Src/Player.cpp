@@ -753,7 +753,7 @@ void Player::UpdateOnGround()
 		state = sCharge;
 		isDash = false;
 		chargeSpeed = 1.0f; //MP•ÏŠ·‘¬“x‰Šú’l
-		mcEffect = new MagicCircleEffect(transform.position, 0);
+		mcEffect = new MagicCircleEffect(transform.position, playerNum);
 	}
 }
 
