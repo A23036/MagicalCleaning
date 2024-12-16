@@ -51,7 +51,7 @@ void PlayDisplay::Update()
 void PlayDisplay::Draw()
 {
 	char str[64]; //文字列
-	int posX = 0, posY = 0;
+	int posX=0, posY=0, offX=0, offY=0;
 
 	auto font = GameDevice()->m_pFont;
 
@@ -148,7 +148,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 90, 90);		//アイコン
 		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 0, 68, 68, 40, 68*2.5, 40*2.5); //文字
-		sprite->Draw(780, 605);
+		sprite->Draw(780, 606);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);			//左右のパワーは半透明
 		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 40, 40);	//左のパワー
 		sprite->Draw(580, 660);
@@ -160,7 +160,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 64, 0, 64, 64, 90, 90);
 		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 72, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(780, 605);
+		sprite->Draw(780, 606);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
 		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 40, 40);
 		sprite->Draw(580, 660);
@@ -172,7 +172,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 128, 0, 64, 64, 90, 90);
 		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 144, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(780, 605);
+		sprite->Draw(780, 606);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
 		sprite->SetSrc(playUiImage, 64, 0, 64, 64, 40, 40);
 		sprite->Draw(580, 660);
@@ -184,7 +184,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 192, 0, 64, 64, 90, 90);
 		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 216, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(780, 605);
+		sprite->Draw(780, 606);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
 		sprite->SetSrc(playUiImage, 128, 0, 64, 64, 40, 40);
 		sprite->Draw(580, 660);
@@ -196,7 +196,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 90, 90);
 		sprite->Draw(680, 610);
 		sprite->SetSrc(playUiImage, 288, 68, 68, 40, 68 * 2.5, 40 * 2.5);
-		sprite->Draw(780, 605);
+		sprite->Draw(780, 606);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
 		sprite->SetSrc(playUiImage, 192, 0, 64, 64, 40, 40);
 		sprite->Draw(580, 660);
@@ -228,16 +228,50 @@ void PlayDisplay::Draw()
 	}
 
 	//MPコスト表示
-	/*
-	GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 320, WINDOW_HEIGHT - 120, _T("COST"), 40, RGB(255, 255, 255));
-	sprintf_s<64>(str, "%3d", pl->GetPowerCost(pl->GetSelectPower()));
-	if (pl->GetPowerCost(pl->GetSelectPower()) <= pl->GetMP()) { //mpが足りていたらコストを白色表示
-		GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 80, str, 40, RGB(255, 255, 255));
+	//「COST」文字
+	sprite->SetSrc(playUiImage, 325, 175, 56, 16, 56*2, 16*2);
+	sprite->Draw(1036, 620);
+
+	//能力レベルがMAXでないとき
+	if (pl->GetMaxPowerLv(pl->GetSelectPower()) > pl->GetPowerLv(pl->GetSelectPower()) + 1) {
+		//所持MP(MAX:必要コスト)
+		int mp = pl->GetMP();
+		if (mp >= pl->GetPowerCost(pl->GetSelectPower())) { //MPは必要コストを超えないようにする
+			mp = pl->GetPowerCost(pl->GetSelectPower());
+		}
+		else {
+			offX = 140;
+		}
+
+		if (mp / 10 > 0) { //MPが10より大きいとき
+			posX = mp / 10 * 14;
+			sprite->SetSrc(playUiImage, 275 + posX + offX, 195, 12, 16, 12 * 2, 16 * 2);
+			sprite->Draw(1030, 660);
+		}
+		posX = mp % 10 * 14;
+		sprite->SetSrc(playUiImage, 275 + posX + offX, 195, 12, 16, 12 * 2, 16 * 2);
+		sprite->Draw(1050, 660);
+
+		offX = 0;
+
+		//「/」表示
+		sprite->SetSrc(playUiImage, 313, 175, 10, 16, 10 * 2, 16 * 2);
+		sprite->Draw(1076, 680);
+
+
+		//必要コスト
+		int cost = pl->GetPowerCost(pl->GetSelectPower());
+		offX = 20;
+		if (cost / 10 > 0) { //コストが10より大きいとき
+			posX = cost / 10 * 14;
+			sprite->SetSrc(playUiImage, 275 + posX, 195, 12, 16, 12 * 2, 16 * 2);
+			sprite->Draw(1100, 700);
+			offX = 0;
+		}
+		posX = cost % 10 * 14;
+		sprite->SetSrc(playUiImage, 275 + posX, 195, 12, 16, 12 * 2, 16 * 2);
+		sprite->Draw(1120 - offX, 700);
 	}
-	else{
-		GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 80, str, 40, RGB(255, 0, 0));
-	}*/
-	
 
 	//スコア表示
 	sprite->SetSrc(75, 175, 176, 32, 176 * 1.5, 32 * 1.5);
@@ -248,15 +282,15 @@ void PlayDisplay::Draw()
 	int textWidth = strlen(str) * 60;
 
 	// 描画位置を右揃えに調整
-	int PosX = (WINDOW_WIDTH / 2 - 130) + textWidth;
+	posX = (WINDOW_WIDTH / 2 - 130) + textWidth;
 
 	// テキストを描画
-	GameDevice()->m_pFont->Draw(PosX+5, 32+5, str, 60, RGB(0,0,0));
-	GameDevice()->m_pFont->Draw(PosX, 32, str, 60, RGB(255, 255, 255));
+	GameDevice()->m_pFont->Draw(posX+5, 32+5, str, 60, RGB(0,0,0));
+	GameDevice()->m_pFont->Draw(posX, 32, str, 60, RGB(255, 255, 255));
 
 
 	//順位表示
-	posY = 565;
+	posY = 566;
 	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
 	case 0:
 	case 2:
@@ -264,7 +298,7 @@ void PlayDisplay::Draw()
 		break;
 	case 1:
 	case 3:
-		posX = 1160;
+		posX = 1166;
 		break;
 	}
 
@@ -282,6 +316,86 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 452, 225, 146, 150, 146, 150);
 		break;
 	}
-
 	sprite->Draw(posX,posY);
+
+	//レーダーチャート表示
+	//ベース
+	sprite->SetSrc(playUiImage, 0, 375, 250, 225);
+	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
+	case 0:
+	case 2:
+		posX = 40;
+		break;
+	case 1:
+	case 3:
+		posX = 1070;
+		break;
+	}
+	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.8f); //半透明で表示
+	sprite->Draw(posX, 40); 
+	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f); //透明度を戻す
+	
+	//能力ごとの進捗表示
+	//中心位置 posX,posY
+	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
+	case 0:
+	case 2:
+		posX = 164;
+		break;
+	case 1:
+	case 3:
+		posX = 1195;
+		break;
+	}
+	posY = 158;
+
+	//点のカラー格納用配列
+	DWORD color[5];
+	
+	int _offX[5], _offY[5];
+	for (int i = 0; i < 5; i++) {
+		switch (i) {
+		case 0: //移動速度
+			_offX[0] = 0;
+			_offY[0] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 84;
+			color[0] = RGB(55, 49, 245);
+			break;
+		case 1: //ジャンプ回数
+			_offX[1] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 80;
+			_offY[1] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 28;
+			color[1] = RGB(245, 49, 238);
+			break;
+		case 2: //攻撃速度
+			_offX[2] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 48;
+			_offY[2] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 66;
+			color[2] = RGB(238, 245, 49);
+			break;
+		case 3: //攻撃範囲
+			_offX[3] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 48;
+			_offY[3] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 66;
+			color[3] = RGB(245, 55, 49);
+			break;
+		case 4: //手持ちリーフ
+			_offX[4] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 80;
+			_offY[4] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 28;
+			color[4] = RGB(49, 245, 55);
+			break;
+		}
+	}
+	
+	//各点間の線の描画
+	for (int i = 0; i < 5; i++) {
+		if (i+1 < 5) {
+			sprite->DrawLine(posX+2 + _offX[i], posY+3 + _offY[i], posX+2 + _offX[i + 1], posY+3 + _offY[i + 1], 2, RGB(255,0,0));
+		}
+		else {
+			sprite->DrawLine(posX+2 + _offX[i], posY+3 + _offY[i], posX+2 + _offX[0], posY+3 + _offY[0], 2, RGB(255,0,0));
+		}
+	}
+
+	//各点の描画
+	for (int i = 0; i < 5; i++) {
+		sprite->DrawRect(posX + _offX[i], posY + _offY[i], 6, 6, color[i]);
+	}
+
 }

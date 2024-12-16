@@ -78,7 +78,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 500;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
@@ -1104,6 +1104,7 @@ void Player::UpdateCharge()
 	if (di->CheckKey(KD_UTRG, DIK_M) || di->CheckJoy(KD_UTRG, 3, playerNum)) {
 		state = sOnGround;
 		isMagicReady = false;
+		chargeFrm = 0;
 		mcEffect->SetIsFinish();
 		return;
 	}

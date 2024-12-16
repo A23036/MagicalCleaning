@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 //
-//  Direct3Dを利用するためのライブラリ                ver 3.3        2024.3.23
+//  Direct3Dを利用するためのライブラリ                ver 3.5         2024.11.2
 // 
 //	①　Direct3Dの初期化	
 //	②　テクスチャーサンプラーとブレンドステートの作成
@@ -32,6 +32,7 @@
 //#pragma comment(lib,"windowscodecs.lib")
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dCompiler.lib")
+#pragma comment(lib,"dxgi.lib")				   		// -- 2024.11.2
 
 //マクロ
 #define ALIGN16 _declspec(align(16))
@@ -63,6 +64,7 @@ public:
 	ID3D11RenderTargetView* m_pBackBuffer_TexRTV;
 	ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV;
 	ID3D11Texture2D*        m_pBackBuffer_DSTex;
+	IDXGIAdapter*           m_pAdapter;		   // -- 2024.11.2
 
 	// ブレンドステート
 	ID3D11BlendState*         m_pBlendStateNormal;

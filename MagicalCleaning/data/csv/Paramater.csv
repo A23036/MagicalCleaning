@@ -10,13 +10,13 @@ Player,MoveSpeed,,0.05,,,,,,,,,
 Player,MoveSpeedT,,1,1.5,1.6,1.7,1.8,2.3,2.4,2.5,3,4
 Player,JumpNumT,,0,1,2,3,4,,,,,
 Player,AtkSpeedT,,1,1.2,1.3,1.4,1.5,1.7,1.9,2.2,2.5,3
-Player,AtkRangeT,,1,2,2.5,3,4,,,,,
+Player,AtkRangeT,,1,1.5,1.75,2,2.25,2.5,3,3.25,3.5,4
 Player,CarWeightT,,5,10,15,20,30,40,50,80,90,100
 ,,,,,,,,,,,,
 Player,MoveSpeedC,,1,1,1,2,2,2,3,3,3,5
 Player,JumpNumC,,1,1,2,2,3,,,,,
 Player,AtkSpeedC,,1,2,3,4,5,10,15,17,20,25
-Player,AtkRangeC,,5,10,15,14,20,,,,,
+Player,AtkRangeC,,2,2,2,5,5,5,10,10,10,15
 Player,CarWeightC,,2,4,6,8,10,12,14,16,18,20
 ,,,,,,,,,,,,
 Dust,SmallHP,,1,,,,,,,,,

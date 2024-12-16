@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 //
-//  Direct3Dを利用するためのライブラリ                ver 3.0        2022.9.14
+//  Direct3Dを利用するためのライブラリ                ver 3.5         2024.11.2
 // 
 //	①　Direct3Dの初期化	
 //	②　テクスチャーサンプラーとブレンドステートの作成
@@ -57,6 +57,40 @@ HRESULT CDirect3D::InitD3D(HWND hWnd, DWORD dwWidth, DWORD dwHeight)
 	m_hWnd = hWnd;
 	m_dwWindowWidth = dwWidth;
 	m_dwWindowHeight = dwHeight;
+	
+	// DXGIインターフェイス					// -- 2024.11.2
+	IDXGIFactory1* pGFactory = nullptr;
+	if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory1), (VOID**)(&pGFactory))))
+	{
+		return FALSE;
+	}
+	// グラフィックカードの情報	 					// -- 2024.11.2
+	m_pAdapter = nullptr;
+	UINT iAdapter = 0;
+	IDXGIAdapter* pAdapterTemp = nullptr;
+	SIZE_T  vramsize = 0;
+
+	while (pGFactory->EnumAdapters(iAdapter, &pAdapterTemp) != DXGI_ERROR_NOT_FOUND)
+	{
+		// アダプター情報
+		DXGI_ADAPTER_DESC descAdapter;
+		pAdapterTemp->GetDesc(&descAdapter);
+		if (m_pAdapter == nullptr)
+		{
+			m_pAdapter = pAdapterTemp;
+			vramsize = descAdapter.DedicatedVideoMemory / 1024 / 1024;
+		}
+		else if (descAdapter.DedicatedVideoMemory / 1024 / 1024 > vramsize) {	   // VRAMの大きいものを選択
+			SAFE_RELEASE(m_pAdapter);
+			m_pAdapter = pAdapterTemp;
+			vramsize = descAdapter.DedicatedVideoMemory / 1024 / 1024;
+		}
+		else {
+			SAFE_RELEASE(pAdapterTemp);
+		}
+		++iAdapter;
+	}
+	SAFE_RELEASE(pGFactory);							// -- 2024.11.2
 
 	// デバイスとスワップチェーンの作成
 	DXGI_SWAP_CHAIN_DESC sd;
@@ -78,8 +112,10 @@ HRESULT CDirect3D::InitD3D(HWND hWnd, DWORD dwWidth, DWORD dwHeight)
 	D3D_FEATURE_LEVEL* pFeatureLevel = nullptr;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
-		nullptr,
-		D3D_DRIVER_TYPE_HARDWARE, 
+		//nullptr,
+		m_pAdapter,								// -- 2024.11.2
+		//D3D_DRIVER_TYPE_HARDWARE, 
+		D3D_DRIVER_TYPE_UNKNOWN,				// -- 2024.11.2
 		nullptr,
 		0, 
 		&pFeatureLevels, 
@@ -888,5 +924,7 @@ void CDirect3D::DestroyD3D()
 	SAFE_RELEASE(m_pFactory);      // -- 2018.12.26
 
 	SAFE_RELEASE(m_pDevice);
+
+	SAFE_RELEASE(m_pAdapter);		// -- 2024.11.2
 }
 
