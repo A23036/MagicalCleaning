@@ -16,8 +16,8 @@ PlayScene::PlayScene()
 
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrier‚ÍƒVƒ“ƒOƒ‹ƒgƒ“‚Å¶¬
 	
-	new Stage();
-	new Sky();
+	st = new Stage();
+	sky = new Sky();
 
 	p1 = new Player(0);
 	p1->SetPosition(-30, 0, -20);
@@ -32,7 +32,7 @@ PlayScene::PlayScene()
 	p4->SetPosition(30, 0, -40);
 	p4->SetTag("Player4");
 
-	new Camera();
+	cm = new Camera();
 	
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
@@ -52,6 +52,17 @@ PlayScene::PlayScene()
 
 PlayScene::~PlayScene()
 {
+	/*
+	SAFE_DELETE(pd);
+	SAFE_DELETE(st);
+	SAFE_DELETE(sky);
+	SAFE_DELETE(cm);
+	SAFE_DELETE(dc);
+	SAFE_DELETE(p1);
+	SAFE_DELETE(p2);
+	SAFE_DELETE(p3);
+	SAFE_DELETE(p4);
+	*/
 }
 
 void PlayScene::Update()

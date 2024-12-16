@@ -78,7 +78,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 100;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;

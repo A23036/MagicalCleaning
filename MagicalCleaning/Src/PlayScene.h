@@ -5,6 +5,9 @@
 #include "DataCarrier.h"
 #include "CsvReader.h"
 #include "Dust.h"
+#include "Stage.h"
+#include "Sky.h"
+#include "Camera.h"
 
 class PlayScene : public SceneBase
 {
@@ -23,6 +26,9 @@ private:
 	SplitScreenLastDraw* ssld;
 	DataCarrier* dc;
 	CsvReader* csv;
+	Stage* st;
+	Sky* sky;
+	Camera* cm;
 
 	list<Player*> players;
 

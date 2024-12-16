@@ -73,8 +73,8 @@ void PlayDisplay::Draw()
 		VECTOR2 center;
 		width = sprite->GetSrcWidth();
 		height = sprite->GetSrcHeight();
-		center.x = WINDOW_WIDTH / 2 - width / 2;
-		center.y = WINDOW_HEIGHT / 2 - height / 2;
+		center.x = WINDOW_WIDTH / 2;
+		center.y = WINDOW_HEIGHT / 2;
 
 		// アニメーションの進行度計算
 		float timeRate = animTime / 1.0f;
@@ -88,11 +88,11 @@ void PlayDisplay::Draw()
 		float pivotY = height / 2.0f;
 
 		// ワールド行列の計算
-		MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0) 
+		MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
 			* XMMatrixRotationZ(rotation)
 			* XMMatrixScaling(scale, scale, 1.0f)
 			* XMMatrixTranslation(center.x, center.y, 0);
-
+			
 		// スプライトをワールド行列を使用して描画
 		sprite->Draw(m);
 	}
@@ -207,28 +207,28 @@ void PlayDisplay::Draw()
 	}
 	
 	//能力レベル表示
-
 	int level;
 	level = pl->GetPowerLv(pl->GetSelectPower());
 	if (level == pl->GetMaxPowerLv(pl->GetSelectPower()) - 1) { //能力レベルMAX
 		//ベース
 		sprite->SetSrc(playUiImage, 275, 175, 34, 16, 34 * 2, 16 * 2);
-		sprite->Draw(1030, 620);
+		sprite->Draw(510, 620);
 		//「MAX」文字
-		sprite->SetSrc(playUiImage, 275, 215, 34, 16, 34 * 2, 16 * 2);
-		sprite->Draw(1100, 620);
+		sprite->SetSrc(playUiImage, 383, 175, 34, 16, 34 * 2, 16 * 2);
+		sprite->Draw(580, 620);
 	}
 	else {
 		//ベース
 		sprite->SetSrc(playUiImage, 275, 175, 34, 16, 34 * 2, 16 * 2);
-		sprite->Draw(1050, 620);
+		sprite->Draw(530, 620);
 		//レベルに応じた数字
 		posX = level * 14;
 		sprite->SetSrc(playUiImage, 289+posX, 195, 12, 16, 12 * 2, 16 * 2);
-		sprite->Draw(1120, 620);
+		sprite->Draw(600, 620);
 	}
 
 	//MPコスト表示
+	/*
 	GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 320, WINDOW_HEIGHT - 120, _T("COST"), 40, RGB(255, 255, 255));
 	sprintf_s<64>(str, "%3d", pl->GetPowerCost(pl->GetSelectPower()));
 	if (pl->GetPowerCost(pl->GetSelectPower()) <= pl->GetMP()) { //mpが足りていたらコストを白色表示
@@ -236,8 +236,9 @@ void PlayDisplay::Draw()
 	}
 	else{
 		GameDevice()->m_pFont->Draw(WINDOW_WIDTH - 300, WINDOW_HEIGHT - 80, str, 40, RGB(255, 0, 0));
-	}
+	}*/
 	
+
 	//スコア表示
 	sprite->SetSrc(75, 175, 176, 32, 176 * 1.5, 32 * 1.5);
 	sprite->Draw(WINDOW_WIDTH/2 - sprite->GetSrcWidth()-30,40);
@@ -252,6 +253,7 @@ void PlayDisplay::Draw()
 	// テキストを描画
 	GameDevice()->m_pFont->Draw(PosX+5, 32+5, str, 60, RGB(0,0,0));
 	GameDevice()->m_pFont->Draw(PosX, 32, str, 60, RGB(255, 255, 255));
+
 
 	//順位表示
 	posY = 565;
@@ -277,7 +279,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 301, 225, 146, 150, 146, 150);
 		break;
 	case 4:
-		sprite->SetSrc(playUiImage, 352, 225, 146, 150, 146, 150);
+		sprite->SetSrc(playUiImage, 452, 225, 146, 150, 146, 150);
 		break;
 	}
 
