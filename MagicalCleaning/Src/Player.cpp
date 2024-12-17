@@ -318,6 +318,7 @@ void Player::Update()
 	//—‰ºˆ—
 	if (transform.position.y <= -30.0f) {
 		transform.position = VECTOR3(0, 20, 0);
+		ResetLeaf();
 	}
 
 	//“–‚½‚è”»’èˆ— // -- 2024.12.2

@@ -11,6 +11,7 @@ PlayDisplay::PlayDisplay()
 
 	countDownImage = new CSpriteImage(_T("data/Image/Play/CountDown.png"));
 	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite.png"));
+	playUiImage2 = new CSpriteImage(_T("data/Image/Play/UISprite2.png"));
 
 	sprite = new CSprite();
 	
@@ -27,6 +28,7 @@ PlayDisplay::~PlayDisplay()
 {
 	SAFE_DELETE(countDownImage);
 	SAFE_DELETE(playUiImage);
+	SAFE_DELETE(playUiImage2);
 	SAFE_DELETE(sprite);
 }
 
@@ -51,12 +53,12 @@ void PlayDisplay::Update()
 void PlayDisplay::Draw()
 {
 	char str[64]; //文字列
-	int posX=0, posY=0, offX=0, offY=0;
+	int posX = 0, posY = 0, offX = 0, offY = 0;
 
 	auto font = GameDevice()->m_pFont;
 
 	//ゲーム開始時のカウントダウン表示
-	if (gameState == sReady) { 
+	if (gameState == sReady) {
 		if (gameTime == 0) {
 			sprite->SetSrc(countDownImage, 132, 0, 66, 66);
 		}
@@ -92,7 +94,7 @@ void PlayDisplay::Draw()
 			* XMMatrixRotationZ(rotation)
 			* XMMatrixScaling(scale, scale, 1.0f)
 			* XMMatrixTranslation(center.x, center.y, 0);
-			
+
 		// スプライトをワールド行列を使用して描画
 		sprite->Draw(m);
 	}
@@ -102,22 +104,22 @@ void PlayDisplay::Draw()
 	//プレイヤーごとのUI描画
 	std::string s = "Player";
 	int n = ObjectManager::DrawCounter();
-	s = s + std::to_string(n+1);
+	s = s + std::to_string(n + 1);
 	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
 
 	//Leaf、MP、能力表示----------
 	//UIベース
-	sprite->SetSrc(playUiImage, 0, 112, 412, 48,412 * 2,48 * 2);
+	sprite->SetSrc(playUiImage, 0, 112, 412, 48, 412 * 2, 48 * 2);
 	sprite->Draw(200, WINDOW_HEIGHT - 130);
 
 	//Leaf表示
 	//Leaf所持数を割合ゲージで表示
-	float rate;		
+	float rate;
 	rate = (float)pl->GetLeaf() / (float)pl->GetCarWeight();
 	posY = 48 * rate;
 	sprite->SetSrc(playUiImage, 0, 160 + 48 - posY, 48, 48, 48 * 2, 48 * 2);
-	sprite->Draw(200, WINDOW_HEIGHT - 130 + 48*2 - posY*2);
-	
+	sprite->Draw(200, WINDOW_HEIGHT - 130 + 48 * 2 - posY * 2);
+
 	//Leaf所持数の表示
 	sprintf_s<64>(str, "%3d", pl->GetLeaf());
 	//文字影
@@ -129,7 +131,7 @@ void PlayDisplay::Draw()
 	else {
 		font->Draw(200 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 255, 255));
 	}
-	
+
 	//MP表示
 	sprintf_s<64>(str, "%3d", pl->GetMP());
 	GameDevice()->m_pFont->Draw(340, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
@@ -139,15 +141,15 @@ void PlayDisplay::Draw()
 		rate = 1.0f;
 	}
 	posX = 236 * rate;
-	sprite->SetSrc(playUiImage, 172, 166, posX, 4, posX*2, 4*2);
-	sprite->Draw(200 + 172*2, WINDOW_HEIGHT - 130 + 80);
+	sprite->SetSrc(playUiImage, 172, 166, posX, 4, posX * 2, 4 * 2);
+	sprite->Draw(200 + 172 * 2, WINDOW_HEIGHT - 130 + 80);
 
 	//選択中パワー描画(アイコンと文字)
-	switch (pl->GetSelectPower()){ 
+	switch (pl->GetSelectPower()) {
 	case pMS:
 		sprite->SetSrc(playUiImage, 0, 0, 64, 64, 90, 90);		//アイコン
 		sprite->Draw(680, 610);
-		sprite->SetSrc(playUiImage, 0, 68, 68, 40, 68*2.5, 40*2.5); //文字
+		sprite->SetSrc(playUiImage, 0, 68, 68, 40, 68 * 2.5, 40 * 2.5); //文字
 		sprite->Draw(780, 606);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);			//左右のパワーは半透明
 		sprite->SetSrc(playUiImage, 272, 0, 64, 64, 40, 40);	//左のパワー
@@ -205,7 +207,7 @@ void PlayDisplay::Draw()
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 		break;
 	}
-	
+
 	//能力レベル表示
 	int level;
 	level = pl->GetPowerLv(pl->GetSelectPower());
@@ -223,13 +225,13 @@ void PlayDisplay::Draw()
 		sprite->Draw(530, 620);
 		//レベルに応じた数字
 		posX = level * 14;
-		sprite->SetSrc(playUiImage, 289+posX, 195, 12, 16, 12 * 2, 16 * 2);
+		sprite->SetSrc(playUiImage, 289 + posX, 195, 12, 16, 12 * 2, 16 * 2);
 		sprite->Draw(600, 620);
 	}
 
 	//MPコスト表示
 	//「COST」文字
-	sprite->SetSrc(playUiImage, 325, 175, 56, 16, 56*2, 16*2);
+	sprite->SetSrc(playUiImage, 325, 175, 56, 16, 56 * 2, 16 * 2);
 	sprite->Draw(1036, 620);
 
 	//能力レベルがMAXでないとき
@@ -275,9 +277,9 @@ void PlayDisplay::Draw()
 
 	//スコア表示
 	sprite->SetSrc(75, 175, 176, 32, 176 * 1.5, 32 * 1.5);
-	sprite->Draw(WINDOW_WIDTH/2 - sprite->GetSrcWidth()-30,40);
-	sprintf_s<64>(str, "%3d", pl->GetScore() );
-	
+	sprite->Draw(WINDOW_WIDTH / 2 - sprite->GetSrcWidth() - 30, 40);
+	sprintf_s<64>(str, "%3d", pl->GetScore());
+
 	// テキスト幅を計算する
 	int textWidth = strlen(str) * 60;
 
@@ -285,7 +287,7 @@ void PlayDisplay::Draw()
 	posX = (WINDOW_WIDTH / 2 - 130) + textWidth;
 
 	// テキストを描画
-	GameDevice()->m_pFont->Draw(posX+5, 32+5, str, 60, RGB(0,0,0));
+	GameDevice()->m_pFont->Draw(posX + 5, 32 + 5, str, 60, RGB(0, 0, 0));
 	GameDevice()->m_pFont->Draw(posX, 32, str, 60, RGB(255, 255, 255));
 
 
@@ -303,7 +305,7 @@ void PlayDisplay::Draw()
 	}
 
 	switch (dc->GetRank(pl->GetPlayerNum())) { //順位ごとのスプライト変更
-	case 1: 
+	case 1:
 		sprite->SetSrc(playUiImage, 2, 225, 146, 150, 146, 150);
 		break;
 	case 2:
@@ -316,7 +318,7 @@ void PlayDisplay::Draw()
 		sprite->SetSrc(playUiImage, 452, 225, 146, 150, 146, 150);
 		break;
 	}
-	sprite->Draw(posX,posY);
+	sprite->Draw(posX, posY);
 
 	//レーダーチャート表示
 	//ベース
@@ -332,9 +334,9 @@ void PlayDisplay::Draw()
 		break;
 	}
 	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.8f); //半透明で表示
-	sprite->Draw(posX, 40); 
+	sprite->Draw(posX, 40);
 	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f); //透明度を戻す
-	
+
 	//能力ごとの進捗表示
 	//中心位置 posX,posY
 	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
@@ -351,51 +353,145 @@ void PlayDisplay::Draw()
 
 	//点のカラー格納用配列
 	DWORD color[5];
-	
+
+	//表示座標オフセット
 	int _offX[5], _offY[5];
+
+	//能力進捗保存用変数
+	int num=0;
+	float max1 = -1, max2 = -1;
+	int power1 = -1, power2 = -1;
+	bool isAllRounder = false;
+
 	for (int i = 0; i < 5; i++) {
+		// 現在の進捗
+		float progress = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i);
+
 		switch (i) {
 		case 0: //移動速度
 			_offX[0] = 0;
-			_offY[0] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 84;
+			_offY[0] = -progress * 84;
 			color[0] = RGB(55, 49, 245);
 			break;
 		case 1: //ジャンプ回数
-			_offX[1] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 80;
-			_offY[1] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 28;
+			_offX[1] = progress * 80;
+			_offY[1] = -progress * 28;
 			color[1] = RGB(245, 49, 238);
 			break;
 		case 2: //攻撃速度
-			_offX[2] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 48;
-			_offY[2] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 66;
+			_offX[2] = progress * 48;
+			_offY[2] = progress * 66;
 			color[2] = RGB(238, 245, 49);
 			break;
 		case 3: //攻撃範囲
-			_offX[3] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 48;
-			_offY[3] = (float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 66;
+			_offX[3] = -progress * 48;
+			_offY[3] = progress * 66;
 			color[3] = RGB(245, 55, 49);
 			break;
 		case 4: //手持ちリーフ
-			_offX[4] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 80;
-			_offY[4] = -(float)(pl->GetPowerLv(i) + 1) / (float)pl->GetMaxPowerLv(i) * 28;
+			_offX[4] = -progress * 80;
+			_offY[4] = -progress * 28;
 			color[4] = RGB(49, 245, 55);
 			break;
 		}
+
+		//強化進捗上位2つの能力を保存
+		if (progress > max1) {	// 最大進捗
+			max2 = max1;		// 現在の最大を2番目に
+			power2 = power1;	// 現在の最大能力を2番目に
+			max1 = progress;	// 新しい最大進捗
+			power1 = i;			// 新しい最大能力
+		}
+		else if (progress > max2) { // 2番目に大きい進捗
+			max2 = progress;
+			power2 = i;
+		}
+		if (progress > 0.5) { //5割を超えた強化をした能力の数をカウント
+			num++;
+		}
 	}
-	
+	if (num == 5) { //5つの能力全ての強化進捗が八割を超えていたら「オールラウンダー」
+		isAllRounder = true;
+	}
+
 	//各点間の線の描画
 	for (int i = 0; i < 5; i++) {
-		if (i+1 < 5) {
-			sprite->DrawLine(posX+2 + _offX[i], posY+3 + _offY[i], posX+2 + _offX[i + 1], posY+3 + _offY[i + 1], 2, RGB(255,0,0));
+		if (i + 1 < 5) {
+			sprite->DrawLine(posX + 2 + _offX[i], posY + 3 + _offY[i], posX + 2 + _offX[i + 1], posY + 3 + _offY[i + 1], 2, RGB(255, 0, 0));
 		}
 		else {
-			sprite->DrawLine(posX+2 + _offX[i], posY+3 + _offY[i], posX+2 + _offX[0], posY+3 + _offY[0], 2, RGB(255,0,0));
+			sprite->DrawLine(posX + 2 + _offX[i], posY + 3 + _offY[i], posX + 2 + _offX[0], posY + 3 + _offY[0], 2, RGB(255, 0, 0));
 		}
 	}
 
 	//各点の描画
 	for (int i = 0; i < 5; i++) {
 		sprite->DrawRect(posX + _offX[i], posY + _offY[i], 6, 6, color[i]);
+	}
+
+	//能力強化状態に応じた二つ名表示
+	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
+	case 0:
+	case 2:
+		posX = 30;
+		break;
+	case 1:
+	case 3:
+		posX = 1060;
+		break;
+	}
+	//能力の強化進捗順に二つ
+	if (isAllRounder) { //「オールラウンダー」
+		sprite->DrawRect(posX-10, 268, 300, 40, RGB(0,0,0), 0.5f);
+		sprite->SetSrc(playUiImage2, 0, 4, 280, 36, 280, 36);
+		sprite->Draw(posX, 270);
+	}
+	else if ((max1 - max2) > 0.4) { //ひとつの能力が突出しているとき
+		sprite->DrawRect(posX-10, 268, 300, 40, RGB(0,0,0), 0.5f);
+		switch (power1) {
+		case 0: //移動速度
+			sprite->SetSrc(playUiImage2, 0, 44, 280, 36, 280, 36);
+			break;
+		case 1: //ジャンプ回数
+			sprite->SetSrc(playUiImage2, 0, 244, 280, 36, 280, 36);
+			break;
+		case 2: //攻撃速度
+			sprite->SetSrc(playUiImage2, 0, 404, 280, 36, 280, 36);
+			break;
+		case 3: //攻撃範囲
+			sprite->SetSrc(playUiImage2, 0, 524, 280, 36, 280, 36);
+			break;
+		case 4: //手持ちリーフ
+			sprite->SetSrc(playUiImage2, 0, 604, 280, 36, 280, 36);
+			break;
+		}
+		sprite->Draw(posX, 270);
+	}
+	else if(max2 > 0.2f){
+		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(0,0,0), 0.5f);
+		switch (min(power1,power2)) {
+		case 0: //移動速度
+			offY = (max(power1,power2)) * 40;
+			sprite->SetSrc(playUiImage2, 0, 44+offY, 280, 36, 280, 36);
+			break;
+		case 1: //ジャンプ回数
+			offY = (max(power1, power2) - 1) * 40;
+			sprite->SetSrc(playUiImage2, 0, 244 + offY, 280, 36, 280, 36);
+			break;
+		case 2: //攻撃速度
+			offY = (max(power1, power2) - 2) * 40;
+			sprite->SetSrc(playUiImage2, 0, 404 + offY, 280, 36, 280, 36);
+			break;
+		case 3: //攻撃範囲
+			offY = (max(power1, power2) - 3) * 40;
+			sprite->SetSrc(playUiImage2, 0, 524 + offY, 280, 36, 280, 36);
+			break;
+		case 4: //手持ちリーフ
+			offY = (max(power1, power2) - 4) * 40;
+			sprite->SetSrc(playUiImage2, 0, 650 + offY, 280, 36, 280, 36);
+			break;
+		}
+		sprite->Draw(posX, 270);
 	}
 
 }

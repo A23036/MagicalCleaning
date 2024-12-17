@@ -19,6 +19,7 @@ private:
 	CSprite* sprite;
 	CSpriteImage* countDownImage;	//カウントダウンイメージ
 	CSpriteImage* playUiImage;		//プレイ画面UIイメージ
+	CSpriteImage* playUiImage2;		//プレイ画面UIイメージ2
 
 	DataCarrier* dc;
 	EasingCalc* ec;

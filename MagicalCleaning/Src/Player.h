@@ -133,7 +133,7 @@ private:
 	int cwNum;
 
 	static const int MsTableNum = 10;	//移動速度テーブル数
-	static const int JnTableNum = 5;	//ジャンプ回数テーブル数
+	static const int JnTableNum = 10;	//ジャンプ回数テーブル数
 	static const int AsTableNum = 10;	//攻撃速度テーブル数
 	static const int ArTableNum = 10;	//攻撃範囲テーブル数
 	static const int CwTableNum = 10;	//運搬可能重量テーブル数
