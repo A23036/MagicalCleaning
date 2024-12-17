@@ -22,6 +22,7 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
 	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI.png"));
+	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite3.png"));
 
 	mapImage1 = new CSpriteImage(_T("data/Image/Play/map/stage1.png"));
 	mapImage2 = new CSpriteImage(_T("data/Image/Play/map/stage2.png"));
@@ -33,6 +34,7 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 SplitScreenLastDraw::~SplitScreenLastDraw()
 {
 	SAFE_DELETE(frameUiImage);
+	SAFE_DELETE(playUiImage);
 	SAFE_DELETE(mapImage1);
 	SAFE_DELETE(mapImage2);
 	SAFE_DELETE(sprite);
@@ -45,7 +47,6 @@ void SplitScreenLastDraw::Update()
 
 void SplitScreenLastDraw::Draw()
 {
-
 	SplitScreen* ss = ObjectManager::FindGameObject<SplitScreen>();
 	Camera* cm = ObjectManager::FindGameObject<Camera>();
 	if (ss->Multi())
@@ -93,8 +94,8 @@ void SplitScreenLastDraw::Draw()
 
 				// ミニマップの描画範囲 (左端, 右端, 上端, 下端)
 				const int mapLeft = 610;
-				const int mapRight = 745;
-				const int mapTop = 335;
+				const int mapRight = 740;
+				const int mapTop = 330;
 				const int mapBottom = 465;
 
 				// ワールド座標系の範囲 (-50 ~ 50)
@@ -109,25 +110,23 @@ void SplitScreenLastDraw::Draw()
 				float normalizedZ = (pl->Position().z - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
 				int posY = mapBottom - static_cast<int>(normalizedZ * (mapBottom - mapTop)); // マップ座標
 
-				//キャラクターアイコンベース
-				sprite->DrawRect(posX, posY, 10, 10, RGB(0, 0, 0));
-				sprite->DrawRect(posX + 1, posY + 1, 8, 8, RGB(255, 255, 255));
-				switch (pl->GetPlayerNum()) { //プレイヤーごとのカラー変更
-				case 0:
-					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(255, 0, 0));
-					break;
-				case 1:
-					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(0, 0, 255));
-					break;
-				case 2:
-					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(255, 255, 0));
-					break;
-				case 3:
-					sprite->DrawRect(posX+2, posY+2, 6, 6, RGB(0, 255, 0));
-					break;
-				default:
-					break;
-				}
+				//プレイヤーごとのアイコンカラー変更
+				sprite->SetSrc(playUiImage,1 + pl->GetPlayerNum() * 17, 1, 15, 16, 15, 16);
+				int a = pl->GetPlayerNum();
+
+				int width, height;
+				width = sprite->GetSrcWidth();
+				height = sprite->GetSrcHeight();
+				float pivotX = width / 2.0f;
+				float pivotY = height / 2.0f;
+
+				MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+					* XMMatrixRotationZ(pl->Rotation().y)
+					* XMMatrixScaling(1.0f, 1.0f, 1.0f)
+					* XMMatrixTranslation(posX+8, posY+8 ,0);
+
+				// スプライトをワールド行列を使用して描画
+				sprite->Draw(m);
 			}
 
 

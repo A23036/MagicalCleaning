@@ -23,7 +23,8 @@ private:
 	D3D11_VIEWPORT vpSingle;
 
 	CSprite* sprite;
-	CSpriteImage* frameUiImage;
+	CSpriteImage* frameUiImage;	//画面枠UI
+	CSpriteImage* playUiImage;	//画面UI
 
 	CSpriteImage* mapImage1;	//マップイメージ1
 	CSpriteImage* mapImage2;	//マップイメージ2
