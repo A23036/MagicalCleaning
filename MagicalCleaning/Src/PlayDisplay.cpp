@@ -99,6 +99,89 @@ void PlayDisplay::Draw()
 		sprite->Draw(m);
 	}
 
+	//ラストスパート時UI表示
+	if (gameState == sGamePlay) {
+		if (gameTime == 60) {
+			sprite->SetSrc(playUiImage, 260, 380, 200, 80);
+			int width, height;
+			VECTOR2 center;
+			width = sprite->GetSrcWidth();
+			height = sprite->GetSrcHeight();
+			center.x = WINDOW_WIDTH / 2;
+			center.y = WINDOW_HEIGHT / 2;
+
+			// アニメーションの進行度計算
+			float timeRate = animTime / 1.0f;
+			float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
+
+			float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// 拡大倍率
+
+			// 回転中心を画像の中心にするための補正
+			float pivotX = width / 2.0f;
+			float pivotY = height / 2.0f;
+
+			// ワールド行列の計算
+			MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+				* XMMatrixScaling(scale, scale, 1.0f)
+				* XMMatrixTranslation(center.x, center.y, 0);
+
+			// スプライトをワールド行列を使用して描画
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
+			sprite->Draw(m);
+		}
+		if (gameTime == 59) {
+			sprite->SetSrc(playUiImage, 260, 380, 200, 80, 400, 160);
+			int width, height;
+			VECTOR2 center;
+			width = sprite->GetSrcWidth();
+			height = sprite->GetSrcHeight();
+			center.x = WINDOW_WIDTH / 2 - width;
+			center.y = WINDOW_HEIGHT / 2 - height;
+
+			// アニメーションの進行度計算
+			float timeRate = animTime / 1.0f;
+
+			float alpha = -0.6f * timeRate + 0.6f;	// 透明度
+
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+			sprite->Draw(center.x, center.y);
+		}
+		if (gameTime < 10 && gameTime != 0) {
+			posX = (gameTime-1) * 56;
+			sprite->SetSrc(playUiImage, 270 + posX, 470, 48, 64);
+			int a = 270 + posX;
+
+			int width, height;
+			VECTOR2 center;
+			width = sprite->GetSrcWidth();
+			height = sprite->GetSrcHeight();
+			center.x = WINDOW_WIDTH / 2;
+			center.y = WINDOW_HEIGHT / 2;
+
+			// アニメーションの進行度計算
+			float timeRate = animTime / 1.0f;
+			float rate = ec->easeOutBack(timeRate); // 滑らかな拡大
+
+			float rotation = (rotGoal - rotStart) * rate + rotStart;	// 回転
+			float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// 拡大倍率
+
+			// 回転中心を画像の中心にするための補正
+			float pivotX = width / 2.0f;
+			float pivotY = height / 2.0f;
+
+			// ワールド行列の計算
+			MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+				* XMMatrixRotationZ(rotation)
+				* XMMatrixScaling(scale, scale, 1.0f)
+				* XMMatrixTranslation(center.x, center.y, 0);
+
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.5f);
+			// スプライトをワールド行列を使用して描画
+			sprite->Draw(m);
+		}
+	}
+
+	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
 
 	//基本UI表示
 	//プレイヤーごとのUI描画
@@ -442,12 +525,12 @@ void PlayDisplay::Draw()
 	}
 	//能力の強化進捗順に二つ
 	if (isAllRounder) { //「オールラウンダー」
-		sprite->DrawRect(posX-10, 268, 300, 40, RGB(0,0,0), 0.5f);
+		sprite->DrawRect(posX-10, 268, 300, 40, RGB(255,255,255), 0.5f);
 		sprite->SetSrc(playUiImage2, 0, 4, 280, 36, 280, 36);
 		sprite->Draw(posX, 270);
 	}
 	else if ((max1 - max2) > 0.4) { //ひとつの能力が突出しているとき
-		sprite->DrawRect(posX-10, 268, 300, 40, RGB(0,0,0), 0.5f);
+		sprite->DrawRect(posX-10, 268, 300, 40, RGB(255,255,255), 0.5f);
 		switch (power1) {
 		case 0: //移動速度
 			sprite->SetSrc(playUiImage2, 0, 44, 280, 36, 280, 36);
@@ -468,7 +551,7 @@ void PlayDisplay::Draw()
 		sprite->Draw(posX, 270);
 	}
 	else if(max2 > 0.2f){
-		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(0,0,0), 0.5f);
+		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(255,255,255), 0.5f);
 		switch (min(power1,power2)) {
 		case 0: //移動速度
 			offY = (max(power1,power2)) * 40;

@@ -9,6 +9,7 @@
 #include "SlashEffect.h"
 #include "PowerUpEffect.h"
 #include "LeafEffect.h"
+#include "JumpEffect.h"
 
 Player::Player()
 {
@@ -78,7 +79,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 500;
+	mp = 100;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
@@ -831,6 +832,7 @@ void Player::UpdateJump()
 			animator->MergePlay(aJump2);//ジャンプアニメーション2
 		}
 		animator->SetPlaySpeed(1.0f);
+		new JumpEffect(transform.position);
 		jumpCount++;
 	}
 

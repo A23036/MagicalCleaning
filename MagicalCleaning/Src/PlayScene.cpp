@@ -187,7 +187,7 @@ void PlayScene::UpdateGamePlay()
 void PlayScene::UpdateFinish()
 {
 	timer = frm * (1.0f / 60.0f);
-	if (timer >= 3) { //リザルトへ
+	if (timer >= 4) { //リザルトへ
 		std::list<Player*> players = ObjectManager::FindGameObjects<Player>();
 		int max=0;
 		int winner = -1;
