@@ -34,6 +34,7 @@ PlayScene::PlayScene()
 
 	cm = new Camera();
 	
+	Dust* d = new Dust(3 ,VECTOR3(0, 1, 0));
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
 	
@@ -227,6 +228,11 @@ int PlayScene::GetRandomSize()
 
 void PlayScene::DustDestroyed(Dust* dust)
 {
+	if (dust->GetNum() == 3) { //透明化アイテム
+		VECTOR3 pos = VECTOR3(GetRandomPosition());
+		new Dust(3, pos);
+		return;
+	}
 	// 配列内から該当の Dust を削除
 	auto it = std::find(dustArray.begin(), dustArray.end(), dust);
 	if (it != dustArray.end())

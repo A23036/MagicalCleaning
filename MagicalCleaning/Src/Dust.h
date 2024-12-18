@@ -37,5 +37,6 @@ private:
 		Small = 0,
 		Midium,
 		Big,
+		Item,
 	};
 };

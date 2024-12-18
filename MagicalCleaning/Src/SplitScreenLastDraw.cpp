@@ -129,7 +129,7 @@ void SplitScreenLastDraw::Draw()
 				sprite->Draw(m);
 			}
 
-
+			 
 			//sprite->DrawRect()
 
 			//ƒQ[ƒ€ŽžŠÔ•\Ž¦

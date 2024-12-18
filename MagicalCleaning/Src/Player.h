@@ -67,6 +67,7 @@ public:
 	int GetPowerCost(int selectPower);
 	int GetPowerLv(int selectPower);
 	int GetMaxPowerLv(int selectPower);
+	bool GetIsInvisible() { return isInvisible; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
 	void SetPlayerState(int state);
@@ -117,6 +118,9 @@ private:
 	float chargeSpeed;	//MP変換スピード
 	int chargeFrm;		//MP変換経過フレーム
 	VECTOR3 blowVec;	//吹っ飛ばしベクトル
+	bool isInvisible;	//透明フラグ
+	int InvisibleTime;	//透明化時間
+	int invisibleTime;	//透明化経過時間
 
 	bool finishAtkAnim;
 

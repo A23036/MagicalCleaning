@@ -31,6 +31,12 @@ Dust::Dust(int number, VECTOR3 pos)
 		size = 2.0f;
 		maxHp = 10;
 		break;
+	case Item:
+		transform.scale = VECTOR3(SmallSize, SmallSize, SmallSize);
+		size = 0.5f;
+		maxHp = 1;
+		mesh->m_vDiffuse = VECTOR4(1.0f, 0.1f, 0.1f, 1.0);
+		break;
 	}
 	hp = maxHp;
 	dustNum = number;
@@ -53,7 +59,14 @@ void Dust::Update()
 	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
 		transform.position.y -= 0.2f;
 	}
-
+	if (dustNum == 3) {
+		/*
+		ImGui::Begin("pos");
+		ImGui::InputFloat("x", &transform.position.x);
+		ImGui::InputFloat("z", &transform.position.z);
+		ImGui::End();
+		*/
+	}
 }
 
 void Dust::Draw()

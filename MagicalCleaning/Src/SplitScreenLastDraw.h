@@ -24,7 +24,7 @@ private:
 
 	CSprite* sprite;
 	CSpriteImage* frameUiImage;	//画面枠UI
-	CSpriteImage* playUiImage;	//画面UI
+	CSpriteImage* playUiImage;	//プレイ画面UI
 
 	CSpriteImage* mapImage1;	//マップイメージ1
 	CSpriteImage* mapImage2;	//マップイメージ2

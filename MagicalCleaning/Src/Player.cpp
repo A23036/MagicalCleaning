@@ -40,6 +40,7 @@ Player::Player(VECTOR3 pos, VECTOR3 rot, int num)//セレクトシーン/リザルトシーン
 
 Player::Player(int num) : playerNum(num) // プレイシーンで使用
 {
+	ObjectManager::SetDrawOrder(this, -100);
 	CsvLoad(); // csvからデータの設定
 
 	// プレイヤーの持つ箒の生成
@@ -79,11 +80,12 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 100;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
 	chargeFrm = 0;
+	invisibleTime = 0;
 
 	isDash = false;
 	isFly = false;
@@ -92,6 +94,7 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 	finishAtkAnim = false;
 	atkComboFlg = false;
 	isMagicReady = false;
+	isInvisible = false;
 
 	blowVec = VECTOR3(0, 0, 0);
 
@@ -316,7 +319,7 @@ void Player::Update()
 	//	transform.position += push;
 	//}
 
-	//落下処理
+	//場外処理
 	if (transform.position.y <= -30.0f) {
 		transform.position = VECTOR3(0, 20, 0);
 		ResetLeaf();
@@ -329,6 +332,16 @@ void Player::Update()
 	//吹っ飛び
 	transform.position += blowVec;
 
+	//透明化
+	if (isInvisible) {
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 0.2f);
+		invisibleTime++;
+		if (invisibleTime * (1.0f / 60.0f) > InvisibleTime) {
+			invisibleTime = 0;
+			isInvisible = false;
+			mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+		}
+	}
 
 	// ImGuiウィンドウの位置とサイズを設定
 	/*
@@ -431,8 +444,12 @@ void Player::Update()
 	
 void Player::Draw()
 {
+	if (ObjectManager::DrawCounter() != playerNum) {
+		if (isInvisible) {
+			return;
+		}
+	}
 	Object3D::Draw(); // 継承元の関数を呼ぶ
-
 }
 
 void Player::CsvLoad()
@@ -453,6 +470,9 @@ void Player::CsvLoad()
 			}
 			if (csv->GetString(i, 1) == "MoveSpeed") {		// 移動速度
 				MOVE_SPEED = csv->GetFloat(i, 3);
+			}
+			if (csv->GetString(i, 1) == "InvisibleTime") {		// 透明化時間
+				InvisibleTime = csv->GetInt(i, 3);
 			}
 			if (csv->GetString(i, 1) == "MoveSpeedT") {		// 移動速度テーブル
 				for (int j = 0; j < MsTableNum; j++) {
@@ -597,6 +617,7 @@ void Player::SetIsBlow(bool isBlow)
 {
 	isDash = false; 
 	isFly = false;
+	finishAtkAnim = false;
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
 	}
@@ -885,6 +906,10 @@ void Player::UpdateAttack1()
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
 				d->AddDamage(this,1); //ダメージを与える
+				if (d->GetNum() == 3) { //透明化
+					invisibleTime = 0;
+					isInvisible = true;
+				}
 			}
 		}
 		//他プレイヤーへの攻撃判定
@@ -974,6 +999,10 @@ void Player::UpdateAttack2()
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
 				d->AddDamage(this, 1); //ダメージを与える
+				if (d->GetNum() == 3) { //透明化
+					invisibleTime = 0;
+					isInvisible = true;
+				}
 			}
 		}
 		//他プレイヤーへの攻撃判定
@@ -1060,6 +1089,10 @@ void Player::UpdateAttack3()
 			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
 				// 当たってる
 				d->AddDamage(this, 1); //ダメージを与える
+				if (d->GetNum() == 3) { //透明化
+					invisibleTime = 0;
+					isInvisible = true;
+				}
 			}
 		}
 		//他プレイヤーへの攻撃判定
@@ -1205,6 +1238,7 @@ void Player::UpdateBlow()
 //　プレイヤーの持つ箒
 Broom::Broom(Object3D* parentModel, int num)
 {
+	ObjectManager::SetDrawOrder(this, -100);
 	parent = parentModel;
 
 	mesh = new CFbxMesh();
@@ -1253,10 +1287,22 @@ void Broom::Update()
 		transform.rotation = VECTOR3(45 * DegToRad, 0, 0);
 		break;
 	}
+	if (pl->GetIsInvisible()) {
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 0.2f);
+	}
+	else {
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+	}
 }
 
 void Broom::Draw()
 {
+	Player* pl = dynamic_cast<Player*>(parent);
+	if (ObjectManager::DrawCounter() != pl->GetPlayerNum()) {
+		if (pl->GetIsInvisible()) {
+			return;
+		}
+	}
 	mesh->Render(transform.matrix() * mat * parent->Matrix());
 }
 
