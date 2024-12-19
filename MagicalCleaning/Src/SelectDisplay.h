@@ -5,6 +5,16 @@
 /// <summary>
 /// 画面に各種情報を表示する処理
 /// </summary>
+
+enum Color {
+	Red = 0,
+	Blue,
+	Yellow,
+	Green,
+	Purple,
+	Black,
+};
+
 class SelectDisplay : public Object3D
 {
 public:
@@ -16,6 +26,8 @@ public:
 
 	void DrawUI();
 
+	bool GetIsSelectColor(int playerNum) { return playerEntry[playerNum]; };
+	bool GetIsSelected(int color) { return isSelect[color]; };
 	int GetSelectColor(int playerNum) { return selectColor[playerNum]; };
 	bool GetIsReady() { return isReadyAll; };
 	
@@ -42,13 +54,4 @@ private:
 
 	int moveFrm[MAXPLAYER];	//プレイヤーごとの入力フレームカウント用変数
 	int MoveFrm;			//カーソルが動くのに必要な入力フレーム量
-
-	enum Color {
-		Red = 0,
-		Blue,
-		Yellow,
-		Green,
-		Purple,
-		Black,
-	};
 };

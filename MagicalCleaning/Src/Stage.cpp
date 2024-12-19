@@ -168,6 +168,7 @@ void Stage::Draw()
 
 void Stage::Load() 
 {
+	/*
 	map.clear();
 	int baseX = 0;
 	int baseY = 0;
@@ -259,13 +260,15 @@ void Stage::Load()
 		}
 
 	}
-
+	
 	// 完成したマップデータを保存
 	SaveMapChips(fullMap, "data/Map/CreatedMap.csv");
+	*/
 }
 
 void Stage::Load(int n)
 {
+	/*
 	char name[64];
 	sprintf_s<64>(name, "data/stage/Stage%02d.csv", n);
 
@@ -331,6 +334,7 @@ void Stage::Load(int n)
 	if (m2.size() > 0) {
 		map.push_back(m2);
 	}
+	*/
 }
 
 bool Stage::IsLandBlock(VECTOR3 pos)

@@ -15,17 +15,13 @@ public:
 
 	void CsvLoad(); //CSVファイルからデータの設定
 private:
-	Player* p0;
-	Player* p1;
-	Player* p2;
-	Player* p3;
-	Player* p4;
-	Player* p5;
-
+	Player* players[6]; //プレイヤーのリスト
 	SelectDisplay* sd;
 	CsvReader* csv;
 	CSprite* sprite;
 	CSpriteImage* selectBackImage;	//セレクト画面背景イメージ
-	float ScrollSpeed;				//背景スクロール速度
-	float scrollX;						//背景画像位置X
+
+	VECTOR3 initPos[6];		//キャラクター初期位置
+	float ScrollSpeed;		//背景スクロール速度
+	float scrollX;			//背景画像位置X
 };

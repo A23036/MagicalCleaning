@@ -20,6 +20,7 @@ enum State { //プレイヤー状態
 	sCharge,
 	sBlow,
 	sStop,
+	sWait,
 };
 
 enum SelectPowerID { //選択中強化能力
@@ -46,7 +47,7 @@ class Player : public Object3D {
 public:
 	Player();
 	Player(VECTOR3 pos, VECTOR3 rot, int num);
-	Player(int num);
+	Player(int num, int color);
 	~Player();
 	void Start() override;
 	void Update() override;
@@ -71,7 +72,6 @@ public:
 	bool GetIsInvisible() { return isInvisible; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
-	void SetPlayerColor(int color);
 	void SetPlayerState(int state);
 	void SetPlayerPrevState(int state);
 	void SetBlowVec(VECTOR3 vec);
@@ -161,8 +161,9 @@ private:
 
 	Animator* animator; // 部品のインスタンスをポインター型で準備
 	enum AnimID {
-		aIdle = 0,
-		aRun = 1,
+		aStandBy = 0,
+		aIdle,
+		aRun,
 		aJump,
 		aJump2,
 		aFly,

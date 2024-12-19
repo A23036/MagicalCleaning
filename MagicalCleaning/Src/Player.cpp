@@ -24,21 +24,22 @@ Player::Player(VECTOR3 pos, VECTOR3 rot, int num)//セレクトシーン/リザルトシーン
 	std::string f = "Data/Player/Color" + std::to_string(num);
 	mesh->Load((f + "/witch.mesh").c_str());
 
-	mesh->LoadAnimation(aIdle, (f + "/standby.anmx").c_str(), true);
+	mesh->LoadAnimation(aStandBy, (f + "/standby.anmx").c_str(), true);
 	
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
-	animator->Play(aIdle);
+	animator->Play(aStandBy);
 	animator->SetPlaySpeed(1.0f);
 
 	transform.position = pos;
 	transform.rotation = rot;
 
 	state = sStandby;
+	prevState = sStandby;
 }
 
 
-Player::Player(int num) : playerNum(num) // プレイシーンで使用
+Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで使用
 {
 	ObjectManager::SetDrawOrder(this, -100);
 
@@ -51,12 +52,33 @@ Player::Player(int num) : playerNum(num) // プレイシーンで使用
 
 	mesh = new CFbxMesh();
 
+	std::string f = "Data/Player/Color" + std::to_string(color);
+	mesh->Load((f + "/witch.mesh").c_str());
+
+	mesh->LoadAnimation(aStandBy, (f + "/standby.anmx").c_str(), true);
+	mesh->LoadAnimation(aIdle, (f + "/idle.anmx").c_str(), true);
+	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
+	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
+	mesh->LoadAnimation(aJump2, (f + "/jump2.anmx").c_str(), false);
+	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), true);
+	mesh->LoadAnimation(aFall, (f + "/fall.anmx").c_str(), true);
+	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
+	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
+	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
+	mesh->LoadAnimation(aChargeReady, (f + "/chargeReady.anmx").c_str(), false);
+	mesh->LoadAnimation(aCharge, (f + "/charge.anmx").c_str(), true);
+	mesh->LoadAnimation(aBlow, (f + "/blow.anmx").c_str(), true);
+
+	animator->SetModel(mesh); // このモデルでアニメーションする
+	animator->Play(aIdle);
+	animator->SetPlaySpeed(1.0f);
+
 	transform.position = VECTOR3(0, 0, 0);
 	transform.rotation = VECTOR3(0, 0, 0);
 	deltaTime = 0.0f;
 
-	state = sOnGround;
-	prevState = sOnGround;
+	state = sWait;
+	prevState = sWait;
 
 	speedY = 0;
 	score = 0;
@@ -120,26 +142,6 @@ void Player::Start()
 	dc = ObjectManager::FindGameObject<DataCarrier>();
 	st = ObjectManager::FindGameObject<Stage>();
 	cm = ObjectManager::FindGameObject<Camera>();
-
-	std::string f = "Data/Player/Color" + std::to_string(color);
-	mesh->Load((f + "/witch.mesh").c_str());
-
-	mesh->LoadAnimation(aIdle, (f + "/idle.anmx").c_str(), true);
-	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
-	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
-	mesh->LoadAnimation(aJump2, (f + "/jump2.anmx").c_str(), false);
-	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), true);
-	mesh->LoadAnimation(aFall, (f + "/fall.anmx").c_str(), true);
-	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
-	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
-	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
-	mesh->LoadAnimation(aChargeReady, (f + "/chargeReady.anmx").c_str(), false);
-	mesh->LoadAnimation(aCharge, (f + "/charge.anmx").c_str(), true);
-	mesh->LoadAnimation(aBlow, (f + "/blow.anmx").c_str(), true);
-
-	animator->SetModel(mesh); // このモデルでアニメーションする
-	animator->Play(aIdle);
-	animator->SetPlaySpeed(1.0f);
 }
 
 void Player::Update()
@@ -205,11 +207,18 @@ void Player::Update()
 
 	if (dc->GetIsPlay()) {
 		animator->Update();
+		if (state == sWait) {
+			state = sOnGround;
+			prevState = sOnGround;
+		}
 		state = prevState;
 	}
-	else
+	else if(state != sStandby && state != sWait)
 	{
 		state = sStop;
+	}
+	else {
+		animator->Update();
 	}
 
 	switch (state) {
@@ -592,11 +601,6 @@ int Player::GetMaxPowerLv(int selectPower)
 	default:
 		return 0;
 	}
-}
-
-void Player::SetPlayerColor(int color)
-{
-	this->color = color;
 }
 
 void Player::SetPlayerState(int state)

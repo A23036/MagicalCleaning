@@ -9,14 +9,11 @@ SelectScene::SelectScene()
 	sprite = new CSprite();
 	selectBackImage = new CSpriteImage(_T("data/Image/Select/BackImage.png"));
 
-	/*
-	p0 = new Player(VECTOR3(0, 0, 0),	VECTOR3(0, 180 * DegToRad, 0), 0);
-	p1 = new Player(VECTOR3(2, 0, 0),	VECTOR3(0, 180 * DegToRad, 0), 1);
-	p2 = new Player(VECTOR3(-2, 0, 0),	VECTOR3(0, 180 * DegToRad, 0), 2);
-	p3 = new Player(VECTOR3(0, -2, 0),	VECTOR3(0, 180 * DegToRad, 0), 3);
-	p4 = new Player(VECTOR3(2, -2, 0),	VECTOR3(0, 180 * DegToRad, 0), 4);
-	p5 = new Player(VECTOR3(-2, -2, 0), VECTOR3(0, 180 * DegToRad, 0), 5);
-	*/
+	for (int i = 0; i < 6; i++) {
+		players[i] = new Player(VECTOR3(i*0.5f - 1.2f, -3, 0), VECTOR3(0, 180 * DegToRad, 0), i);
+		initPos[i] = VECTOR3(i * 0.5f - 1.2f, -3, 0);
+		players[i]->SetScale(0.6f, 0.6f, 0.6f);
+	}
 
 	sd = new SelectDisplay();
 
@@ -36,10 +33,27 @@ void SelectScene::Update()
 	if (di->CheckKey(KD_TRG, DIK_P)) {
 		SceneManager::ChangeScene("ViewMapScene");
 	}
+	
+	for (int i = 0; i < MAXPLAYER; i++) {
+		if (sd->GetIsSelectColor(i)){ //プレイヤーがカラーを選択していたら
+			// プレイヤーの位置にキャラクターを移動
+			players[sd->GetSelectColor(i)]->SetPosition(VECTOR3(-3.7f + i % 2 * 7.4f, 1.2f + i / 2 * (-3), 0));
+			// サイズを拡大
+			players[sd->GetSelectColor(i)]->SetScale(1.4f, 1.4f, 1.4f);
+		}
+		else {
+			if (!sd->GetIsSelected(sd->GetSelectColor(i))) { //選択されていないカラーが他のプレイヤーにも選択されていなかったら
+				// 初期位置に戻す
+				players[sd->GetSelectColor(i)]->SetPosition(initPos[sd->GetSelectColor(i)]);
+				// サイズを戻す
+				players[sd->GetSelectColor(i)]->SetScale(0.6f, 0.6f, 0.6f);
+			}
+		}
 
-	if (sd->GetIsReady()) {
-		SceneManager::ChangeScene("PlayScene");
-	}
+		if (sd->GetIsReady()) {
+			SceneManager::ChangeScene("PlayScene");
+		}
+	}	
 }
 
 void SelectScene::Draw()
