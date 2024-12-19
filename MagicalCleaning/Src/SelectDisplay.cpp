@@ -4,6 +4,8 @@ SelectDisplay::SelectDisplay()
 {
 	SetDrawOrder(-10000);	// àÍî‘ç≈å„Ç…ï`âÊÇ∑ÇÈ
 	
+	dc = ObjectManager::FindGameObject<DataCarrier>();
+
 	sprite = new CSprite();
 	selectUiImage = new CSpriteImage(_T("data/Image/Select/UI.png"));
 
@@ -188,6 +190,10 @@ void SelectDisplay::Update()
 	}
 
 	if (num == MAXPLAYER) { //ëSàıÇ™èÄîıäÆóπ
+		//DataCarrierÇ…ê›íËèÓïÒÇï€ë∂
+		dc->SetCameraSetteing(selectCamera);
+		dc->SetColor(selectColor);
+
 		isReadyAll = true;
 	}
 	else {

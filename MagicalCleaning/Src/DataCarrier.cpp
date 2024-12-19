@@ -26,6 +26,20 @@ void DataCarrier::SetIsPlay(bool isPlay)
 	this->isPlay = isPlay;
 }
 
+void DataCarrier::SetColor(int color[MAXPLAYER])
+{
+	for (int i = 0; i < MAXPLAYER; i++) {
+		selectColor[i] = color[i];
+	}
+}
+
+void DataCarrier::SetCameraSetteing(int setting[MAXPLAYER])
+{
+	for (int i = 0; i < MAXPLAYER; i++) {
+		cameraSetting[i] = setting[i];
+	}
+}
+
 void DataCarrier::SetGameState(int state)
 {
 	gameState = state;

@@ -193,22 +193,6 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 	auto di = GameDevice()->m_pDI;
 	
-	//カメラの手動回転処理
-	float z = di->GetJoyState(counter).lZ;	// 左:0 / 右:65535
-
-	// スティックの入力値を取得
-	
-	// 入力値を正規化 (-1.0f ~ 1.0f)
-	float normalizedZ = (z / 32767.5f) - 1.0f;
-
-	// デッドゾーンの設定
-	const float deadZone = 0.1f;
-	if (fabs(normalizedZ) > deadZone) {
-		// カメラのY軸回転処理
-		rotationY[counter] += normalizedZ * ROTATE_SPEED;
-	}
-	
-
 	// プレイヤーの位置を取得
 	VECTOR3 playerPos = pos;
 
@@ -216,8 +200,79 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 	MATRIX4X4 trans = XMMatrixTranslation(pos.x, pos.y, pos.z);
 	MATRIX4X4 m = rotY * trans;
 
-	// 2024.10.12 カメラ回転リセット↓
+	//カメラの手動回転処理
+	if (dc->GetCameraSetting(counter) == 1) {
+		float z = di->GetJoyState(counter).lZ;	// 左:0 / 右:65535
 
+		// 入力値を正規化 (-1.0f ~ 1.0f)
+		float normalizedZ = (z / 32767.5f) - 1.0f;
+
+		// デッドゾーンの設定
+		const float deadZone = 0.1f;
+		if (fabs(normalizedZ) > deadZone) {
+			// カメラのY軸回転処理
+			rotationY[counter] += normalizedZ * ROTATE_SPEED;
+		}
+	}
+	else { //カメラの自動回転処理
+
+	//2024.10.25 カメラ自動回転処理↓
+	// プレイヤーの移動方向を計算
+		VECTOR3 moveDir = playerPos - prevPlayerPos[counter];
+		moveDir.y = 0.0f;	// 垂直方向の動きを無視
+		moveDir = XMVector3Normalize(moveDir);
+
+		if (prevPlayerPos[counter] != VECTOR3(0, 0, 0) && moveDir.Length() != 0)
+		{
+			MATRIX4X4 rotY = XMMatrixRotationY(rotationY[counter]);	// カメラの回転量
+			VECTOR3 rightDir = VECTOR3(1, 0, 0) * rotY;		// カメラから見て右方向のベクトル
+
+			float dotVal = dot(moveDir, rightDir); // 内積結果 0:正面 / ～1.0:右移動 / -1.0～:左移動 
+
+			// プレイヤーの後ろにカメラを回り込ませる処理
+			float targetRotationY = rotationY[counter];
+
+			if (dotVal > 0.1) // プレイヤーがカメラの右側にいる
+			{
+				// 緩やかに右に回転させる
+				targetRotationY += ROTATE_SPEED;
+			}
+			else if (dotVal < -0.1) // プレイヤーがカメラの左側にいる
+			{
+				// 緩やかに左に回転させる
+				targetRotationY -= ROTATE_SPEED;
+			}
+
+			// プレイヤーが斜め前にいる場合は回転を少し抑える
+			float forwardDot = dot(moveDir, VECTOR3(0, 0, 1) * rotY); // 正面方向との内積
+			if (forwardDot > 0.0f) // プレイヤーがカメラの前にいる場合
+			{
+				float adjustment = 1.0f - forwardDot; // 前にいるほど回転を抑える
+				targetRotationY = rotationY[counter] + (targetRotationY - rotationY[counter]) * adjustment;
+			}
+
+			// 回転量を更新
+			rotationY[counter] = targetRotationY;
+		}
+		//2024.10.25 カメラ自動回転処理↑
+	}
+	
+	//MP変換中のカメラ操作
+	if (player[counter]->GetPlayerState() == sCharge) {
+
+		//左スティックの左右入力
+		// 入力値を正規化 (-1.0f ~ 1.0f)
+		float ix = di->GetJoyState(counter).lX / 1000.0f; 
+		
+		// デッドゾーンの設定
+		const float deadZone = 0.1f;
+		if (fabs(ix) > deadZone) {
+			// カメラのY軸回転処理
+			rotationY[counter] += ix * ROTATE_SPEED;
+		}
+	}
+
+	// 2024.10.12 カメラ回転リセット↓
 	// 左SHIFTキーが押されたらカメラをプレイヤーの後方に移動
 	if (di->CheckKey(KD_TRG, DIK_LSHIFT) || di->CheckJoy(KD_TRG, 6,counter)) {
 		//プレイヤーの回転を保存
@@ -249,48 +304,6 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 		transform.position = position;
 		lookPosition = look;
 	}
-
-	//2024.10.25 カメラ自動回転処理↓
-	/*
-	// プレイヤーの移動方向を計算
-	VECTOR3 moveDir = playerPos - prevPlayerPos[counter];
-	moveDir.y = 0.0f;	// 垂直方向の動きを無視
-	moveDir = XMVector3Normalize(moveDir);
-
-	if (prevPlayerPos[counter] != VECTOR3(0, 0, 0) && moveDir.Length() != 0)
-	{
-		MATRIX4X4 rotY = XMMatrixRotationY(rotationY[counter]);	// カメラの回転量
-		VECTOR3 rightDir = VECTOR3(1, 0, 0) * rotY;		// カメラから見て右方向のベクトル
-
-		float dotVal = dot(moveDir, rightDir); // 内積結果 0:正面 / ～1.0:右移動 / -1.0～:左移動 
-
-		// プレイヤーの後ろにカメラを回り込ませる処理
-		float targetRotationY = rotationY[counter];
-
-		if (dotVal > 0.1) // プレイヤーがカメラの右側にいる
-		{
-			// 緩やかに右に回転させる
-			targetRotationY += ROTATE_SPEED;
-		}
-		else if (dotVal < -0.1) // プレイヤーがカメラの左側にいる
-		{
-			// 緩やかに左に回転させる
-			targetRotationY -= ROTATE_SPEED;
-		}
-
-		// プレイヤーが斜め前にいる場合は回転を少し抑える
-		float forwardDot = dot(moveDir, VECTOR3(0, 0, 1) * rotY); // 正面方向との内積
-		if (forwardDot > 0.0f) // プレイヤーがカメラの前にいる場合
-		{
-			float adjustment = 1.0f - forwardDot; // 前にいるほど回転を抑える
-			targetRotationY = rotationY[counter] + (targetRotationY - rotationY[counter]) * adjustment;
-		}
-
-		// 回転量を更新
-		rotationY[counter] = targetRotationY;
-	}
-	*/
-	//2024.10.25 カメラ自動回転処理↑
 
 
 	// カメラが壁にめり込まないようにする

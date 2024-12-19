@@ -1,5 +1,6 @@
 #pragma once
 #include "Object3D.h"
+#include "DataCarrier.h"
 
 /// <summary>
 /// 画面に各種情報を表示する処理
@@ -19,6 +20,7 @@ public:
 	bool GetIsReady() { return isReadyAll; };
 	
 private:
+	DataCarrier* dc;
 	CSprite* sprite;
 	CSpriteImage* selectUiImage;	//セレクト画面UIイメージ
 	

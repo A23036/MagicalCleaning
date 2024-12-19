@@ -8,7 +8,6 @@ SelectScene::SelectScene()
 	CsvLoad();
 	sprite = new CSprite();
 	selectBackImage = new CSpriteImage(_T("data/Image/Select/BackImage.png"));
-	dc = ObjectManager::FindGameObject<DataCarrier>();
 
 	/*
 	p0 = new Player(VECTOR3(0, 0, 0),	VECTOR3(0, 180 * DegToRad, 0), 0);

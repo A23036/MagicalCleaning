@@ -14,7 +14,7 @@ PlayScene::PlayScene()
 
 	pd = new PlayDisplay();
 
-	dc = SingleInstantiate<DataCarrier>(); //DataCarrier‚ÍƒVƒ“ƒOƒ‹ƒgƒ“‚Å¶¬
+	dc = ObjectManager::FindGameObject<DataCarrier>();
 	
 	st = new Stage();
 	sky = new Sky();
@@ -22,15 +22,19 @@ PlayScene::PlayScene()
 	p1 = new Player(0);
 	p1->SetPosition(-30, 0, -20);
 	p1->SetTag("Player1");
+	p1->SetPlayerColor(dc->GetColor(0));
 	p2 = new Player(1);
 	p2->SetPosition(-10, 0, -25);
 	p2->SetTag("Player2");
+	p2->SetPlayerColor(dc->GetColor(1));
 	p3 = new Player(2);
 	p3->SetPosition(10, 0, -30);
 	p3->SetTag("Player3");
+	p3->SetPlayerColor(dc->GetColor(2));
 	p4 = new Player(3);
 	p4->SetPosition(30, 0, -40);
 	p4->SetTag("Player4");
+	p4->SetPlayerColor(dc->GetColor(3));
 
 	cm = new Camera();
 	

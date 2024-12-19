@@ -115,7 +115,7 @@ void SplitScreenLastDraw::Draw()
 				int posY = mapBottom - static_cast<int>(normalizedZ * (mapBottom - mapTop)); // マップ座標
 
 				//プレイヤーごとのアイコンカラー変更
-				sprite->SetSrc(playUiImage,1 + pl->GetPlayerNum() * 17, 1, 15, 16, 15, 16);
+				sprite->SetSrc(playUiImage,1 + pl->GetColor() * 17, 1, 15, 16, 15, 16);
 				int a = pl->GetPlayerNum();
 
 				int width, height;

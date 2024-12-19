@@ -2,7 +2,6 @@
 #include "SceneBase.h"
 #include "Animator.h"
 #include "CsvReader.h"
-#include "DataCarrier.h"
 #include "Player.h"
 #include "SelectDisplay.h"
 
@@ -25,7 +24,6 @@ private:
 
 	SelectDisplay* sd;
 	CsvReader* csv;
-	DataCarrier* dc;
 	CSprite* sprite;
 	CSpriteImage* selectBackImage;	//セレクト画面背景イメージ
 	float ScrollSpeed;				//背景スクロール速度
