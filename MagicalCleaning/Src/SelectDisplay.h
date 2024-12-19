@@ -12,6 +12,12 @@ public:
 
 	void Update() override;
 	void Draw() override;
+
+	void DrawUI();
+
+	int GetSelectColor(int playerNum) { return selectColor[playerNum]; };
+	bool GetIsReady() { return isReadyAll; };
+	
 private:
 	CSprite* sprite;
 	CSpriteImage* selectUiImage;	//セレクト画面UIイメージ
@@ -23,16 +29,17 @@ private:
 	int GuideUiPosY;		//操作方法ガイドUI位置Y
 	VECTOR2 BackUiPos;		//戻るUI位置
 
-	bool playerEntry[4];	//プレイヤーのエントリー状態
-	int selectColor[4];		//プレイヤーごとの選択中カラー
-	VECTOR2 cursorPos[4];	//カーソル位置
-	
-	enum Dir{
-		UP = 0,
-		RIGHT,
-		DOWN,
-		LEFT,
-	};
+	bool isReadyAll;				//プレイヤー全員が準備完了
+	bool playerEntry[MAXPLAYER];	//プレイヤーのエントリー状態
+	bool isReady[MAXPLAYER];		//プレイヤー準備完了判定
+	int  selectColor[MAXPLAYER];	//プレイヤーごとの選択中カラー
+	int  selectCamera[MAXPLAYER];	//プレイヤーごとの選択中カメラ設定 0:オート/1:マニュアル
+	bool isSetUpCamera[MAXPLAYER];	//プレイヤーごとのカメラ設定完了判定
+	bool isSelect[6];				//カラーごとの選択済み判定
+	VECTOR2 cursorPos[MAXPLAYER];	//カーソル位置
+
+	int moveFrm[MAXPLAYER];	//プレイヤーごとの入力フレームカウント用変数
+	int MoveFrm;			//カーソルが動くのに必要な入力フレーム量
 
 	enum Color {
 		Red = 0,

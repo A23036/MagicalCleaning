@@ -56,6 +56,7 @@ public:
 
 	SphereCollider Collider() override;
 
+	int GetColor() { return color; };
 	int GetLeaf() { return leaf; };
 	int GetMP() { return mp; };
 	int GetWeight() { return weight; };
@@ -70,6 +71,7 @@ public:
 	bool GetIsInvisible() { return isInvisible; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
+	void SetPlayerColor(int color);
 	void SetPlayerState(int state);
 	void SetPlayerPrevState(int state);
 	void SetBlowVec(VECTOR3 vec);
@@ -103,6 +105,7 @@ private:
 	float MOVE_SPEED;	//基本移動速度
 
 	int playerNum;		//プレイヤー番号
+	int color;			//プレイヤーカラー
 	int score;			//スコア
 	int leaf;			//葉っぱ所持数
 	int mp;				//MP所持数

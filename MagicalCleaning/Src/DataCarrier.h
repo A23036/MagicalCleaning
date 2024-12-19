@@ -25,6 +25,7 @@ public:
 private:
 	int gameTime;	//ゲーム経過時間(秒)
 	bool isPlay;	//ゲーム中判定
+	int selectColor[MAXPLAYER];	//プレイヤーごとの選択カラー情報
 	int gameState;	//ゲーム状態変数
 	int rank[MAXPLAYER];	//順位
 	int winnerId;

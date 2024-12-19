@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include "EasingCalc.h"
 #include "CsvReader.h"
+#include "DataCarrier.h"
 
 class TitleScene : public SceneBase
 {
@@ -16,6 +17,7 @@ public:
 private:
 	CsvReader*	csv;
 	EasingCalc*	 easing;
+	DataCarrier* dc;
 	CSpriteImage*	titleBackImage;		//タイトル画面背景イメージ
 	CSpriteImage*	broomImage;			//タイトル画面「箒」イメージ
 	CSpriteImage*	titleText1Image;	//「まほうつかいの」テキストイメージ

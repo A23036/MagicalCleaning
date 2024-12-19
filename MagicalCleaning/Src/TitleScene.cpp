@@ -1,6 +1,5 @@
 #include "TitleScene.h"
 #include "GameMain.h"
-#include "EasingCalc.h"
 
 
 TitleScene::TitleScene()
@@ -16,6 +15,7 @@ TitleScene::TitleScene()
 	
 	sprite = new CSprite();
 	easing = new EasingCalc();
+	dc = SingleInstantiate<DataCarrier>(); //DataCarrier‚ÍƒVƒ“ƒOƒ‹ƒgƒ“‚Å¶¬
 
 	animNum = 0;
 	animFrm = 0;
