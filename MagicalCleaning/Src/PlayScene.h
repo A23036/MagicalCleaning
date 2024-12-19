@@ -43,7 +43,7 @@ private:
 	bool isPlay;	//ゲーム中フラグ
 	int rank[MAXPLAYER];	//順位
 
-	static const int MAX_DUST_NUM = 30; //最大生成ゴミ数
+	static const int MAX_DUST_NUM = 50; //最大生成ゴミ数
 	std::vector<Dust*> dustArray;
 
 	void UpdateReady();

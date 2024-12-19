@@ -59,14 +59,7 @@ void Dust::Update()
 	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
 		transform.position.y -= 0.2f;
 	}
-	if (dustNum == 3) {
-		/*
-		ImGui::Begin("pos");
-		ImGui::InputFloat("x", &transform.position.x);
-		ImGui::InputFloat("z", &transform.position.z);
-		ImGui::End();
-		*/
-	}
+
 }
 
 void Dust::Draw()

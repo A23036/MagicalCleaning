@@ -191,6 +191,24 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 		return;
 	}
 
+	auto di = GameDevice()->m_pDI;
+	
+	//カメラの手動回転処理
+	float z = di->GetJoyState(counter).lZ;	// 左:0 / 右:65535
+
+	// スティックの入力値を取得
+	
+	// 入力値を正規化 (-1.0f ~ 1.0f)
+	float normalizedZ = (z / 32767.5f) - 1.0f;
+
+	// デッドゾーンの設定
+	const float deadZone = 0.1f;
+	if (fabs(normalizedZ) > deadZone) {
+		// カメラのY軸回転処理
+		rotationY[counter] += normalizedZ * ROTATE_SPEED;
+	}
+	
+
 	// プレイヤーの位置を取得
 	VECTOR3 playerPos = pos;
 
@@ -201,7 +219,6 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 	// 2024.10.12 カメラ回転リセット↓
 
 	// 左SHIFTキーが押されたらカメラをプレイヤーの後方に移動
-	auto di = GameDevice()->m_pDI;
 	if (di->CheckKey(KD_TRG, DIK_LSHIFT) || di->CheckJoy(KD_TRG, 6,counter)) {
 		//プレイヤーの回転を保存
 		rotationY[counter] = rot.y;
@@ -234,7 +251,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 	}
 
 	//2024.10.25 カメラ自動回転処理↓
-	
+	/*
 	// プレイヤーの移動方向を計算
 	VECTOR3 moveDir = playerPos - prevPlayerPos[counter];
 	moveDir.y = 0.0f;	// 垂直方向の動きを無視
@@ -271,9 +288,8 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 
 		// 回転量を更新
 		rotationY[counter] = targetRotationY;
-
 	}
-	
+	*/
 	//2024.10.25 カメラ自動回転処理↑
 
 

@@ -444,7 +444,7 @@ void Player::Update()
 	
 void Player::Draw()
 {
-	if (ObjectManager::DrawCounter() != playerNum) {
+	if (ObjectManager::DrawCounter() != playerNum) { //“§–¾‚ÌƒvƒŒƒCƒ„[‚ğ•`‰æ‚µ‚È‚¢
 		if (isInvisible) {
 			return;
 		}

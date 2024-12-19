@@ -86,7 +86,11 @@ void SplitScreenLastDraw::Draw()
 			int posX,posY;
 
 			for (Player* pl : players){
-
+				if (pl->GetIsInvisible())
+				{
+					continue;
+				}
+				
 				//左端 610 右端 745
 				posX = 610;
 				//上端 335 下端 465
