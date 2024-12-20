@@ -320,7 +320,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 			hit += push;
 			end = hit;
 		}
-	}*/
+	}
 	
 	VECTOR3 start = pos;
 	//start.y = CameraPos.y;
@@ -336,7 +336,7 @@ void Camera::updateCamera(int counter, VECTOR3 pos, VECTOR3 rot)
 	}
 	
 	transform.position = end;
-	
+	*/
 
 	// プレイヤーの位置を保存
 	prevPlayerPos[counter] = playerPos;

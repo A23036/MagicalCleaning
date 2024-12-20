@@ -83,7 +83,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 500;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
@@ -786,7 +786,7 @@ void Player::UpdateOnGround()
 		state = sCharge;
 		isDash = false;
 		chargeSpeed = 1.0f; //MP変換速度初期値
-		mcEffect = new MagicCircleEffect(transform.position, playerNum);
+		mcEffect = new MagicCircleEffect(transform.position, color);
 	}
 }
 

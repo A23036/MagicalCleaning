@@ -21,7 +21,7 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	vpSingle.TopLeftY = 0;
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
-	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI.png"));
+	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI2.png"));
 	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite3.png"));
 
 	mapImage1 = new CSpriteImage(_T("data/Image/Play/map/stage1.png"));
@@ -75,7 +75,7 @@ void SplitScreenLastDraw::Draw()
 			// ‰æ–Ê‘S‘Ì‚Ì•`‰æ
 
 			//‰æ–Ê•ªŠ„˜g•`‰æ
-			sprite->Draw(frameUiImage, 0, 0, 1024, 576, 1024, 576, WINDOW_WIDTH, WINDOW_HEIGHT);
+			sprite->Draw(frameUiImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 
 			//ƒ}ƒbƒv•`‰æ

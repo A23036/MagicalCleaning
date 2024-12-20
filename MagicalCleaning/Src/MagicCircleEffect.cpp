@@ -11,19 +11,22 @@ MagicCircleEffect::MagicCircleEffect(VECTOR3 pos, int num)
     
     switch (num) { //プレイヤーカラーごとに色を変更
     case 0:
-        color = VECTOR4(233.0f/255.0f, 84.0f/255.0f, 96/255.0f, 1);
+        color = VECTOR4(255.0f / 255.0f, 51.0f / 255.0f, 102 / 255.0f, 1);
         break;
     case 1:
-        color = VECTOR4(44.0f /255.0f, 169.0f /255.0f, 224.0f /255.0f, 1);
+        color = VECTOR4(44.0f / 255.0f, 169.0f / 255.0f, 224.0f / 255.0f, 1);
         break;
     case 2:
-        color = VECTOR4(254.0f /255.0f, 242.0f /255.0f, 99.0f /255.0f, 1);
+        color = VECTOR4(254.0f / 255.0f, 242.0f / 255.0f, 99.0f / 255.0f, 1);
         break;
     case 3:
-        color = VECTOR4(2.0f /255.0f, 135.0f /255.0f, 96.0f /255.0f, 1);
+        color = VECTOR4(2.0f / 255.0f, 135.0f / 255.0f, 96.0f / 255.0f, 1);
         break;
     case 4:
-        color = VECTOR4(0.1921, 0.9607, 0.2156, 1);
+        color = VECTOR4(160.0f / 255.0f, 84.0f / 255.0f, 179.0f / 255.0f, 1);
+        break;
+    case 5:
+        color = VECTOR4(29.0f / 255.0f, 9.0f / 255.0f, 33.0f / 255.0f, 1);
         break;
     default:
         break;
