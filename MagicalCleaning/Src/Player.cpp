@@ -74,7 +74,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	animator->SetPlaySpeed(1.0f);
 
 	transform.position = VECTOR3(0, 0, 0);
-	transform.rotation = VECTOR3(0, 0, 0);
+	transform.rotation = VECTOR3(0, playerNum * 90 * DegToRad, 0);
 	deltaTime = 0.0f;
 
 	state = sWait;

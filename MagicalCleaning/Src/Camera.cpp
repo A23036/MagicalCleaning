@@ -21,7 +21,7 @@ Camera::Camera()
 	*/
 	// ”z—ñ—v‘f‚Ì‰Šú‰»
 	for (int i = 0; i < MAXPLAYER; i++) {
-		rotationY[i] = 0.0f;
+		rotationY[i] = 0.0f + i*90*DegToRad;
 		prevPlayerPos[i] = VECTOR3(0, 0, 0);
 		changeTime[i] = CHANGE_TIME;
 		changePosStart[i]	= VECTOR3(0, 0, 0);

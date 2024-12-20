@@ -120,14 +120,14 @@ void SplitScreenLastDraw::Draw()
 				
 				//左端 600 右端 750
 				posX = 600;
-				//上端 320 下端 470
-				posY = 470;
+				//上端 320 下端 475
+				posY = 475;
 
 				// ミニマップの描画範囲 (左端, 右端, 上端, 下端)
 				const int mapLeft = 600;
 				const int mapRight = 750;
 				const int mapTop = 320;
-				const int mapBottom = 470;
+				const int mapBottom = 475;
 
 				// ワールド座標系の範囲 (-50 ~ 50)
 				const float worldMin = -50.0f;
@@ -142,7 +142,7 @@ void SplitScreenLastDraw::Draw()
 				int posY = mapBottom - static_cast<int>(normalizedZ * (mapBottom - mapTop)); // マップ座標
 
 				//プレイヤーごとのアイコンカラー変更
-				sprite->SetSrc(playUiImage,1 + pl->GetColor() * 17, 1, 15, 16, 15, 16);
+				sprite->SetSrc(playUiImage,1 + pl->GetColor() * 16, 1, 15, 16, 15, 16);
 				int a = pl->GetPlayerNum();
 
 				int width, height;
