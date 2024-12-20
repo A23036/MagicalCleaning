@@ -76,7 +76,7 @@ public:
 	void SetPlayerPrevState(int state);
 	void SetBlowVec(VECTOR3 vec);
 	void SetSpeedY(float y);
-	void SetIsBlow(bool isBlow);
+	void SetIsBlow();
 	void ResetLeaf();
 	void AddLeaf(int n);
 	void AddMP(int n);

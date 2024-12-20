@@ -330,8 +330,12 @@ void Player::Update()
 	//}
 
 	//êŠOˆ—
-	if (transform.position.y <= -30.0f) {
+	if (transform.position.y < -30.0f || fabs(transform.position.x) > 60.0f || fabs(transform.position.z) > 60.0f){
 		transform.position = VECTOR3(0, 20, 0);
+		SetIsBlow();
+		SetPlayerState(sBlow);
+		animator->MergePlay(aBlow, 0);
+		animator->SetPlaySpeed(2.0f);
 		ResetLeaf();
 	}
 
@@ -623,15 +627,15 @@ void Player::SetSpeedY(float y)
 	speedY = y;
 }
 
-void Player::SetIsBlow(bool isBlow)
+void Player::SetIsBlow()
 {
+	isBlow = true;
 	isDash = false; 
 	isFly = false;
 	finishAtkAnim = false;
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
 	}
-	this->isBlow = isBlow;
 }
 
 void Player::ResetLeaf()
@@ -940,7 +944,7 @@ void Player::UpdateAttack1()
 				p->SetSpeedY(pushVec.y);
 				p->SetPlayerState(sBlow);
 				p->SetPlayerPrevState(sBlow);
-				p->SetIsBlow(true);
+				p->SetIsBlow();
 				p->animator->MergePlay(aBlow, 0);
 				p->animator->SetPlaySpeed(2.0f);
 				AddLeaf(p->GetLeaf());
@@ -1033,7 +1037,7 @@ void Player::UpdateAttack2()
 				p->SetSpeedY(pushVec.y);
 				p->SetPlayerState(sBlow);
 				p->SetPlayerPrevState(sBlow);
-				p->SetIsBlow(true);
+				p->SetIsBlow();
 				p->animator->MergePlay(aBlow, 0);
 				p->animator->SetPlaySpeed(2.0f);
 				AddLeaf(p->GetLeaf());
@@ -1123,7 +1127,7 @@ void Player::UpdateAttack3()
 				p->SetSpeedY(pushVec.y);
 				p->SetPlayerState(sBlow);
 				p->SetPlayerPrevState(sBlow);
-				p->SetIsBlow(true);
+				p->SetIsBlow();
 				p->animator->MergePlay(aBlow, 0);
 				p->animator->SetPlaySpeed(2.0f);
 				AddLeaf(p->GetLeaf());
