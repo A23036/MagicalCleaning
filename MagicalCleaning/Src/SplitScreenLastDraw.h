@@ -21,6 +21,8 @@ public:
 
 	void SetPlayers(list<Player*> players);
 
+	void LoadMap();
+
 private:
 	D3D11_VIEWPORT vpSingle;
 

@@ -6,6 +6,7 @@
 #include "Dust.h"
 #include "DustBox.h"
 #include "Collision.h"
+#include "SplitScreenLastDraw.h"
 #include <iostream>
 #include <fstream>
 
@@ -14,8 +15,13 @@ using namespace std;
 
 Stage::Stage()
 {
+	SplitScreenLastDraw* ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
+
 	//ランダムなマップチップ配列の作成
 	GenerateRandomMap(MapNum);
+
+	ssld->LoadMap();
+
 	/*
 	mesh = new CFbxMesh();
 
@@ -69,7 +75,7 @@ Stage::~Stage()
 //		csv = nullptr;
 //	}
 	SAFE_DELETE(csv);
-
+	SAFE_DELETE(mesh);
 	SAFE_DELETE(mapCol);
 }
 

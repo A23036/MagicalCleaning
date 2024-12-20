@@ -75,17 +75,6 @@ void SplitScreenLastDraw::Draw()
 
 			// 画面全体の描画
 
-			if (st == nullptr) {
-				st = ObjectManager::FindGameObject<Stage>();
-
-				for (int i = 0; i < st->GetMapNum(); i++) {//マップデータの数だけイメージデータをロード
-					CSpriteImage* s;
-					std::string f = "data/Image/Play/map/stage" + std::to_string(i + 1);
-					s = new CSpriteImage(_T((f + ".png").c_str()));
-					mapImages.push_back(s);
-				}
-			} 
-
 			//画面分割枠描画
 			sprite->Draw(frameUiImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -218,4 +207,16 @@ void SplitScreenLastDraw::SetGameTime(int time)
 void SplitScreenLastDraw::SetPlayers(list<Player*> players)
 {
 	this->players = players;
+}
+
+void SplitScreenLastDraw::LoadMap()
+{
+	st = ObjectManager::FindGameObject<Stage>();
+
+	for (int i = 0; i < st->GetMapNum(); i++) {//マップデータの数だけイメージデータをロード
+		CSpriteImage* s;
+		std::string f = "data/Image/Play/map/stage" + std::to_string(i + 1);
+		s = new CSpriteImage(_T((f + ".png").c_str()));
+		mapImages.push_back(s);
+	}
 }
