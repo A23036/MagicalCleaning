@@ -14,48 +14,35 @@ using namespace std;
 
 Stage::Stage()
 {
-	size = 7;
-	chipX = 10;
-	chipY = 5;
-	chipZ = 10;
+	int mapNum = 4;	//マップデータの数
 
 	//ランダムなマップチップ配列の作成
-	//GenerateRandomMap(15,size);
-
-	SetTag("STAGEOBJ");
-
+	GenerateRandomMap(mapNum);
+	/*
 	mesh = new CFbxMesh();
-	//mesh->Load("data/Map2/map50Field1.mesh");
-
-	//meshes.push_back(mesh);
-	//meshCol = new MeshCollider();
-	//meshCol->MakeFromMesh(mesh); //メッシュを作成
 
 	mapCol = new CCollision;	// -- 2024.12.2
-	//mapCol->AddFbxLoad(mesh);	// -- 2024.12.2 
 	
 	mesh->Load("data/Map2/MapChip/stage01.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixRotationY(90 * DegToRad) * XMMatrixTranslation(-25, 0, -25)); //移動させる場合、引数を追加
+	mapCol->AddFbxLoad(mesh,XMMatrixTranslation(-25, 0, -25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
 
 	mesh = new CFbxMesh();
-
 	mesh->Load("data/Map2/MapChip/stage02.mesh");
 	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(25, 0, -25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
 
 	mesh = new CFbxMesh();
-
 	mesh->Load("data/Map2/MapChip/stage03.mesh");
 	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(-25, 0, 25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
+	
 	mesh = new CFbxMesh();
-
 	mesh->Load("data/Map2/MapChip/stage04.mesh");
 	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(25, 0, 25)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
+	*/
 	mesh = new CFbxMesh();
-
 	mesh->Load("data/Map2/MapChip/stage_wall.mesh");
 	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 0)); //移動させる場合、引数を追加
 	meshes.push_back(mesh);
@@ -105,62 +92,14 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-	/*
-	// 画面ごとにプレイヤー周辺のみマップ描画
-	int num = ObjectManager::DrawCounter(); 
-	std::string s = "Player" + std::to_string(num+1);
-	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
-	VECTOR3 pos = pl->Position();
 	
-	const int radius = 25; // プレイヤーからの描画範囲を指定
-
-	// 描画範囲の計算
-	int minX = max(0, static_cast<int>(pos.x) - radius);
-	int maxX = min(static_cast<int>(map[0][0].size()) - 1, static_cast<int>(pos.x) + radius);
-	int minY = max(0, static_cast<int>(pos.y) - radius);
-	int maxY = min(static_cast<int>(map.size()) - 1, static_cast<int>(pos.y) + radius);
-	int minZ = max(0, static_cast<int>(-pos.z) - radius);
-	int maxZ = min(static_cast<int>(map[0].size()) - 1, static_cast<int>(-pos.z) + radius);
-	
-	int i = 0;
-	int j = 0;
-	for (int y = minY; y <= maxY; y++) {
-		for (int z = minZ; z <= maxZ; z++) {
-			for (int x = minX; x <= maxX; x++) {
-				i++;
-				VECTOR3 dist = pos - VECTOR3(x, y, -z);
-
-				// 特定の範囲内だけ描画
-				if (dist.LengthSquare() >= 500)
-					continue;
-				j++;
-				// チップの描画処理
-				int chip = map[y][z][x];
-				if (chip >= 0) { // 負の時は穴
-					meshes[chip]->Render(XMMatrixTranslation(x, y, -z));
-				}
-			}
-		}
-	}
-	*/
 	int i = 0;
 	for (CFbxMesh* m : meshes) {
-		switch (i) {
-		case 0:
-			m->Render(XMMatrixRotationY(90 * DegToRad)*XMMatrixTranslation(-25, 0,-25));
-			break;
-		case 1:
-			m->Render(XMMatrixTranslation(25, 0, -25));
-			break;
-		case 2:
-			m->Render(XMMatrixTranslation(-25, 0, 25));
-			break;
-		case 3:
-			m->Render(XMMatrixTranslation(25, 0, 25));
-			break;
-		case 4:
+		if (i == 4) {
 			m->Render(XMMatrixTranslation(0, 0, 0));
-			break;
+		}
+		else{
+			m->Render(XMMatrixRotationY(mapRotData[i] * 90 * DegToRad) * XMMatrixTranslation(-25 + i % 2 * 50, 0, -25 + i / 2 * 50));
 		}
 		i++;
 	}
@@ -339,7 +278,6 @@ void Stage::Load(int n)
 
 bool Stage::IsLandBlock(VECTOR3 pos)
 {
-	
 	VECTOR3 to = pos;
 	to.y -= 0.01f;
 	pos.y += 1.0f;
@@ -351,39 +289,6 @@ bool Stage::IsLandBlock(VECTOR3 pos)
 		return false;
 	}
 	return true;
-
-	/*
-	if (csv == nullptr) {
-		return false;
-	}
-	if (-pos.z + 0.5f < 0.0f) {
-		return false;
-	}
-	int chipZ = (int)(-pos.z + 0.5f);
-	if (pos.x + 0.5f < 0.0f) {
-		return false;
-	}
-	int chipX = (int)(pos.x+0.5f);
-
-	if (pos.y < 0.0f) {
-		return false;
-	}
-	int chipY = (int)pos.y;
-	if (chipY >= map.size()) {
-		return false;
-	}
-
-	if (chipZ >= map[chipY].size()) {
-		return false;
-	}
-	if (chipX >= map[chipY][chipZ].size()) {
-		return false;
-	}
-	if (map[chipY][chipZ][chipX]>=0) {
-		return true;
-	}
-	return false;
-	*/
 }
 
 bool Stage::HitSphere(const SphereCollider& coll, VECTOR3* out)
@@ -450,78 +355,21 @@ bool Stage::HitSphere(const SphereCollider& coll, VECTOR3* out)
 	return pushed;
 }
 
-void Stage::GenerateRandomMap(int totalMaps, int size)
+void Stage::GenerateRandomMap(int num)
 {
-	// 配列の中身を-1で初期化
-  	mapChips.assign(size, vector<int>(size, -1));
-
-	// プレイヤースタート位置 (固定配置)
-	mapChips[0][size / 2]			= 30;
-	mapChips[size / 2][size - 1]	= 31;
-	mapChips[size - 1][size / 2]	= 32;
-	mapChips[size / 2][0]			= 33;
-	
+	mapCol = new CCollision;
 
 	// ランダムなマップチップの配置
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			if (mapChips[j][i] != -1) {	//空でない場合continue
-				continue;
-			}
-			mapChips[j][i] = Random(10, totalMaps);
-		}
-	}
+	for (int i = 0; i < 4; i++) {
+		mesh = new CFbxMesh();
+		mapData[i] = Random(1, num);	//マップデータからランダム選択
+		mapRotData[i] = Random(0, 3);	//回転量の設定
 
-	// 結果をCSVファイルとして出力(確認用)
-	SaveMapChips(mapChips, "data/Map/GeneratedMap.csv");
+		std::string f = "data/Map2/MapChip/stage0"+ std::to_string(mapData[i]);
+		mesh->Load((f + ".mesh").c_str());
+
+		//回転量、配置を考慮してデータ配列に格納
+		mapCol->AddFbxLoad(mesh, XMMatrixRotationY(mapRotData[i] * 90 * DegToRad) * XMMatrixTranslation(-25 + i%2*50, 0, -25 + i/2*50));
+		meshes.push_back(mesh);
+	}
 }
-
-void Stage::SaveMapChips(const vector<vector<int>>& mapChips, const string& filePath) //マップチップ配列用
-{
-	ofstream file(filePath);
-
-	if (!file.is_open()) {
-		std::cerr << "Error: Could not open file " << filePath << " for writing." << std::endl;
-		return;
-	}
-
-	// マップデータを書き込む
-	for (const auto& row : mapChips) {
-		for (size_t i = 0; i < row.size(); ++i) {
-			file << row[i];
-			if (i < row.size() - 1) {
-				file << ",";
-			}
-		}
-		file << "\n";
-	}
-
-	file.close();
-}
-
-void Stage::SaveMapChips(const vector<vector<vector<int>>>& mapChips, const string& filePath) //マップ用
-{
-	ofstream file(filePath);
-
-	if (!file.is_open()) {
-		std::cerr << "Error: Could not open file " << filePath << " for writing." << std::endl;
-		return;
-	}
-
-	// 三次元配列の各層を順番に書き込む
-	for (const auto& layer : mapChips) {
-		for (const auto& row : layer) {
-			for (size_t i = 0; i < row.size(); ++i) {
-				file << row[i];
-				if (i < row.size() - 1) {
-					file << ",";  // 行の要素をカンマ区切り
-				}
-			}
-			file << "\n";  // 行の終わりで改行
-		}
-		file << "\n";  // 層の終わりで空行（区切り）
-	}
-
-	file.close();
-}
-

@@ -18,9 +18,9 @@ public:
 	void Load(int n);
 	bool IsLandBlock(VECTOR3 pos);
 	bool HitSphere(const SphereCollider& coll, VECTOR3 *push);
-	void GenerateRandomMap(int totalMaps, int size);
-	void SaveMapChips(const vector<vector<int>>& mapChips, const string& filePath);
-	void SaveMapChips(const vector<vector<vector<int>>>& mapChips, const string& filePath);
+	
+	void GenerateRandomMap(int num);
+
 	CCollision* MapCol() {	return mapCol;	}	// -- 2024.12.2
 private:
 	CFbxMesh* mesh;
@@ -32,8 +32,6 @@ private:
 
 	CCollision* mapCol;	// -- 2024.12.2
 
-	int size;	//マップのグリッドサイズ
-	int chipX;	//マップチップのXサイズ
-	int chipY;	//マップチップのYサイズ
-	int chipZ;	//マップチップのZサイズ
+	int mapData[4];		//配置するマップナンバー
+	int mapRotData[4];	//配置するマップの回転データ
 };
