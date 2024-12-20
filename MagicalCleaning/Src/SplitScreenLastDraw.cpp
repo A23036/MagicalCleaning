@@ -24,9 +24,6 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI2.png"));
 	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite3.png"));
 
-	mapImage1 = new CSpriteImage(_T("data/Image/Play/map/stage1.png"));
-	mapImage2 = new CSpriteImage(_T("data/Image/Play/map/stage2.png"));
-
 	sprite = new CSprite();
 
 }
@@ -35,10 +32,14 @@ SplitScreenLastDraw::~SplitScreenLastDraw()
 {
 	SAFE_DELETE(frameUiImage);
 	SAFE_DELETE(playUiImage);
-	SAFE_DELETE(mapImage1);
-	SAFE_DELETE(mapImage2);
 	SAFE_DELETE(sprite);
 }
+
+void SplitScreenLastDraw::Start()
+{
+	
+}
+
 
 void SplitScreenLastDraw::Update()
 {
@@ -74,13 +75,39 @@ void SplitScreenLastDraw::Draw()
 
 			// 画面全体の描画
 
+			if (st == nullptr) {
+				st = ObjectManager::FindGameObject<Stage>();
+
+				for (int i = 0; i < st->GetMapNum(); i++) {//マップデータの数だけイメージデータをロード
+					CSpriteImage* s;
+					std::string f = "data/Image/Play/map/stage" + std::to_string(i + 1);
+					s = new CSpriteImage(_T((f + ".png").c_str()));
+					mapImages.push_back(s);
+				}
+			} 
+
 			//画面分割枠描画
 			sprite->Draw(frameUiImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 
-			//マップ描画
-			//sprite->Draw(mapImage1, 608, 264, 50, 50, 50, 50);
-			//sprite->Draw(mapImage1, 608, 264+50, 50, 50, 50, 50);
+			//4つのマップ描画
+			for (int i = 0; i < 4; i++) {
+				sprite->SetSrc(mapImages[st->GetMapData(i)-1], 75, 75, 75, 75);
+
+				int width, height;
+				width = sprite->GetSrcWidth();
+				height = sprite->GetSrcHeight();
+				float pivotX = width / 2.0f;
+				float pivotY = height / 2.0f;
+
+				MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+					* XMMatrixRotationZ(st->GetMapRotData(i) * 90 * DegToRad)
+					* XMMatrixScaling(1.0f, 1.0f, 1.0f)
+					* XMMatrixTranslation(646 + i%2 * 75, 444 - i/2 * 75, 0);
+				
+				// スプライトをワールド行列を使用して描画
+				sprite->Draw(m);
+			}
 
 			//player位置表示
 			int posX,posY;
@@ -91,16 +118,16 @@ void SplitScreenLastDraw::Draw()
 					continue;
 				}
 				
-				//左端 610 右端 745
-				posX = 610;
-				//上端 335 下端 465
-				posY = 465;
+				//左端 600 右端 750
+				posX = 600;
+				//上端 320 下端 470
+				posY = 470;
 
 				// ミニマップの描画範囲 (左端, 右端, 上端, 下端)
-				const int mapLeft = 610;
-				const int mapRight = 740;
-				const int mapTop = 330;
-				const int mapBottom = 465;
+				const int mapLeft = 600;
+				const int mapRight = 750;
+				const int mapTop = 320;
+				const int mapBottom = 470;
 
 				// ワールド座標系の範囲 (-50 ~ 50)
 				const float worldMin = -50.0f;
@@ -174,6 +201,7 @@ void SplitScreenLastDraw::Draw()
 	}
 
 }
+
 
 
 

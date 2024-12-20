@@ -20,6 +20,9 @@ public:
 	bool HitSphere(const SphereCollider& coll, VECTOR3 *push);
 	
 	void GenerateRandomMap(int num);
+	int GetMapNum() { return MapNum; };
+	int GetMapData(int n) { return mapData[n]; };
+	int GetMapRotData(int n) { return mapRotData[n]; };
 
 	CCollision* MapCol() {	return mapCol;	}	// -- 2024.12.2
 private:
@@ -32,6 +35,7 @@ private:
 
 	CCollision* mapCol;	// -- 2024.12.2
 
+	int MapNum = 4;
 	int mapData[4];		//配置するマップナンバー
 	int mapRotData[4];	//配置するマップの回転データ
 };

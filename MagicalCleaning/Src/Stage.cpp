@@ -14,10 +14,8 @@ using namespace std;
 
 Stage::Stage()
 {
-	int mapNum = 4;	//マップデータの数
-
 	//ランダムなマップチップ配列の作成
-	GenerateRandomMap(mapNum);
+	GenerateRandomMap(MapNum);
 	/*
 	mesh = new CFbxMesh();
 
@@ -79,13 +77,15 @@ void Stage::Update()
 {
 	//現在のマップ情報
 	/*
-	ImGui::Begin("mapsize");
-	int x = map.size();
-	int y = map[0].size();
-	int z = map[0][0].size();
-	ImGui::InputInt("X", &x);
-	ImGui::InputInt("Y", &y);
-	ImGui::InputInt("Z", &z);
+	ImGui::Begin("mapdata");
+	ImGui::InputInt("MapNum0", &mapData[0]);
+	ImGui::InputInt("MapNum1", &mapData[1]);
+	ImGui::InputInt("MapNum2", &mapData[2]);
+	ImGui::InputInt("MapNum3", &mapData[3]);
+	ImGui::InputInt("MapRot0", &mapRotData[0]);
+	ImGui::InputInt("MapRot1", &mapRotData[1]);
+	ImGui::InputInt("MapRot2", &mapRotData[2]);
+	ImGui::InputInt("MapRot3", &mapRotData[3]);
 	ImGui::End();
 	*/
 }
