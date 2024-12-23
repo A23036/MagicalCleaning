@@ -19,7 +19,7 @@ public:
 	void SetState(int state);
 	void SetGameTime(int time);
 
-	void SetPlayers(list<Player*> players);
+	void SetPlayers(vector<Player*> players);
 
 	void LoadMap();
 
@@ -34,7 +34,7 @@ private:
 
 	vector<CSpriteImage*> mapImages;	//マップイメージデータ配列
 
-	list<Player*> players;
+	vector<Player*> players;
 
 	int gameState;
 	int gameTime;

@@ -554,6 +554,7 @@
     <ClInclude Include="Src\LeafEffect.h" />
     <ClInclude Include="Src\resource.h" />
     <ClInclude Include="Src\ResourceManager.h" />
+    <ClInclude Include="Src\ResultDisplay.h" />
     <ClInclude Include="Src\ResultScene.h" />
     <ClInclude Include="Src\SceneBase.h" />
     <ClInclude Include="Src\SceneFactory.h" />
@@ -611,6 +612,7 @@
     <ClCompile Include="Src\PowerUpEffect.cpp" />
     <ClCompile Include="Src\LeafEffect.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
+    <ClCompile Include="Src\ResultDisplay.cpp" />
     <ClCompile Include="Src\ResultScene.cpp" />
     <ClCompile Include="Src\SceneBase.cpp" />
     <ClCompile Include="Src\SceneFactory.cpp" />

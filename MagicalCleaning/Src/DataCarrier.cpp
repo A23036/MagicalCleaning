@@ -56,3 +56,13 @@ void DataCarrier::SetRank(int rank[MAXPLAYER])
 		this->rank[i] = rank[i];
 	}
 }
+
+void DataCarrier::SetScore(int score, int playerNum)
+{
+	this->score[playerNum] = score;
+}
+
+void DataCarrier::SetPowerLevel(int power, int level, int playerNum)
+{
+	powerLevel[power][playerNum] = level;
+}

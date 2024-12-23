@@ -21,7 +21,7 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	vpSingle.TopLeftY = 0;
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
-	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI2.png"));
+	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI.png"));
 	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite3.png"));
 
 	sprite = new CSprite();
@@ -204,7 +204,7 @@ void SplitScreenLastDraw::SetGameTime(int time)
 	gameTime = time;
 }
 
-void SplitScreenLastDraw::SetPlayers(list<Player*> players)
+void SplitScreenLastDraw::SetPlayers(vector<Player*> players)
 {
 	this->players = players;
 }

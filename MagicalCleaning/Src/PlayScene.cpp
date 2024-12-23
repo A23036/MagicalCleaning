@@ -198,8 +198,13 @@ void PlayScene::UpdateFinish()
 				max = pl->GetScore();
 				winner = pl->GetPlayerNum();
 			}
+			dc->SetScore(pl->GetScore(),pl->GetPlayerNum());
+			for (int i = 0; i < 5; i++) {
+				dc->SetPowerLevel(i, pl->GetPowerLv(i), pl->GetPlayerNum());
+			}
 		}
 		dc->SetWinnerId(winner); // ŸÒ‚ğ•Û‘¶
+		
 		SceneManager::ChangeScene("ResultScene");
 	}
 }

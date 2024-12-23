@@ -339,9 +339,6 @@
     <ClInclude Include="Src\SelectDisplay.h">
       <Filter>ソース ファイル\10_SelectScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DataCarrier.h">
-      <Filter>ソース ファイル\08_PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\ViewMapScene.h">
       <Filter>ソース ファイル\11_ViewMapScene</Filter>
     </ClInclude>
@@ -368,6 +365,12 @@
     </ClInclude>
     <ClInclude Include="Src\JumpEffect.h">
       <Filter>ソース ファイル\13_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResultDisplay.h">
+      <Filter>ソース ファイル\12_ResultScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DataCarrier.h">
+      <Filter>ソース ファイル\06_共通</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -509,9 +512,6 @@
     <ClCompile Include="Src\SelectDisplay.cpp">
       <Filter>ソース ファイル\10_SelectScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DataCarrier.cpp">
-      <Filter>ソース ファイル\08_PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\ResultScene.cpp">
       <Filter>ソース ファイル\12_ResultScene</Filter>
     </ClCompile>
@@ -535,6 +535,12 @@
     </ClCompile>
     <ClCompile Include="Src\JumpEffect.cpp">
       <Filter>ソース ファイル\13_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ResultDisplay.cpp">
+      <Filter>ソース ファイル\12_ResultScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DataCarrier.cpp">
+      <Filter>ソース ファイル\06_共通</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

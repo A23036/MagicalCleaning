@@ -30,7 +30,7 @@ private:
 	Sky* sky;
 	Camera* cm;
 
-	list<Player*> players;
+	vector<Player*> players;
 
 	Player* p1;
 	Player* p2;

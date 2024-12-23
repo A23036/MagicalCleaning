@@ -22,6 +22,8 @@ SelectScene::SelectScene()
 
 SelectScene::~SelectScene()
 {
+	SAFE_DELETE(sprite);
+	SAFE_DELETE(selectBackImage);
 }
 
 void SelectScene::Update()
@@ -31,7 +33,7 @@ void SelectScene::Update()
 		SceneManager::ChangeScene("TitleScene");
 	}
 	if (di->CheckKey(KD_TRG, DIK_P)) {
-		SceneManager::ChangeScene("ViewMapScene");
+		SceneManager::ChangeScene("PlayScene");
 	}
 	
 	for (int i = 0; i < MAXPLAYER; i++) {

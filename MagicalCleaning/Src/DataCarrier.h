@@ -17,6 +17,8 @@ public:
 	void SetGameState(int state);
 	void SetWinnerId(int id);
 	void SetRank(int rank[MAXPLAYER]);
+	void SetScore(int score,int playerNum);
+	void SetPowerLevel(int power, int level, int playerNum);
 
 	int GetGameTime() { return gameTime; };
 	bool GetIsPlay() { return isPlay; };
@@ -25,6 +27,8 @@ public:
 	int GetGameState() { return gameState; };
 	int GetWinnerId() { return winnerId; };
 	int GetRank(int num) { return rank[num]; };
+	int GetScore(int playerNum){ return score[playerNum]; };
+	int GetPowerLevel(int power, int playerNum) { return powerLevel[power][playerNum]; };
 
 private:
 	int gameTime;	//ゲーム経過時間(秒)
@@ -34,4 +38,6 @@ private:
 	int gameState;	//ゲーム状態変数
 	int rank[MAXPLAYER];	//順位
 	int winnerId;
+	int score[MAXPLAYER];			//最終スコア
+	int powerLevel[5][MAXPLAYER];	//各能力最終レベル
 };
