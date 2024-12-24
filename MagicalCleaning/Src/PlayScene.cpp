@@ -198,12 +198,18 @@ void PlayScene::UpdateFinish()
 				max = pl->GetScore();
 				winner = pl->GetPlayerNum();
 			}
-			dc->SetScore(pl->GetScore(),pl->GetPlayerNum());
+			dc->SetScore(pl->GetScore(),pl->GetPlayerNum()); //スコアの保存
 			for (int i = 0; i < 5; i++) {
-				dc->SetPowerLevel(i, pl->GetPowerLv(i), pl->GetPlayerNum());
+				dc->SetPowerLevel(i, pl->GetPowerLv(i), pl->GetPlayerNum()); //各能力レベルの保存
 			}
+			//各ボーナス用変数のセット
+			dc->SetMoveDistance(pl->GetMoveDistance(),pl->GetPlayerNum());
+			dc->SetJumpCount(pl->GetJumpCount(), pl->GetPlayerNum());
+			dc->SetKnockOutCount(pl->GetKnockOutCount(), pl->GetPlayerNum());
+			dc->SetItemCount(pl->GetItemCount(), pl->GetPlayerNum());
+			dc->SetCleanReafCount(pl->GetCleanReafCount(), pl->GetPlayerNum());
+			dc->SetBlowCount(pl->GetBlowCount(), pl->GetPlayerNum());
 		}
-		dc->SetWinnerId(winner); // 勝者を保存
 		
 		SceneManager::ChangeScene("ResultScene");
 	}

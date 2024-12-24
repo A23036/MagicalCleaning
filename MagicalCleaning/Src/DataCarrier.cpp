@@ -45,11 +45,6 @@ void DataCarrier::SetGameState(int state)
 	gameState = state;
 }
 
-void DataCarrier::SetWinnerId(int id)
-{
-	winnerId = id;
-}
-
 void DataCarrier::SetRank(int rank[MAXPLAYER])
 {
 	for (int i = 0; i < MAXPLAYER; i++) {
@@ -65,4 +60,34 @@ void DataCarrier::SetScore(int score, int playerNum)
 void DataCarrier::SetPowerLevel(int power, int level, int playerNum)
 {
 	powerLevel[power][playerNum] = level;
+}
+
+void DataCarrier::SetMoveDistance(int moveDistance, int playerNum)
+{
+	this->moveDistance[playerNum] = moveDistance;
+}
+
+void DataCarrier::SetJumpCount(int jumpCount, int playerNum)
+{
+	this->jumpCount[playerNum] = jumpCount;
+}
+
+void DataCarrier::SetKnockOutCount(int knockOutCount, int playerNum)
+{
+	this->knockOutCount[playerNum] = knockOutCount;
+}
+
+void DataCarrier::SetItemCount(int itemCount, int playerNum)
+{
+	this->itemCount[playerNum] = itemCount;
+}
+
+void DataCarrier::SetCleanReafCount(int cleanReafCount, int playerNum)
+{
+	this->cleanReafCount[playerNum] = cleanReafCount;
+}
+
+void DataCarrier::SetBlowCount(int blowCount, int playerNum)
+{
+	this->blowCount[playerNum] = blowCount;
 }

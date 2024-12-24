@@ -115,6 +115,13 @@ Player::Player(int num,int color) : playerNum(num),color(color)// ƒvƒŒƒCƒV[ƒ“‚Å
 	atkRange	= AtkRangeT[arNum];
 	carWeight	= CarWeightT[cwNum];
 
+	moveDistance = 0.0f;
+	jumpCount = 0;
+	knockOutCount = 0;
+	itemCount = 0;
+	cleanReafCount = 0;
+	blowCount = 0;
+
 	selectPower = 0;
 	anmFrame = 0;
 }
@@ -167,15 +174,18 @@ void Player::Update()
 	}
 	
 	/*
-	ImGui::SetNextWindowPos(ImVec2(600, 0));
-	ImGui::SetNextWindowSize(ImVec2(100, 120));
-	ImGui::Begin("Player");
-	if (ImGui::Button("DataLoad")) {
-		CsvLoad();
+	if (playerNum == 0) {
+		ImGui::Begin("Counter");
+		ImGui::InputFloat("MoveDistance", &moveDistance);
+		ImGui::InputInt("JumpCount", &jumpCountAll);
+		ImGui::InputInt("KnockOutCount", &knockOutCount);
+		ImGui::InputInt("ItemCount", &itemCount);
+		ImGui::InputInt("CleanReaf", &cleanReaf);
+		ImGui::InputInt("BlowCount", &blowCount);
+		ImGui::End();
 	}
-	ImGui::End();
-	
-	
+	*/
+	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 160));
 	ImGui::Begin("state");
@@ -588,7 +598,6 @@ int Player::GetPowerLv(int selectPower)
 		return 0;
 	}
 }
-
 int Player::GetMaxPowerLv(int selectPower)
 {
 	switch (selectPower) {
@@ -629,6 +638,7 @@ void Player::SetSpeedY(float y)
 
 void Player::SetIsBlow()
 {
+	blowCount++;
 	isBlow = true;
 	isDash = false; 
 	isFly = false;
@@ -667,6 +677,11 @@ void Player::AddWeight(int n)
 void Player::AddScore(int n)
 {
 	score += n;
+}
+
+void Player::AddCleanReaf()
+{
+	cleanReafCount++;
 }
 
 void Player::UpdateOnGround()
@@ -737,6 +752,7 @@ void Player::UpdateOnGround()
 		else {
 			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // ŒX‚«‹ï‡‚É‰ž‚¶‚½‘¬“x
 		}
+		moveDistance += moveDirection.Length(); //ˆÚ“®‹——£‚Ì‰ÁŽZ
 		
 		// ˆÚ“®‚Ì“K—p
 		transform.position += moveDirection * moveSpeed * deltaTime;
@@ -774,6 +790,7 @@ void Player::UpdateOnGround()
 			animator->SetPlaySpeed(1.0f);
 		}
 		jumpCount++;
+		jumpCountAll++;
 		state = sJump;
 	}
 	if ((di->CheckKey(KD_TRG, DIK_N) && playerNum == 0) || di->CheckJoy(KD_TRG, 0, playerNum)) { //UŒ‚
@@ -850,6 +867,8 @@ void Player::UpdateJump()
 		else {
 			moveDirection = XMVector3Normalize(moveDirection) * MOVE_SPEED * sqrt(ix * ix + iy * iy); // ŒX‚«‹ï‡‚É‰ž‚¶‚½‘¬“x
 		}
+		moveDistance += moveDirection.Length(); //ˆÚ“®‹——£‚Ì‰ÁŽZ
+
 		// ˆÚ“®‚Ì“K—p
 		transform.position += moveDirection * moveSpeed * deltaTime;
 
@@ -869,6 +888,7 @@ void Player::UpdateJump()
 		animator->SetPlaySpeed(1.0f);
 		new JumpEffect(transform.position);
 		jumpCount++;
+		jumpCountAll++;
 	}
 
 
@@ -923,6 +943,7 @@ void Player::UpdateAttack1()
 				if (d->GetNum() == 3) { //“§–¾‰»
 					invisibleTime = 0;
 					isInvisible = true;
+					itemCount++;
 				}
 			}
 		}
@@ -950,6 +971,7 @@ void Player::UpdateAttack1()
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
+				knockOutCount++;
 			}
 		}
 	}
@@ -1016,6 +1038,7 @@ void Player::UpdateAttack2()
 				if (d->GetNum() == 3) { //“§–¾‰»
 					invisibleTime = 0;
 					isInvisible = true;
+					itemCount++;
 				}
 			}
 		}
@@ -1043,6 +1066,7 @@ void Player::UpdateAttack2()
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
+				knockOutCount++;
 			}
 		}
 	}
@@ -1106,6 +1130,7 @@ void Player::UpdateAttack3()
 				if (d->GetNum() == 3) { //“§–¾‰»
 					invisibleTime = 0;
 					isInvisible = true;
+					itemCount++;
 				}
 			}
 		}
@@ -1133,6 +1158,7 @@ void Player::UpdateAttack3()
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
+				knockOutCount++;
 			}
 		}
 	}

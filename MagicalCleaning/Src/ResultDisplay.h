@@ -13,11 +13,19 @@ public:
 	void Draw() override;
 
 	void DrawFinish(int nowAnim);
+
+	void SetBonus1(int bonus1);
+	void SetBonus2(int bonus2);
+
+	void SetBonusID(int bonus1, int bonus2);
+	void SetBonusPlayer(std::vector<int> players1, std::vector<int> players2);
+
 private:
 	DataCarrier* dc;
 	EasingCalc* ec;
 	CSprite* sprite;
-	CSpriteImage* resultUiImage1;	//セレクト画面UIイメージ1
+	CSpriteImage* resultUiImage1;	//リザルト画面UIイメージ1
+	CSpriteImage* resultUiImage2;	//リザルト画面UIイメージ2
 
 	float timeRate;
 	float rate;
@@ -25,13 +33,20 @@ private:
 	int animFrm;		//アニメーションの経過時間(フレーム)
 	float animTime;		//アニメーションの経過時間(秒)
 
+	int bonus1;
+	int bonus2;
+
+	std::vector<int> bonusPlayer1;
+	std::vector<int> bonusPlayer2;
 
 	enum animState {
 		aFade = 0,
 		aStart,
 		aChart1,
 		aChart2,
-		aBonus,
+		aBonus1,
+		aScore1,
+		aBonus2,
 		aScore,
 		aRank,
 		aFinish,

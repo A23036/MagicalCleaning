@@ -7,6 +7,7 @@ ResultDisplay::ResultDisplay()
 
 	sprite = new CSprite();
 	resultUiImage1 = new CSpriteImage(_T("data/Image/Play/UISprite.png"));
+	resultUiImage2 = new CSpriteImage(_T("data/Image/Result/UISprite.png"));
 
 	animFrm = 0;
 	animTime = 0;
@@ -21,6 +22,7 @@ ResultDisplay::~ResultDisplay()
 {
 	SAFE_DELETE(sprite);
 	SAFE_DELETE(resultUiImage1);
+	SAFE_DELETE(resultUiImage2);
 }
 
 void ResultDisplay::Update()
@@ -32,6 +34,7 @@ void ResultDisplay::Draw()
 	animTime = animFrm * (1.0f / 60.0f);
 
 	DrawFinish(state); //アニメーションし終わったUIの常時表示
+
 	switch (state) {
 	case aFade:
 		timeRate = animTime / 1.5f;
@@ -174,12 +177,50 @@ void ResultDisplay::Draw()
 		}
 		
 		if (animTime >= 2.0f) {
-			state = aBonus;
+			state = aBonus1;
 			animFrm = 0;
 		}
 		break;
-	case aBonus:
+	case aBonus1:
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus1, 256, 48, 256*2, 48*2);
+		int width;
+		width = sprite->GetSrcWidth();
+
+		timeRate = animTime / 2.0f;
+		rate = timeRate;
 		
+		alpha = (1.0f - (0.0f)) * rate + (0.0f);
+
+		rate = ec->easeOutExpo(timeRate);
+		posX = (0 - (-100)) * rate + (-100);
+
+		sprite->m_vDiffuse = VECTOR4(1,1,1,alpha);
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width + posX, 50);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		if (animTime >= 2.0f) {
+			state = aScore1;
+			animFrm = 0;
+		}
+		break;
+	case aScore1:
+		for (int i = 0; i < bonusPlayer1.size(); i++) {
+			sprite->SetSrc(resultUiImage2, 1, 289, 56, 28, 56, 28);
+			timeRate = animTime / 1.0f;
+			rate = timeRate;
+
+			alpha = (1.0f - (0.0f)) * rate + (0.0f);
+			posY = (380 - (400)) * rate + (400);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+			sprite->Draw(WINDOW_WIDTH / 2 - 450 + bonusPlayer1[i] * 300, posY);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		}
+		if (animTime >= 1.0f) {
+			state = aBonus2;
+			animFrm = 0;
+		}
 		break;
 	}
 	animFrm++;
@@ -283,5 +324,37 @@ void ResultDisplay::DrawFinish(int nowAnim)
 			}
 
 		}
+	}
+	if (nowAnim > aBonus1 && nowAnim < aBonus2) {
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus1, 256, 48, 256 * 2, 48 * 2);
+		int width;
+		width = sprite->GetSrcWidth();
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width, 50);
+	}
+}
+
+void ResultDisplay::SetBonus1(int bonus1)
+{
+}
+
+void ResultDisplay::SetBonus2(int bonus2)
+{
+}
+
+void ResultDisplay::SetBonusID(int bonus1, int bonus2)
+{
+	this->bonus1 = bonus1;
+	this->bonus2 = bonus2;
+}
+
+void ResultDisplay::SetBonusPlayer(std::vector<int> players1, std::vector<int> players2)
+{
+	for (int i = 0; i < players1.size(); i++) {
+		bonusPlayer1.push_back(players1[i]);
+	}
+
+	for (int i = 0; i < players2.size(); i++) {
+		bonusPlayer2.push_back(players2[i]);
 	}
 }

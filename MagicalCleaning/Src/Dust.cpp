@@ -101,6 +101,7 @@ void Dust::AddDamage(Player* player,int damage)
 
 	if (hp <= 0)
 	{
+		player->AddCleanReaf();
 		SceneBase* scene = SceneManager::CurrentScene(); // 現在の PlayScene のインスタンス参照を取得
 		PlayScene* play = dynamic_cast<PlayScene*>(scene);
 		play->DustDestroyed(this); // PlayScene に通知

@@ -72,6 +72,12 @@ public:
 	bool GetIsInvisible() { return isInvisible; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
+	float GetMoveDistance() { return moveDistance; };
+	int GetJumpCount() { return jumpCount; };
+	int GetKnockOutCount() { return knockOutCount; };
+	int GetItemCount() { return itemCount; };
+	int GetCleanReafCount() { return cleanReafCount; };
+	int GetBlowCount() { return blowCount; };
 	void SetPlayerState(int state);
 	void SetPlayerPrevState(int state);
 	void SetBlowVec(VECTOR3 vec);
@@ -82,6 +88,7 @@ public:
 	void AddMP(int n);
 	void AddWeight(int n);
 	void AddScore(int n);
+	void AddCleanReaf();
 
 private:
 	CsvReader* csv;
@@ -133,11 +140,11 @@ private:
 	float	atkRange;	//攻撃範囲
 	int		carWeight;	//運搬可能重量
 
-	int msNum;
-	int jnNum;
-	int asNum;
-	int arNum;
-	int cwNum;
+	int msNum;	//能力レベル:移動速度
+	int jnNum;	//能力レベル:ジャンプ回数
+	int asNum;	//能力レベル:攻撃速度
+	int arNum;	//能力レベル:攻撃範囲
+	int cwNum;	//能力レベル:運搬可能重量
 
 	static const int MsTableNum = 10;	//移動速度テーブル数
 	static const int JnTableNum = 10;	//ジャンプ回数テーブル数
@@ -158,6 +165,13 @@ private:
 	int CarWeightC[CwTableNum];	//運搬可能重量コストテーブル
 
 	float speedY; // Y方向の速度
+
+	float moveDistance;	//移動距離
+	int jumpCountAll;	//累計ジャンプ回数
+	int knockOutCount;	//吹っ飛ばした敵の数
+	int itemCount;		//アイテムを使用した回数
+	int cleanReafCount;	//リーフを掃除した数
+	int blowCount;		//吹っ飛ばされた回数
 
 	Animator* animator; // 部品のインスタンスをポインター型で準備
 	enum AnimID {
