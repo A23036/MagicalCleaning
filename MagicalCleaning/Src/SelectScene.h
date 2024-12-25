@@ -24,4 +24,6 @@ private:
 	VECTOR3 initPos[6];		//キャラクター初期位置
 	float ScrollSpeed;		//背景スクロール速度
 	float scrollX;			//背景画像位置X
+	int frm;		//経過フレーム
+	int backFrm;	//長押し計測フレーム
 };

@@ -1,11 +1,11 @@
 #include "ResultScene.h"
+#include "PlayScene.h"
 #include <algorithm>
 
 ResultScene::ResultScene()
 {
 	dc = ObjectManager::FindGameObject<DataCarrier>();
-	rd = new ResultDisplay();
-
+	
 	sprite = new CSprite();
 	resultBackImage = new CSpriteImage(_T("data/Image/Result/BackImage.png"));
 
@@ -15,10 +15,36 @@ ResultScene::ResultScene()
 	SetRandomBonus(); //ボーナス2つをランダムに決定
 
 	//ボーナスを受け取るプレイヤーの設定
-	SetBonusPlayer(bonus1,bonusPlayers1); 
+	SetBonusPlayer(bonus1,bonusPlayers1);
+	//ボーナス分スコアを加算
+	for (int i = 0; i < bonusPlayers1.size(); i++) {
+		dc->SetScore(dc->GetScore(bonusPlayers1[i]) + 20, bonusPlayers1[i]);
+	}
+	//二つ目のボーナス
 	SetBonusPlayer(bonus2,bonusPlayers2);
+	for (int i = 0; i < bonusPlayers2.size(); i++) {
+		dc->SetScore(dc->GetScore(bonusPlayers2[i]) + 20, bonusPlayers2[i]);
+	}
+
+	//ボーナス加算分を考慮した最終的な順位の計算
+	SetFinalRank();
+
+	//キャラクターの配置
+	p1 = new Player(VECTOR3(-4, -1, 0), VECTOR3(0, 180 * DegToRad, 0), dc->GetColor(0));
+	p1->SetScale(2.0f, 2.0f, 2.0f);
+	p2 = new Player(VECTOR3(-1.3f, -1, 0), VECTOR3(0, 180 * DegToRad, 0), dc->GetColor(1));
+	p2->SetScale(2.0f, 2.0f, 2.0f);
+	p3 = new Player(VECTOR3(1.3f, -1, 0), VECTOR3(0, 180 * DegToRad, 0), dc->GetColor(2));
+	p3->SetScale(2.0f, 2.0f, 2.0f);
+	p4 = new Player(VECTOR3(4, -1, 0), VECTOR3(0, 180 * DegToRad, 0), dc->GetColor(3));
+	p4->SetScale(2.0f, 2.0f, 2.0f);
+
+	//UI表示用クラスの生成
+	rd = new ResultDisplay();
+	//ボーナスを受け取るプレイヤーの設定
 	rd->SetBonusID(bonus1, bonus2);
 	rd->SetBonusPlayer(bonusPlayers1, bonusPlayers2);
+
 }
 
 ResultScene::~ResultScene()
@@ -30,8 +56,10 @@ ResultScene::~ResultScene()
 void ResultScene::Update()
 {
 	auto di = GameDevice()->m_pDI;
-	if (di->CheckKey(KD_TRG, DIK_T) || di->CheckJoy(KD_TRG, DIJ_B)) {
-		SceneManager::ChangeScene("TitleScene");
+	if (di->CheckKey(KD_TRG, DIK_T) || di->CheckJoy(KD_TRG, 2, 0)) {
+		if (rd->GetIsFinish()) {
+			SceneManager::ChangeScene("TitleScene");
+		}
 	}
 }
 
@@ -41,6 +69,10 @@ void ResultScene::Draw()
 
 	GameDevice()->m_pFont->Draw(400, 15, _T("RESULTSCENE   Push [T]: TitleScene"), 50, RGB(255, 0, 0));
 
+	GameDevice()->m_mView = XMMatrixLookAtLH(
+		VECTOR3(0, 0, -10), // カメラ位置
+		VECTOR3(0, 0, 0), // 注視点
+		VECTOR3(0, 1, 0)); // 上ベクトル
 }
 
 void ResultScene::SetRandomBonus()
@@ -158,5 +190,27 @@ void ResultScene::SetBonusPlayer(int bonus, std::vector<int> &players)
 		default:
 			break;
 		}
+	}
+}
+
+void ResultScene::SetFinalRank()
+{
+	int i = 0, j = 0, max = -1;
+	int arr[MAXPLAYER],rank[MAXPLAYER];
+	for (int i = 0; i < MAXPLAYER; i++) {
+		arr[i] = dc->GetScore(i);
+	}
+
+	for (i = 0; i < MAXPLAYER; i++) {
+		rank[i] = 1;
+		for (j = 0; j < MAXPLAYER; j++) {
+			if (arr[j] > arr[i]) { //自分より大きいスコアがある場合、順位を1つ下げる
+				rank[i]++;
+			}
+		}
+	}
+
+	for (int i = 0; i < MAXPLAYER; i++) {
+		dc->SetRank(rank);
 	}
 }

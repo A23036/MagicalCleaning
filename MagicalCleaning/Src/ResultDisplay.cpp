@@ -12,6 +12,8 @@ ResultDisplay::ResultDisplay()
 	animFrm = 0;
 	animTime = 0;
 
+	isFinish = false;
+
 	timeRate = 0;
 	rate = 0;
 
@@ -186,7 +188,7 @@ void ResultDisplay::Draw()
 		int width;
 		width = sprite->GetSrcWidth();
 
-		timeRate = animTime / 2.0f;
+		timeRate = animTime / 1.5f;
 		rate = timeRate;
 		
 		alpha = (1.0f - (0.0f)) * rate + (0.0f);
@@ -199,15 +201,23 @@ void ResultDisplay::Draw()
 		sprite->Draw(WINDOW_WIDTH / 2 - width + posX, 50);
 		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 
-		if (animTime >= 2.0f) {
+		if (animTime >= 1.5f) {
 			state = aScore1;
 			animFrm = 0;
 		}
 		break;
 	case aScore1:
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus1, 256, 48, 256 * 2, 48 * 2);
+		
+		width = sprite->GetSrcWidth();
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width, 50);
 		for (int i = 0; i < bonusPlayer1.size(); i++) {
-			sprite->SetSrc(resultUiImage2, 1, 289, 56, 28, 56, 28);
-			timeRate = animTime / 1.0f;
+			sprite->SetSrc(resultUiImage2, 1, 289, 56, 28, 56*2, 28*2);
+			timeRate = animTime / 0.3f;
+			if (timeRate > 1.0f) {
+				timeRate = 1.0f;
+			}
 			rate = timeRate;
 
 			alpha = (1.0f - (0.0f)) * rate + (0.0f);
@@ -215,12 +225,194 @@ void ResultDisplay::Draw()
 			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
 			sprite->Draw(WINDOW_WIDTH / 2 - 450 + bonusPlayer1[i] * 300, posY);
 			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
-
 		}
 		if (animTime >= 1.0f) {
+			state = aBonusFade1;
+			animFrm = 0;
+		}
+		break;
+	case aBonusFade1:
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus1, 256, 48, 256 * 2, 48 * 2);
+		
+		width = sprite->GetSrcWidth();
+
+		timeRate = animTime / 0.5f;
+		rate = timeRate;
+
+		alpha = (0.0f - (1.0f)) * rate + (1.0f);
+
+		rate = ec->easeOutExpo(timeRate);
+		posX = (100 - (0)) * rate + (0);
+
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width + posX, 50);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		for (int i = 0; i < bonusPlayer1.size(); i++) {
+			sprite->SetSrc(resultUiImage2, 1, 289, 56, 28, 56*2, 28*2);
+			timeRate = animTime / 0.5f;
+			rate = timeRate;
+
+			alpha = (0.0f - (1.0f)) * rate + (1.0f);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+			sprite->Draw(WINDOW_WIDTH / 2 - 450 + bonusPlayer1[i] * 300, 380);
+		}
+		if (animTime >= 0.5f) {
 			state = aBonus2;
 			animFrm = 0;
 		}
+		break;
+	case aBonus2:
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus2, 256, 48, 256 * 2, 48 * 2);
+		width = sprite->GetSrcWidth();
+
+		timeRate = animTime / 1.5f;
+		rate = timeRate;
+
+		alpha = (1.0f - (0.0f)) * rate + (0.0f);
+
+		rate = ec->easeOutExpo(timeRate);
+		posX = (0 - (-100)) * rate + (-100);
+
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width + posX, 50);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		if (animTime >= 1.5f) {
+			state = aScore2;
+			animFrm = 0;
+		}
+		break;
+	case aScore2:
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus2, 256, 48, 256 * 2, 48 * 2);
+
+		width = sprite->GetSrcWidth();
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width, 50);
+		for (int i = 0; i < bonusPlayer2.size(); i++) {
+			sprite->SetSrc(resultUiImage2, 1, 289, 56, 28, 56*2, 28*2);
+			timeRate = animTime / 0.3f;
+			if (timeRate > 1.0f) {
+				timeRate = 1.0f;
+			}
+			rate = timeRate;
+
+			alpha = (1.0f - (0.0f)) * rate + (0.0f);
+			posY = (380 - (400)) * rate + (400);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+			sprite->Draw(WINDOW_WIDTH / 2 - 450 + bonusPlayer2[i] * 300, posY);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		}
+		if (animTime >= 1.0f) {
+			state = aBonusFade2;
+			animFrm = 0;
+		}
+		break;
+	case aBonusFade2:
+		sprite->SetSrc(resultUiImage2, 0, 48 * bonus2, 256, 48, 256 * 2, 48 * 2);
+
+		width = sprite->GetSrcWidth();
+
+		timeRate = animTime / 0.5f;
+		rate = timeRate;
+
+		alpha = (0.0f - (1.0f)) * rate + (1.0f);
+
+		rate = ec->easeOutExpo(timeRate);
+		posX = (100 - (0)) * rate + (0);
+
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+
+		sprite->Draw(WINDOW_WIDTH / 2 - width + posX, 50);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		for (int i = 0; i < bonusPlayer2.size(); i++) {
+			sprite->SetSrc(resultUiImage2, 1, 289, 56, 28, 56*2, 28*2);
+			timeRate = animTime / 0.5f;
+			rate = timeRate;
+
+			alpha = (0.0f - (1.0f)) * rate + (1.0f);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+			sprite->Draw(WINDOW_WIDTH / 2 - 450 + bonusPlayer2[i] * 300, 380);
+			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+
+		}
+		if (animTime >= 0.5f) {
+			state = aCount;
+			animFrm = 0;
+		}
+		break;
+	case aCount:
+		int score,offX;
+		
+		for (int i = 0; i < MAXPLAYER; i++) {
+			posX = WINDOW_WIDTH / 2 - 450 + i * 300;
+
+			timeRate = animTime / 5.0f;
+			if (timeRate > 1.0f) {
+				timeRate = 1.0f;
+			}
+			rate = ec->easeOutExpo(timeRate);
+
+			score = dc->GetScore(i) * rate;
+
+			offX = score / 100 * 28 + 2;
+			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
+			sprite->Draw(posX - 30, 500);
+
+			offX = score / 10 * 28 + 2;
+			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
+			sprite->Draw(posX - 10, 500);
+
+			offX = score % 10 * 28 + 2;
+			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
+			sprite->Draw(posX + 10, 500);
+
+		}
+		if (animTime >= 5.0f) {
+			state = aRank;
+			animFrm = 0;
+		}
+		break;
+	case aRank:
+		// アニメーションの進行度計算
+		timeRate = animTime / 1.0f;
+		rate = ec->easeOutBounce(timeRate); // バウンドしながら拡大
+
+		for (int i = 0; i < MAXPLAYER; i++) {
+			sprite->SetSrc(resultUiImage1, 150 * (dc->GetRank(i)-1) + 2, 225, 146, 150, 146, 150);
+			int height;
+			width = sprite->GetSrcWidth();
+			height = sprite->GetSrcHeight();
+
+			// 拡大中心を画像の中心にするための補正
+			float pivotX = width / 2.0f;
+			float pivotY = height / 2.0f;
+
+			//float posX;
+
+			posX = WINDOW_WIDTH / 2 - 450 + i * 300;
+
+			float scale = 1.0f * rate;	// 拡大
+
+			// ワールド行列の計算
+			MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+				* XMMatrixScaling(scale, scale, 1.0f)
+				* XMMatrixTranslation(posX, 170, 0);
+
+			sprite->Draw(m);
+		}
+		if (animTime >= 1.0f) {
+			state = aFinish;
+			isFinish = true;
+			animFrm = 0;
+		}
+		break;
+	case aFinish:
+
 		break;
 	}
 	animFrm++;
@@ -325,21 +517,49 @@ void ResultDisplay::DrawFinish(int nowAnim)
 
 		}
 	}
-	if (nowAnim > aBonus1 && nowAnim < aBonus2) {
-		sprite->SetSrc(resultUiImage2, 0, 48 * bonus1, 256, 48, 256 * 2, 48 * 2);
-		int width;
-		width = sprite->GetSrcWidth();
+	if (nowAnim > aCount) {
+		int posX, score, offX;
 
-		sprite->Draw(WINDOW_WIDTH / 2 - width, 50);
+		for (int i = 0; i < MAXPLAYER; i++) {
+			posX = WINDOW_WIDTH / 2 - 450 + i * 300;
+
+			score = dc->GetScore(i);
+
+			offX = score / 100 * 28 + 2;
+			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
+			sprite->Draw(posX - 30, 500);
+
+			offX = score / 10 * 28 + 2;
+			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
+			sprite->Draw(posX - 10, 500);
+
+			offX = score % 10 * 28 + 2;
+			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
+			sprite->Draw(posX + 10, 500);
+
+		}
 	}
-}
+	if (nowAnim > aRank) {
+		for (int i = 0; i < MAXPLAYER; i++) {
+			sprite->SetSrc(resultUiImage1, 150 * (dc->GetRank(i) - 1) + 2, 225, 146, 150, 146, 150);
+			int width,height,posX;
+			width = sprite->GetSrcWidth();
+			height = sprite->GetSrcHeight();
 
-void ResultDisplay::SetBonus1(int bonus1)
-{
-}
+			// 拡大中心を画像の中心にするための補正
+			float pivotX = width / 2.0f;
+			float pivotY = height / 2.0f;
 
-void ResultDisplay::SetBonus2(int bonus2)
-{
+			posX = WINDOW_WIDTH / 2 - 450 + i * 300;
+
+			// ワールド行列の計算
+			MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+				* XMMatrixScaling(1.0f, 1.0f, 1.0f)
+				* XMMatrixTranslation(posX, 170, 0);
+
+			sprite->Draw(m);
+		}
+	}
 }
 
 void ResultDisplay::SetBonusID(int bonus1, int bonus2)

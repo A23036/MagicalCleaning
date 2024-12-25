@@ -17,6 +17,9 @@ SelectScene::SelectScene()
 
 	sd = new SelectDisplay();
 
+	frm = 0;
+	backFrm = 120;
+
 	scrollX = 0.0f;
 }
 
@@ -34,6 +37,13 @@ void SelectScene::Update()
 	}
 	if (di->CheckKey(KD_TRG, DIK_P)) {
 		SceneManager::ChangeScene("PlayScene");
+	}
+
+	if (di->CheckJoy(KD_DAT, 1, 0)) {
+		if (frm > backFrm) { //1P‚Ìˆê’èŠÔˆÈã–ß‚éƒ{ƒ^ƒ““ü—Í‚Å–ß‚é
+			SceneManager::ChangeScene("TitleScene");
+		}
+		frm++;
 	}
 	
 	for (int i = 0; i < MAXPLAYER; i++) {

@@ -19,7 +19,7 @@ public:
 
 	void CsvLoad();
 	void DustDestroyed(Dust* dust);
-	void CalcRank();
+	void SetFinalRank();
 
 private:
 	PlayDisplay* pd;

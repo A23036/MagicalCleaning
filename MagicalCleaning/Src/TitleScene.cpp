@@ -48,7 +48,7 @@ void TitleScene::Update()
 
 	if (animNum == aFinish) {
 		// 2024.10.27 コードの可読性向上とコントローラー入力対応
-		if (di->CheckKey(KD_TRG, DIK_S) || di->CheckJoy(KD_TRG, DIJ_B)) {
+		if (di->CheckKey(KD_TRG, DIK_S) || di->CheckJoy(KD_TRG, 2)) {
 			SceneManager::ChangeScene("SelectScene");
 		}
 		if (di->CheckKey(KD_TRG, DIK_V)) {
@@ -61,7 +61,7 @@ void TitleScene::Update()
 			SceneManager::ChangeScene("EditScene");
 		}
 	}
-	else if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, DIJ_B)) {
+	else if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, 2)) {
 		animNum = aFinish;
 	}
 	

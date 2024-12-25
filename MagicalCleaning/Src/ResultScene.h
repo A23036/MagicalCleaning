@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include "DataCarrier.h"
 #include "ResultDisplay.h"
+#include "Player.h"
  
 class ResultScene : public SceneBase
 {
@@ -14,11 +15,18 @@ public:
 	void SetRandomBonus();
 	void SetBonusPlayer(int bonus,std::vector<int> &players);
 
+	void SetFinalRank();
+
 private:
 	DataCarrier* dc;
 	ResultDisplay* rd;
 	CSprite* sprite;
 	CSpriteImage* resultBackImage;	//リザルト画面背景イメージ
+
+	Player* p1;
+	Player* p2;
+	Player* p3;
+	Player* p4;
 
 	int bonus1;
 	int bonus2;

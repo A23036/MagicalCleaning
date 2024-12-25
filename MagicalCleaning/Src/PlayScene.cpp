@@ -74,7 +74,7 @@ void PlayScene::Update()
 	dc->SetGameTime(timer);
 	dc->SetIsPlay(isPlay);
 
-	CalcRank();			//‡ˆÊŒvŽZ
+	SetFinalRank();	//‡ˆÊŒvŽZ
 	dc->SetRank(rank);	//ƒf[ƒ^Ši”[
 
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
@@ -252,7 +252,7 @@ void PlayScene::DustDestroyed(Dust* dust)
 	}
 }
 
-void PlayScene::CalcRank()
+void PlayScene::SetFinalRank()
 {
 	int i = 0, j = 0, max = -1;
 	int arr[MAXPLAYER];

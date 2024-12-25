@@ -14,9 +14,7 @@ public:
 
 	void DrawFinish(int nowAnim);
 
-	void SetBonus1(int bonus1);
-	void SetBonus2(int bonus2);
-
+	bool GetIsFinish() { return isFinish; };
 	void SetBonusID(int bonus1, int bonus2);
 	void SetBonusPlayer(std::vector<int> players1, std::vector<int> players2);
 
@@ -33,6 +31,8 @@ private:
 	int animFrm;		//アニメーションの経過時間(フレーム)
 	float animTime;		//アニメーションの経過時間(秒)
 
+	bool isFinish;	//リザルトの終了判定
+
 	int bonus1;
 	int bonus2;
 
@@ -46,10 +46,14 @@ private:
 		aChart2,
 		aBonus1,
 		aScore1,
+		aBonusFade1,
 		aBonus2,
-		aScore,
+		aScore2,
+		aBonusFade2,
+		aCount,
 		aRank,
 		aFinish,
+		aBack,
 	};
 
 	animState state;
