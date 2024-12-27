@@ -101,7 +101,7 @@ void SplitScreenLastDraw::Draw()
 				sprite->Draw(m);
 			}
 
-			//player位置表示
+			//player位置/テレポート位置表示
 			int posX,posY;
 
 			for (Player* pl : players){
@@ -125,6 +125,32 @@ void SplitScreenLastDraw::Draw()
 				const float worldMin = -50.0f;
 				const float worldMax = 50.0f;
 
+				if (pl->GetIsSetTeleport()) { //テレポート場所が設置されているとき
+					// ミニマップ上のX座標計算 (ワールドXをミニマップの範囲に変換)
+					float normalizedX = (pl->GetTeleportPos().x - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
+					int posX = mapLeft + static_cast<int>(normalizedX * (mapRight - mapLeft)); // マップ座標
+
+					// ミニマップ上のY座標計算 (ワールドZをミニマップの範囲に変換)
+					float normalizedZ = (pl->GetTeleportPos().y - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
+					int posY = mapBottom - static_cast<int>(normalizedZ * (mapBottom - mapTop)); // マップ座標
+
+					//プレイヤーごとのアイコンカラー変更
+					sprite->SetSrc(playUiImage, 1 + pl->GetColor() * 17, 24, 16, 16, 16, 16);
+
+					int width, height;
+					width = sprite->GetSrcWidth();
+					height = sprite->GetSrcHeight();
+					float pivotX = width / 2.0f;
+					float pivotY = height / 2.0f;
+
+					MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+						* XMMatrixScaling(1.0f, 1.0f, 1.0f)
+						* XMMatrixTranslation(posX + 8, posY + 8, 0);
+
+					// スプライトをワールド行列を使用して描画
+					sprite->Draw(m);
+				}
+
 				// ミニマップ上のX座標計算 (ワールドXをミニマップの範囲に変換)
 				float normalizedX = (pl->Position().x - worldMin) / (worldMax - worldMin); // 正規化 (0~1)
 				int posX = mapLeft + static_cast<int>(normalizedX * (mapRight - mapLeft)); // マップ座標
@@ -135,7 +161,6 @@ void SplitScreenLastDraw::Draw()
 
 				//プレイヤーごとのアイコンカラー変更
 				sprite->SetSrc(playUiImage,1 + pl->GetColor() * 16, 1, 15, 16, 15, 16);
-				int a = pl->GetPlayerNum();
 
 				int width, height;
 				width = sprite->GetSrcWidth();

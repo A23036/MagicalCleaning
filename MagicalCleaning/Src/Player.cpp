@@ -97,7 +97,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	isDash = false;
 	isFly = false;
 	isBlow = false;
-	isTelrporting = false;
+	isTeleporting = false;
 
 	canTeleport = false;
 	setTeleport = false;
@@ -370,7 +370,7 @@ void Player::Update()
 		|| joyState.rgbButtons[10] & 0x80) && setTeleport && state != sBlow) {
 		state = sTeleport;
 		finishAtkAnim = false;
-		isTelrporting = true;
+		isTeleporting = true;
 		if (mcEffect != nullptr) {
 			mcEffect->SetIsFinish();
 		}
@@ -689,7 +689,7 @@ void Player::SetIsBlow()
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
 	}
-	if (isTelrporting) {
+	if (isTeleporting) {
 		teleportFrm = 0;
 		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 	}
@@ -1201,7 +1201,7 @@ void Player::UpdateTeleport()
 		state = sOnGround;
 		prevState = sOnGround;
 		teleportFrm = 0;
-		isTelrporting = false;
+		isTeleporting = false;
 		return;
 	}
 

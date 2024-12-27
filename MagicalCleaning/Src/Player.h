@@ -71,6 +71,8 @@ public:
 	int GetPowerCost(int selectPower);
 	int GetPowerLv(int selectPower);
 	int GetMaxPowerLv(int selectPower);
+	bool GetIsSetTeleport() { return setTeleport; };
+	VECTOR2 GetTeleportPos() { return VECTOR2(tereportPos.x, tereportPos.z); };
 	bool GetIsInvisible() { return isInvisible; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
@@ -146,7 +148,7 @@ private:
 	bool finishAtkAnim;
 	int atkNum;			//現在の攻撃の連続回数
 	
-	bool isTelrporting;	//テレポート中判定
+	bool isTeleporting;	//テレポート中判定
 	float teleportTime;	//テレポート時間
 	int teleportFrm;	//テレポート経過時間
 
