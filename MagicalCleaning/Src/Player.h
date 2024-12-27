@@ -121,12 +121,19 @@ private:
 	bool isDash;		//ダッシュ中判定
 	bool isFly;			//飛行中判定
 	bool isBlow;		//吹っ飛び中判定
+
+	//各能力最終進化
+	bool canTeleport;	//テレポート可能判定
 	bool canFly;		//飛行可能判定
+	bool canSpeedAtk;	//連続攻撃可能判定
+	bool canRangeAtk;	//遠距離攻撃可能判定
+	bool canFastCharge; //高速変換可能判定
+
 	bool atkComboFlg;	//連続攻撃判定
 	int	 comboWaitFrm;	//コンボ先行入力フレーム
 	bool isMagicReady;	//MP変換予備動作完了フラグ
 	float chargeSpeed;	//MP変換スピード
-	int chargeFrm;		//MP変換経過フレーム
+	float chargeTime;	//MP変換経過時間
 	VECTOR3 blowVec;	//吹っ飛ばしベクトル
 	bool isInvisible;	//透明フラグ
 	int InvisibleTime;	//透明化時間

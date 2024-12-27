@@ -83,17 +83,23 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 500;
 	weight = 0;
 	jumpCount = 0;
-	chargeSpeed = 0;
-	chargeFrm = 0;
+	chargeSpeed = 1.0f;
+	chargeTime = 0.0f;
 	invisibleTime = 0;
 
 	isDash = false;
 	isFly = false;
 	isBlow = false;
+
+	canTeleport = false;
 	canFly = false;
+	canSpeedAtk = false;
+	canRangeAtk = false;
+	canFastCharge = false;
+
 	finishAtkAnim = false;
 	atkComboFlg = false;
 	isMagicReady = false;
@@ -268,8 +274,13 @@ void Player::Update()
 			{
 				mp -= MoveSpeedC[msNum];
 				msNum++;
-				moveSpeed = MoveSpeedT[msNum];
 				new PowerUpEffect(this,transform.position,selectPower);
+				if (msNum == MsTableNum - 1) {
+					canTeleport = true;
+				}
+				else {
+					moveSpeed = MoveSpeedT[msNum];
+				}
 			}
 			break;
 		case pJN:
@@ -291,8 +302,13 @@ void Player::Update()
 			{
 				mp -= AtkSpeedC[asNum];
 				asNum++;
-				atkSpeed = AtkSpeedT[asNum];
 				new PowerUpEffect(this, transform.position, selectPower);
+				if (asNum == AsTableNum - 1) {
+					canSpeedAtk = true;
+				}
+				else {
+					atkSpeed = AtkSpeedT[asNum];
+				}
 			}
 			break;
 		case pAR:
@@ -300,8 +316,13 @@ void Player::Update()
 			{
 				mp -= AtkRangeC[arNum];
 				arNum++;
-				atkRange = AtkRangeT[arNum];
 				new PowerUpEffect(this, transform.position, selectPower);
+				if (arNum == ArTableNum - 1) {
+					canRangeAtk = true;
+				}
+				else {
+					atkRange = AtkRangeT[arNum];
+				}
 			}
 			break;
 		case pCW:
@@ -309,8 +330,13 @@ void Player::Update()
 			{
 				mp -= CarWeightC[cwNum];
 				cwNum++;
-				carWeight = CarWeightT[cwNum];
 				new PowerUpEffect(this, transform.position, selectPower);
+				if (cwNum == CwTableNum - 1) {
+					canFastCharge = true;
+				}
+				else {
+					carWeight = CarWeightT[cwNum];
+				}
 			}
 			break;
 		}
@@ -806,7 +832,7 @@ void Player::UpdateOnGround()
 		animator->SetPlaySpeed(1.0f);
 		state = sCharge;
 		isDash = false;
-		chargeSpeed = 1.0f; //MP変換速度初期値
+		chargeSpeed = 1.0f;
 		mcEffect = new MagicCircleEffect(transform.position, color);
 	}
 }
@@ -1178,22 +1204,21 @@ void Player::UpdateCharge()
 {
 	auto di = GameDevice()->m_pDI;
 	if (di->CheckKey(KD_UTRG, DIK_M) || di->CheckJoy(KD_UTRG, 3, playerNum)) {
+		animator->SetPlaySpeed(1.0f);
 		state = sOnGround;
 		isMagicReady = false;
-		chargeFrm = 0;
+		chargeTime = 0.0f;
 		mcEffect->SetIsFinish();
 		return;
 	}
 	
 	if (animator->PlayingID() == aChargeReady && animator->Finished()) {
-		animator->SetPlaySpeed(1.0f);
 		animator->MergePlay(aCharge);
 		isMagicReady = true;
 	}
 
 	if (isMagicReady) {
-
-		if (chargeSpeed <= (chargeFrm * (1.0f / 60.0f)) && leaf > 0) {
+		if (chargeSpeed <= (chargeTime * (1.0f / 60.0f)) && leaf > 0) {
 			new LeafEffect(transform.position,VECTOR3(0.5f, 0.5f, 0.5f),1);
 			mp++;		//MP加算
 			score++;	//スコア加算
@@ -1201,10 +1226,16 @@ void Player::UpdateCharge()
 			if (chargeSpeed > 0.1f) {
 				chargeSpeed -= 0.1f;
 			}
-			chargeFrm = 0;
+			chargeTime = 0;
 		}
-
-		chargeFrm++;
+		if (canFastCharge) {
+			animator->SetPlaySpeed(2.0f);
+			chargeTime += 2.0f;
+		}
+		else {
+			animator->SetPlaySpeed(1.0f);
+			chargeTime++;
+		}
 	}
 }
 

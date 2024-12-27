@@ -41,4 +41,18 @@ private:
 	int rotGoal;
 	int ScaleStart;
 	int ScaleGoal;
+
+	int msIconPosX[MAXPLAYER];
+	int jnIconPosX[MAXPLAYER];
+	int asIconPosX[MAXPLAYER];
+	int arIconPosX[MAXPLAYER];
+	int cwIconPosX[MAXPLAYER];
+
+	int msTextPosX[MAXPLAYER];
+	int jnTextPosX[MAXPLAYER];
+	int asTextPosX[MAXPLAYER];
+	int arTextPosX[MAXPLAYER];
+	int cwTextPosX[MAXPLAYER];
+	
+	bool isMaxLv[5][MAXPLAYER];
 };
