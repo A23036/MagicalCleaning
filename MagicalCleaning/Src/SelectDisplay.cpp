@@ -1,10 +1,12 @@
 #include "SelectDisplay.h"
+#include "EasingCalc.h"
 
 SelectDisplay::SelectDisplay()
 {
 	SetDrawOrder(-10000);	// 一番最後に描画する
 	
 	dc = ObjectManager::FindGameObject<DataCarrier>();
+	ec = ObjectManager::FindGameObject<EasingCalc>();
 
 	sprite = new CSprite();
 	selectUiImage = new CSpriteImage(_T("data/Image/Select/UI.png"));
@@ -24,6 +26,7 @@ SelectDisplay::SelectDisplay()
 		isReady[i] = false;
 		selectCamera[i] = 0;
 		moveFrm[i] = 15;
+		animFrm[i] = 0;
 	}
 
 	for (int i = 0; i < 6; i++) {
@@ -61,6 +64,7 @@ void SelectDisplay::Update()
 			//準備完了キャンセル処理
 			if (di->CheckJoy(KD_TRG, 1, i)) {
 				isReady[i] = false;
+				animFrm[i] = 0;
 			}
 			continue;
 		}
@@ -159,7 +163,7 @@ void SelectDisplay::Update()
 			}
 		}
 
-		//選択カラーごとの位置情報の設定{
+		//選択カラーごとの位置情報の設定
 		switch (selectColor[i]) {
 		case Red:
 			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 - UiSpace - ColorIconDispSize, ColorPosY);
@@ -185,7 +189,10 @@ void SelectDisplay::Update()
 	int num = 0; //準備完了人数
 	for (int i = 0; i < MAXPLAYER; i++) {
 		if (isReady[i]) {
-			num++;
+			animFrm[i]++;
+			if (animFrm[i] * (1.0f / 60.0f) > 1.0f) { //準備完了アニメーションが終了している
+				num++;
+			}
 		}
 	}
 
@@ -257,6 +264,39 @@ void SelectDisplay::Draw()
 
 	//プレイヤーの状態に応じたUIの描画
 	DrawUI();
+
+	for (int i = 0; i < MAXPLAYER; i++) {
+		sprite->SetSrc(selectUiImage, 1, 1, 192, 32);
+		// アニメーションの進行度計算
+		float timeRate = animFrm[i]*(1.0f/60.0f) / 1.0f;
+		if (timeRate > 1.0f) {
+			timeRate = 1.0f;
+		}
+		float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
+
+		int width, height;
+		width = sprite->GetSrcWidth();
+		height = sprite->GetSrcHeight();
+
+		// 拡大中心を画像の中心にするための補正
+		float pivotX = width / 2.0f;
+		float pivotY = height / 2.0f;
+
+		float posX;
+		float posY;
+
+		posX = 260 + i % 2 * 840;
+		posY = 250 + i / 2 * 340;
+
+		float scale = 2.0f * rate;	// 拡大
+
+		// ワールド行列の計算
+		MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+			* XMMatrixScaling(scale, scale, 1.0f)
+			* XMMatrixTranslation(posX, posY, 0);
+
+		sprite->Draw(m);
+	}
 }
 
 void SelectDisplay::DrawUI()

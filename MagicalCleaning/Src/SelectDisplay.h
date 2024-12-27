@@ -1,6 +1,7 @@
 #pragma once
 #include "Object3D.h"
 #include "DataCarrier.h"
+#include "EasingCalc.h"
 
 /// <summary>
 /// 画面に各種情報を表示する処理
@@ -33,6 +34,7 @@ public:
 	
 private:
 	DataCarrier* dc;
+	EasingCalc* ec;
 	CSprite* sprite;
 	CSpriteImage* selectUiImage;	//セレクト画面UIイメージ
 	
@@ -54,4 +56,6 @@ private:
 
 	int moveFrm[MAXPLAYER];	//プレイヤーごとの入力フレームカウント用変数
 	int MoveFrm;			//カーソルが動くのに必要な入力フレーム量
+
+	int animFrm[MAXPLAYER]; //プレイヤーごとの準備完了アニメーション経過フレーム保存
 };
