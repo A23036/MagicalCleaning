@@ -351,7 +351,7 @@ void ResultDisplay::Draw()
 		for (int i = 0; i < MAXPLAYER; i++) {
 			posX = WINDOW_WIDTH / 2 - 450 + i * 300;
 
-			timeRate = animTime / 5.0f;
+			timeRate = animTime / 3.0f;
 			if (timeRate > 1.0f) {
 				timeRate = 1.0f;
 			}
@@ -359,11 +359,11 @@ void ResultDisplay::Draw()
 
 			score = dc->GetScore(i) * rate;
 
-			offX = score / 100 * 28 + 2;
+			offX = (score / 100) % 10 * 28 + 2;
 			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
 			sprite->Draw(posX - 30, 500);
 
-			offX = score / 10 * 28 + 2;
+			offX = (score / 10) % 10 * 28 + 2;
 			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
 			sprite->Draw(posX - 10, 500);
 
@@ -372,7 +372,7 @@ void ResultDisplay::Draw()
 			sprite->Draw(posX + 10, 500);
 
 		}
-		if (animTime >= 5.0f) {
+		if (animTime >= 4.0f) {
 			state = aRank;
 			animFrm = 0;
 		}
@@ -525,11 +525,11 @@ void ResultDisplay::DrawFinish(int nowAnim)
 
 			score = dc->GetScore(i);
 
-			offX = score / 100 * 28 + 2;
+			offX = (score / 100) % 10 * 28 + 2;
 			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
 			sprite->Draw(posX - 30, 500);
 
-			offX = score / 10 * 28 + 2;
+			offX = (score / 10) % 10 * 28 + 2;
 			sprite->SetSrc(resultUiImage2, offX, 338, 24, 32, 24, 32);
 			sprite->Draw(posX - 10, 500);
 

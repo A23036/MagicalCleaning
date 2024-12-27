@@ -57,9 +57,11 @@ void TitleScene::Update()
 		if (di->CheckKey(KD_TRG, DIK_P)) {
 			SceneManager::ChangeScene("PlayScene");
 		}
+		/*
 		if (di->CheckKey(KD_TRG, DIK_E)) {
 			SceneManager::ChangeScene("EditScene");
 		}
+		*/
 	}
 	else if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, 2)) {
 		animNum = aFinish;

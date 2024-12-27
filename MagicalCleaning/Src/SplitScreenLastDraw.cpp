@@ -33,6 +33,9 @@ SplitScreenLastDraw::~SplitScreenLastDraw()
 	SAFE_DELETE(frameUiImage);
 	SAFE_DELETE(playUiImage);
 	SAFE_DELETE(sprite);
+	for (int i = 0; i < 4; i++) {
+		SAFE_DELETE(mapImages[i]);
+	}
 }
 
 void SplitScreenLastDraw::Start()

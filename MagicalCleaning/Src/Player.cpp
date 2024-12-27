@@ -83,7 +83,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 500;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	chargeSpeed = 0;
@@ -116,7 +116,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	carWeight	= CarWeightT[cwNum];
 
 	moveDistance = 0.0f;
-	jumpCount = 0;
+	jumpCountAll = 0;
 	knockOutCount = 0;
 	itemCount = 0;
 	cleanReafCount = 0;
