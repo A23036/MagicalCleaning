@@ -100,9 +100,7 @@ private:
 
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理
-	void UpdateAttack1();	//攻撃1中処理
-	void UpdateAttack2();	//攻撃2中処理
-	void UpdateAttack3();	//攻撃3中処理
+	void UpdateAttack();	//攻撃中処理
 	void UpdateCharge();	//MP変換中処理
 	void UpdateBlow();		//吹っ飛ばされ中処理
 
@@ -140,6 +138,7 @@ private:
 	int invisibleTime;	//透明化経過時間
 
 	bool finishAtkAnim;
+	int atkNum;			//現在の攻撃の連続回数
 
 	float	moveSpeed;	//移動速度
 	int		jumpNum;	//ジャンプ回数
