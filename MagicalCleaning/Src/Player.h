@@ -7,6 +7,7 @@
 #include "Stage.h"
 #include "Camera.h"
 #include "MagicCircleEffect.h"
+#include "TeleportCircleEffect.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ enum State { //プレイヤー状態
 	sAttack3,
 	sCharge,
 	sBlow,
+	sTeleport,
 	sStop,
 	sWait,
 };
@@ -97,12 +99,14 @@ private:
 	Camera* cm;
 	list<Player*> otherPlayers;
 	MagicCircleEffect* mcEffect;
+	TeleportCircleEffect* tpEffect;
 
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理
 	void UpdateAttack();	//攻撃中処理
 	void UpdateCharge();	//MP変換中処理
 	void UpdateBlow();		//吹っ飛ばされ中処理
+	void UpdateTeleport();	//テレポート処理
 
 	float deltaTime;
 	float GRAVITY;		//重力加速度
@@ -122,6 +126,8 @@ private:
 
 	//各能力最終進化
 	bool canTeleport;	//テレポート可能判定
+	bool setTeleport;	//テレポート場所設置済み判定
+	VECTOR3 tereportPos;//テレポート場所
 	bool canFly;		//飛行可能判定
 	bool canSpeedAtk;	//連続攻撃可能判定
 	bool canRangeAtk;	//遠距離攻撃可能判定
@@ -139,6 +145,10 @@ private:
 
 	bool finishAtkAnim;
 	int atkNum;			//現在の攻撃の連続回数
+	
+	bool isTelrporting;	//テレポート中判定
+	float teleportTime;	//テレポート時間
+	int teleportFrm;	//テレポート経過時間
 
 	float	moveSpeed;	//移動速度
 	int		jumpNum;	//ジャンプ回数

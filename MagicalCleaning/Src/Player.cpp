@@ -90,12 +90,17 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	chargeSpeed = 1.0f;
 	chargeTime = 0.0f;
 	invisibleTime = 0;
+	tereportPos = VECTOR3(0,0,0);
+	teleportTime = 1.0f;
+	teleportFrm = 0;
 
 	isDash = false;
 	isFly = false;
 	isBlow = false;
+	isTelrporting = false;
 
 	canTeleport = false;
+	setTeleport = false;
 	canFly = false;
 	canSpeedAtk = false;
 	canRangeAtk = false;
@@ -259,6 +264,9 @@ void Player::Update()
 	case sBlow:
 		UpdateBlow();
 		break;
+	case sTeleport:
+		UpdateTeleport();
+		return;
 	default:
 		break;
 	}
@@ -353,7 +361,20 @@ void Player::Update()
 		}
 	}
 
+	//テレポート処理
+	auto* pdi = GameDevice()->m_pDI;
+	DIJOYSTATE2 joyState = pdi->GetJoyState(playerNum);
 
+	// ボタン10が押されていて、テレポート先が設置されていて、吹っ飛ばされていないとき
+	if (((di->CheckKey(KD_TRG, DIK_F) && playerNum == 0) 
+		|| joyState.rgbButtons[10] & 0x80) && setTeleport && state != sBlow) {
+		state = sTeleport;
+		finishAtkAnim = false;
+		isTelrporting = true;
+		if (mcEffect != nullptr) {
+			mcEffect->SetIsFinish();
+		}
+	}
 
 	//当たり判定処理
 	//VECTOR3 push;
@@ -405,9 +426,8 @@ void Player::Update()
 	ImGui::SetNextWindowPos(ImVec2(0, 220));
 	ImGui::SetNextWindowSize(ImVec2(200, 120));
 	ImGui::Begin("CheckJoy");
-	auto di = GameDevice()->m_pDI;
 	auto* pdi = GameDevice()->m_pDI;
-	DIJOYSTATE2 joyState = pdi->GetJoyState(playerNum);
+	DIJOYSTATE2 joyState = pdi->GetJoyState(0);
 	for (int i = 0; i < 32; i++)
 	{
 		// 各ボタンの押下状態を確認
@@ -416,12 +436,12 @@ void Player::Update()
 			ImGui::Text("%dP : Button %d is pressed", playerNum,i); // ボタン番号を表示
 		}
 	}
-	
 	float rx = di->GetJoyState().lRx;
 	float ry = di->GetJoyState().lRy;
 	float rz = di->GetJoyState().lRz;
 	ImGui::End();
 	*/
+
 	// Dustにめり込まないようにする
 	// 自分の座標は、transform.position
 	// Dustの座標を知る
@@ -669,6 +689,10 @@ void Player::SetIsBlow()
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
 	}
+	if (isTelrporting) {
+		teleportFrm = 0;
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+	}
 }
 
 void Player::ResetLeaf()
@@ -832,6 +856,14 @@ void Player::UpdateOnGround()
 		isDash = false;
 		chargeSpeed = 1.0f;
 		mcEffect = new MagicCircleEffect(transform.position, color);
+	}
+	if (((di->CheckKey(KD_TRG, DIK_R) && playerNum == 0) || di->CheckJoy(KD_TRG, 7, playerNum)) && canTeleport) { //テレポート魔法陣設置
+		setTeleport = true;
+		tereportPos = transform.position;
+		if (tpEffect != nullptr) {
+			tpEffect->SetIsFinish();
+		}
+		tpEffect = new TeleportCircleEffect(transform.position, color);
 	}
 }
 
@@ -1159,6 +1191,27 @@ void Player::UpdateBlow()
 		speedY = 0;
 		blowVec = VECTOR3(0, 0, 0);
 	}
+}
+
+void Player::UpdateTeleport()
+{
+	if (teleportFrm * (1.0f / 60.0f) > teleportTime) {
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+		transform.position = tereportPos;
+		state = sOnGround;
+		prevState = sOnGround;
+		teleportFrm = 0;
+		isTelrporting = false;
+		return;
+	}
+
+	if (teleportFrm % 20 > 10) {
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 0.5f);
+	}
+	else {
+		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
+	}
+	teleportFrm++;
 }
 
 //　プレイヤーの持つ箒
