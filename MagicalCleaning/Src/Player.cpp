@@ -91,7 +91,6 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	chargeTime = 0.0f;
 	invisibleTime = 0;
 	tereportPos = VECTOR3(0,0,0);
-	teleportTime = 1.0f;
 	teleportFrm = 0;
 
 	isDash = false;
@@ -537,6 +536,9 @@ void Player::CsvLoad()
 			}
 			if (csv->GetString(i, 1) == "MoveSpeed") {		// 移動速度
 				MOVE_SPEED = csv->GetFloat(i, 3);
+			}
+			if (csv->GetString(i, 1) == "TeleportTime") {		// テレポート待機時間
+				TeleportTime = csv->GetInt(i, 3);
 			}
 			if (csv->GetString(i, 1) == "InvisibleTime") {		// 透明化時間
 				InvisibleTime = csv->GetInt(i, 3);
@@ -1195,7 +1197,7 @@ void Player::UpdateBlow()
 
 void Player::UpdateTeleport()
 {
-	if (teleportFrm * (1.0f / 60.0f) > teleportTime) {
+	if (teleportFrm * (1.0f / 60.0f) > TeleportTime) {
 		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 		transform.position = tereportPos;
 		state = sOnGround;

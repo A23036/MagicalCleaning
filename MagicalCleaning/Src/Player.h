@@ -149,7 +149,7 @@ private:
 	int atkNum;			//現在の攻撃の連続回数
 	
 	bool isTeleporting;	//テレポート中判定
-	float teleportTime;	//テレポート時間
+	float TeleportTime;	//テレポート時間
 	int teleportFrm;	//テレポート経過時間
 
 	float	moveSpeed;	//移動速度
