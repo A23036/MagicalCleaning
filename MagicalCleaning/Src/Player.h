@@ -132,6 +132,7 @@ private:
 	VECTOR3 tereportPos;//テレポート場所
 	bool canFly;		//飛行可能判定
 	bool canSpeedAtk;	//連続攻撃可能判定
+	int fastAtkSpeed;	//連続攻撃の攻撃速度(○fに一回)
 	bool canRangeAtk;	//遠距離攻撃可能判定
 	bool canFastCharge; //高速変換可能判定
 
@@ -203,6 +204,7 @@ private:
 		aAttack1,
 		aAttack2,
 		aAttack3,
+		aComboAttack,
 		aChargeReady,
 		aCharge,
 		aBlow,

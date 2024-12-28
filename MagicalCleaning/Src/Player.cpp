@@ -56,18 +56,19 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	mesh->Load((f + "/witch.mesh").c_str());
 
 	mesh->LoadAnimation(aStandBy, (f + "/standby.anmx").c_str(), true);
-	mesh->LoadAnimation(aIdle, (f + "/idle.anmx").c_str(), true);
-	mesh->LoadAnimation(aRun, (f + "/run.anmx").c_str(), true);
-	mesh->LoadAnimation(aJump, (f + "/jump.anmx").c_str(), false);
-	mesh->LoadAnimation(aJump2, (f + "/jump2.anmx").c_str(), false);
-	mesh->LoadAnimation(aFly, (f + "/fly.anmx").c_str(), true);
-	mesh->LoadAnimation(aFall, (f + "/fall.anmx").c_str(), true);
-	mesh->LoadAnimation(aAttack1, (f + "/attack1.anmx").c_str(), false);
-	mesh->LoadAnimation(aAttack2, (f + "/attack2.anmx").c_str(), false);
-	mesh->LoadAnimation(aAttack3, (f + "/attack3.anmx").c_str(), false);
-	mesh->LoadAnimation(aChargeReady, (f + "/chargeReady.anmx").c_str(), false);
-	mesh->LoadAnimation(aCharge, (f + "/charge.anmx").c_str(), true);
-	mesh->LoadAnimation(aBlow, (f + "/blow.anmx").c_str(), true);
+	mesh->LoadAnimation(aIdle, _T("Data/Player/idle.anmx"), true);
+	mesh->LoadAnimation(aRun, _T("Data/Player/run.anmx"), true);
+	mesh->LoadAnimation(aJump, _T("Data/Player/jump.anmx"), false);
+	mesh->LoadAnimation(aJump2, _T("Data/Player/jump2.anmx"), false);
+	mesh->LoadAnimation(aFly, _T("Data/Player/fly.anmx"), true);
+	mesh->LoadAnimation(aFall, _T("Data/Player/fall.anmx"), true);
+	mesh->LoadAnimation(aAttack1, _T("Data/Player/attack1.anmx"), false);
+	mesh->LoadAnimation(aAttack2, _T("Data/Player/attack2.anmx"), false);
+	mesh->LoadAnimation(aAttack3, _T("Data/Player/attack3.anmx"), false);
+	mesh->LoadAnimation(aComboAttack, _T("Data/Player/comboAttack.anmx"), true);
+	mesh->LoadAnimation(aChargeReady, _T("Data/Player/chargeReady.anmx"), false);
+	mesh->LoadAnimation(aCharge, _T("Data/Player/charge.anmx"), true);
+	mesh->LoadAnimation(aBlow, _T("Data/Player/blow.anmx"), true);
 
 	animator->SetModel(mesh); // このモデルでアニメーションする
 	animator->Play(aIdle);
@@ -92,6 +93,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	invisibleTime = 0;
 	tereportPos = VECTOR3(0,0,0);
 	teleportFrm = 0;
+	fastAtkSpeed = 10;
 
 	isDash = false;
 	isFly = false;
@@ -843,9 +845,15 @@ void Player::UpdateOnGround()
 		state = sJump;
 	}
 	if ((di->CheckKey(KD_TRG, DIK_N) && playerNum == 0) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃
-		animator->MergePlay(aAttack1,0);
-		animator->SetPlaySpeed(1.0f * atkSpeed);
-		transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
+		if (canSpeedAtk) {
+			animator->MergePlay(aComboAttack, 0);
+			animator->SetPlaySpeed(8.0f);
+		}
+		else {
+			animator->MergePlay(aAttack1, 0);
+			animator->SetPlaySpeed(1.0f * atkSpeed);
+			transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
+		}
 		state = sAttack1;
 		isDash = false;
 		anmFrame = 0;
@@ -978,7 +986,8 @@ void Player::UpdateAttack()
 	// ゴミに攻撃を当てる
 	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
 	
-	if (!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) { //攻撃のヒットしたタイミング
+	if ((!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) //攻撃のヒットしたタイミング
+		|| (canSpeedAtk && anmFrame%fastAtkSpeed == 0)) { //連続攻撃の場合
 		finishAtkAnim = true;
 		//エフェクトの再生
 		VECTOR3 forward = VECTOR3(0, 0, 1.1f*atkRange); // 回転してない時の移動量
@@ -1035,17 +1044,38 @@ void Player::UpdateAttack()
 	}
 	
 	auto di = GameDevice()->m_pDI;
-	if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃中の先行入力受付
-		atkComboFlg = true;
-		anmFrame = 0;
+	if (canSpeedAtk) {
+		// 攻撃中の方向転換処理
+		auto di = GameDevice()->m_pDI;
+		float ix = di->GetJoyState(playerNum).lX / 1000.0f;
+		float iy = di->GetJoyState(playerNum).lY / 1000.0f;
+
+		// スティックが入力されているか確認
+		if (fabs(ix) > 0.1f || fabs(iy) > 0.1f) {
+			// カメラのY軸回転を取得
+			float cameraYRotation = cm->GetRotY(playerNum);
+			// プレイヤーの回転をカメラ基準で決める
+			transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
+		}
+	}
+	else {
+		if (di->CheckKey(KD_TRG, DIK_N) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃中の先行入力受付
+			atkComboFlg = true;
+			anmFrame = 0;
+		}
+
+		if (anmFrame >= comboWaitFrm) { //連続入力後一定時間で連続攻撃フラグ解除
+			atkComboFlg = false;
+		}
 	}
 
-	if (anmFrame >= comboWaitFrm) { //連続入力後一定時間で連続攻撃フラグ解除
-		atkComboFlg = false;
-	}
-
-	if (animator->Finished())
+	if (animator->Finished() || (canSpeedAtk && di->CheckJoy(KD_UTRG, 0, playerNum)))
 	{
+		if (canSpeedAtk) {
+			animator->SetPlaySpeed(1.0f);
+			state = sOnGround;
+			anmFrame = 0;
+		}
 		//攻撃アニメーションの終了
 		finishAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
