@@ -366,7 +366,7 @@ void Player::Update()
 	auto* pdi = GameDevice()->m_pDI;
 	DIJOYSTATE2 joyState = pdi->GetJoyState(playerNum);
 
-	// ボタン10が押されていて、テレポート先が設置されていて、吹っ飛ばされていないとき
+	// テレポート先が設置されていて吹っ飛ばされていないとき
 	if (((di->CheckKey(KD_TRG, DIK_F) && playerNum == 0) 
 		|| joyState.rgbButtons[10] & 0x80) && setTeleport && state != sBlow) {
 		state = sTeleport;
@@ -881,7 +881,9 @@ void Player::UpdateOnGround()
 void Player::UpdateJump()
 {
 	transform.position.y += speedY * deltaTime;
-	if (canFly && GameDevice()->m_pDI->CheckJoy(KD_DAT, 7, playerNum)) {
+
+	//飛行可能かつジャンプキーを入力しっぱなしで降下しているとき
+	if (canFly && GameDevice()->m_pDI->CheckJoy(KD_DAT, 1, playerNum) && speedY < 0) {
 		speedY = -0.01;	// 重力
 		isFly = true;
 		if (animator->PlayingID() == aRun || animator->PlayingID() == aFall) {
@@ -942,7 +944,7 @@ void Player::UpdateJump()
 		transform.rotation.y = cameraYRotation + atan2(ix, -iy); // カメラの回転に対してスティックの方向に合わせる
 	}
 
-	if (di->CheckJoy(KD_TRG, 1, playerNum) && jumpCount <= jumpNum) {
+	if (di->CheckJoy(KD_TRG, 1, playerNum) && jumpCount <= jumpNum) { //ジャンプ可能回数が残っているとき
 		speedY = JUMP_POWER;
 		isDash = false;
 		if (jumpCount % 2 == 0) {
@@ -962,8 +964,7 @@ void Player::UpdateJump()
 		if (isFly) {
 			animator->MergePlay(aFly);
 		}
-		else
-		{
+		else{
 			animator->MergePlay(aFall);
 		}
 		
@@ -1234,6 +1235,7 @@ void Player::UpdateTeleport()
 		prevState = sOnGround;
 		teleportFrm = 0;
 		isTeleporting = false;
+		isFly = false;
 		return;
 	}
 
