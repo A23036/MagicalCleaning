@@ -7,6 +7,7 @@ public:
 	~SlashEffect();
 	void Update();
 
+	void SetPos(VECTOR3 pos);
 private:
 	float lifeTime;
 	float fadeTime;

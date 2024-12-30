@@ -51,3 +51,8 @@ void SlashEffect::Update()
     transform.rotation.y += rotSpeed;
     frm++;
 }
+
+void SlashEffect::SetPos(VECTOR3 pos)
+{
+    transform.position = pos;
+}
