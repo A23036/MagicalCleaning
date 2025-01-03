@@ -200,9 +200,9 @@ void TitleScene::Draw()
 			rate = 0;
 		}
 		width = (WINDOW_WIDTH + 10) * rate;
-		sprite->DrawRect(0, 0, width, WINDOW_HEIGHT, RGB(0,0,0));
+		sprite->DrawRect(0, 0, width, WINDOW_HEIGHT, RGB(0, 0, 0));
 
-		if (animTime == 1.0f){
+		if (animTime == 1.1f){
 			state = aFinish;
 		}
 		break;

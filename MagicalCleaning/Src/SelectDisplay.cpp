@@ -224,7 +224,7 @@ void SelectDisplay::Draw()
 		}
 		float height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
 
-		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(154, 145, 255));
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(205, 200, 255));
 
 		timeRate = (animTime - 0.2f) / 1.0f;
 		rate = ec->easeOutExpo(timeRate);
@@ -232,7 +232,7 @@ void SelectDisplay::Draw()
 			rate = 0;
 		}
 		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
-		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(195, 157, 204));
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(154, 145, 255));
 
 		timeRate = animTime / 1.0f;
 		rate = ec->easeOutExpo(timeRate);

@@ -33,6 +33,7 @@ Camera::Camera()
 
 Camera::~Camera()
 {
+	SAFE_DELETE(csv);
 }
 
 void Camera::Start()

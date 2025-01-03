@@ -75,8 +75,10 @@ Stage::~Stage()
 //		csv = nullptr;
 //	}
 	SAFE_DELETE(csv);
-	SAFE_DELETE(mesh);
 	SAFE_DELETE(mapCol);
+	for (int i = 0; i < meshes.size(); i++){
+		SAFE_DELETE(meshes[i]);
+	}
 }
 
 void Stage::Update()

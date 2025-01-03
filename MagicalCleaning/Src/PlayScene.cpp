@@ -53,17 +53,7 @@ PlayScene::PlayScene()
 
 PlayScene::~PlayScene()
 {
-	/*
-	SAFE_DELETE(pd);
-	SAFE_DELETE(st);
-	SAFE_DELETE(sky);
-	SAFE_DELETE(cm);
-	SAFE_DELETE(dc);
-	SAFE_DELETE(p1);
-	SAFE_DELETE(p2);
-	SAFE_DELETE(p3);
-	SAFE_DELETE(p4);
-	*/
+	SAFE_DELETE(csv);
 }
 
 void PlayScene::Update()

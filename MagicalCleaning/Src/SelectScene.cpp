@@ -27,6 +27,7 @@ SelectScene::~SelectScene()
 {
 	SAFE_DELETE(sprite);
 	SAFE_DELETE(selectBackImage);
+	SAFE_DELETE(csv);
 }
 
 void SelectScene::Update()
