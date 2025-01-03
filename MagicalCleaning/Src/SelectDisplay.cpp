@@ -11,6 +11,9 @@ SelectDisplay::SelectDisplay()
 	sprite = new CSprite();
 	selectUiImage = new CSpriteImage(_T("data/Image/Select/UI.png"));
 
+	isTransition = true; //開始時、フェードイン
+	transFrm = 0;
+
 	ColorPosY = WINDOW_HEIGHT * 2/5;		//キャラ選択カラー位置Y
 	ColorIconSize = 64;						//キャラ選択カラーサイズ
 	ColorIconDispSize = 100;				//キャラ選択カラー表示サイズ
@@ -210,6 +213,38 @@ void SelectDisplay::Update()
 
 void SelectDisplay::Draw()
 {
+	//開幕トランジション
+	if (isTransition) {
+		float animTime = transFrm * (1.0f / 60.0f);
+
+		float timeRate = (animTime - 0.4f) / 1.0f;
+		float rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		float height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(154, 145, 255));
+
+		timeRate = (animTime - 0.2f) / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(195, 157, 204));
+
+		timeRate = animTime / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(0, 0, 0));
+
+		transFrm++;
+		if (animTime < 0.5f) {
+			return;
+		}
+	}
+
 	//UIイメージの設定
 	sprite->SetImage(selectUiImage);
 
@@ -297,6 +332,7 @@ void SelectDisplay::Draw()
 
 		sprite->Draw(m);
 	}
+
 }
 
 void SelectDisplay::DrawUI()

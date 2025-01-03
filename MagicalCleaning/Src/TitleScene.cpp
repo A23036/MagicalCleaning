@@ -14,10 +14,10 @@ TitleScene::TitleScene()
 	titleText3Image = new CSpriteImage(_T("data/Image/Title/Text3.png"));
 	
 	sprite = new CSprite();
-	easing = new EasingCalc();
+	ec = new EasingCalc();
 	dc = SingleInstantiate<DataCarrier>(); //DataCarrierはシングルトンで生成
 
-	animNum = 0;
+	state = aFadeIn;
 	animFrm = 0;
 	animTime = 0;
 
@@ -28,6 +28,11 @@ TitleScene::TitleScene()
 	rot = 0;
 	scale = 0;
 	trans = 0;
+
+	d1 = 0;
+	d2 = 0;
+	offX = 0;
+	offY = 0;
 }
 
 TitleScene::~TitleScene()
@@ -38,7 +43,7 @@ TitleScene::~TitleScene()
 	SAFE_DELETE(titleText2Image);
 	SAFE_DELETE(titleText3Image);
 	SAFE_DELETE(sprite);
-	SAFE_DELETE(easing);
+	SAFE_DELETE(ec);
 	SAFE_DELETE(csv);
 }
 
@@ -46,10 +51,11 @@ void TitleScene::Update()
 {
 	auto di = GameDevice()->m_pDI;
 
-	if (animNum == aFinish) {
+	if (state == aWait) {
 		// 2024.10.27 コードの可読性向上とコントローラー入力対応
-		if (di->CheckKey(KD_TRG, DIK_S) || di->CheckJoy(KD_TRG, 2)) {
-			SceneManager::ChangeScene("SelectScene");
+		if ((di->CheckKey(KD_TRG, DIK_S) || di->CheckJoy(KD_TRG, 2)) && state != aTransition){
+			state = aTransition;
+			animFrm = 0;
 		}
 		if (di->CheckKey(KD_TRG, DIK_V)) {
 			SceneManager::ChangeScene("ViewMapScene");
@@ -63,27 +69,30 @@ void TitleScene::Update()
 		}
 		*/
 	}
-	else if (di->CheckKey(KD_TRG, DIK_SPACE) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, 2)) {
-		animNum = aFinish;
+	else if ((di->CheckKey(KD_TRG, DIK_S) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, 2)) && state != aTransition){
+		state = aWait;
 	}
-	
+
+	if (state == aFinish){
+		SceneManager::ChangeScene("SelectScene");
+	}
 }
 
 void TitleScene::Draw()
 {
 	animTime = animFrm * (1.0f / 60.0f);
 
-	switch (animNum) {
-	case aWait: //背景フェードイン
+	switch (state) {
+	case aFadeIn: //背景フェードイン
 		
-		timeRate = animTime / AnimTime[aWait];
+		timeRate = animTime / AnimTime[aFadeIn];
 		rate = timeRate; //線形補完
 
 		alpha = (AlphaGoal -AlphaStart) * rate + AlphaStart;
 
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT,alpha);
-		if (animTime >= AnimTime[aWait]) {
-			animNum = aBroom;
+		if (animTime >= AnimTime[aFadeIn]) {
+			state = aBroom;
 			animFrm = 0;
 		}
 		break;
@@ -92,7 +101,7 @@ void TitleScene::Draw()
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		timeRate = animTime / AnimTime[aBroom];
-		rate = easing->easeOutBack(timeRate);
+		rate = ec->easeOutBack(timeRate);
 		rot = (RotateGoal - RotateStart) * rate + RotateStart;
 		scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;
 
@@ -105,7 +114,7 @@ void TitleScene::Draw()
 
 		if (animTime >= AnimTime[aBroom])
 		{
-			animNum = aText1;
+			state = aText1;
 			animFrm = 0;
 		}
 		break;
@@ -114,14 +123,14 @@ void TitleScene::Draw()
 		sprite->Draw(broomImage, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		timeRate = animTime / AnimTime[aText1];
-		rate = easing->easeOutBack(timeRate);
+		rate = ec->easeOutBack(timeRate);
 		trans = (TransGoal - TransStart) * rate + TransStart;
 
 		sprite->Draw(titleText1Image, 0, trans, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		if (animTime >= AnimTime[aText1])
 		{
-			animNum = aText2;
+			state = aText2;
 			animFrm = 0;
 		}
 		break;
@@ -131,7 +140,7 @@ void TitleScene::Draw()
 		sprite->Draw(titleText1Image, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		timeRate = animTime / AnimTime[aText2];
-		rate = easing->easeOutBounce(timeRate);
+		rate = ec->easeOutBounce(timeRate);
 		scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;
 		trans = 1 - scale;
 
@@ -139,37 +148,63 @@ void TitleScene::Draw()
 							0, 0, 1280, 720, WINDOW_WIDTH * scale, WINDOW_HEIGHT * scale);
 		if (animTime >= AnimTime[aText2])
 		{
-			animNum = aFinish;
+			state = aWait;
 			animFrm = 0;
 		}
 		break;
-	case aFinish: //アニメーション終了、プレイヤーの入力待機
-
+	case aWait: //アニメーション終了、プレイヤーの入力待機
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-		float d1 = sinf(animFrm / 120.0f * XM_2PI) * 5.0f;
-		float d2 = 1 + fabs(sinf(animFrm / 300.0f * XM_2PI) * 0.05f);
+		d1 = sinf(animFrm / 120.0f * XM_2PI) * 5.0f;
+		d2 = 1 + fabs(sinf(animFrm / 300.0f * XM_2PI) * 0.05f);
 
 		// 中央で拡縮するためのオフセットを計算
-		float offsetX = (WINDOW_WIDTH * (1 - d2)) / 2;
-		float offsetY = (WINDOW_HEIGHT * (1 - d2)) / 2;
+		offX = (WINDOW_WIDTH * (1 - d2)) / 2;
+		offY = (WINDOW_HEIGHT * (1 - d2)) / 2;
 
 		sprite->Draw(broomImage, 0, d1, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 		sprite->Draw(titleText1Image, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
-		sprite->Draw(titleText2Image, offsetX, offsetY, 0, 0, 1280, 720, WINDOW_WIDTH * d2, WINDOW_HEIGHT * d2);
+		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * d2, WINDOW_HEIGHT * d2);
 
 		if (animFrm % 60 < 40) {
-			sprite->SetSrc(0,0,612,32);
-			sprite->Draw(titleText3Image, WINDOW_WIDTH/2 - (sprite->GetSrcWidth())/2, WINDOW_HEIGHT* 3/4,
-							0, 0, sprite->GetSrcWidth(), sprite->GetSrcHeight());
+			sprite->SetSrc(0, 0, 612, 32);
+			sprite->Draw(titleText3Image, WINDOW_WIDTH / 2 - (sprite->GetSrcWidth()) / 2, WINDOW_HEIGHT * 3 / 4,
+				0, 0, sprite->GetSrcWidth(), sprite->GetSrcHeight());
 			int n = sprite->GetSrcWidth() / 2;
 			int a = n;
 		}
-		//GameDevice()->m_pFont->Draw(400, 15, _T("TITLE SCENE"), 32, RGB(255, 0, 0));
-		//GameDevice()->m_pFont->Draw(400, 100, _T("[S]key : SELECT SCENE"), 32, RGB(255, 0, 0));
-		//GameDevice()->m_pFont->Draw(400, 130, _T("[V]Key : VIEW MAP SCENE"), 32, RGB(255, 0, 0));
-		//GameDevice()->m_pFont->Draw(400, 160, _T("[P]Key : PLAY SCENE"), 32, RGB(255, 0, 0));
-		
+		break;
+	case aTransition:
+		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT);
+		sprite->Draw(broomImage, 0, d1, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
+		sprite->Draw(titleText1Image, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
+		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * d2, WINDOW_HEIGHT * d2);
+
+		timeRate = animTime / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		float width = (WINDOW_WIDTH + 10) * rate;
+
+		sprite->DrawRect(0, 0, width, WINDOW_HEIGHT, RGB(244, 196, 255));
+
+		timeRate = (animTime - 0.2f) / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		width = (WINDOW_WIDTH + 10) * rate;
+		sprite->DrawRect(0, 0, width, WINDOW_HEIGHT, RGB(195, 157, 204));
+
+		timeRate = (animTime - 0.4f) / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		width = (WINDOW_WIDTH + 10) * rate;
+		sprite->DrawRect(0, 0, width, WINDOW_HEIGHT, RGB(0,0,0));
+
+		if (animTime == 1.0f){
+			state = aFinish;
+		}
 		break;
 
 	}

@@ -52,7 +52,7 @@ private:
 		aBonusFade2,
 		aCount,
 		aRank,
-		aFinish,
+		aWait,
 		aBack,
 	};
 

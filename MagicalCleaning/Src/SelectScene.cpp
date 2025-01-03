@@ -40,10 +40,13 @@ void SelectScene::Update()
 	}
 
 	if (di->CheckJoy(KD_DAT, 1, 0)) {
-		if (frm > backFrm) { //1Pの一定時間以上戻るボタン入力で戻る
+		if (frm > backFrm) { //1Pの一定時間以上戻るボタン入力でタイトルに戻る
 			SceneManager::ChangeScene("TitleScene");
 		}
 		frm++;
+	}
+	else {
+		frm = 0;
 	}
 	
 	for (int i = 0; i < MAXPLAYER; i++) {

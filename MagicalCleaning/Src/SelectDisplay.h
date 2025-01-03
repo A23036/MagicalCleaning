@@ -58,4 +58,7 @@ private:
 	int MoveFrm;			//カーソルが動くのに必要な入力フレーム量
 
 	int animFrm[MAXPLAYER]; //プレイヤーごとの準備完了アニメーション経過フレーム保存
+
+	bool isTransition;	//トランジション中判定
+	int transFrm;	//トランジションフレーム
 };

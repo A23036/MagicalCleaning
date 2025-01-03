@@ -16,7 +16,7 @@ public:
 
 private:
 	CsvReader*	csv;
-	EasingCalc*	 easing;
+	EasingCalc*	 ec;
 	DataCarrier* dc;
 	CSpriteImage*	titleBackImage;		//タイトル画面背景イメージ
 	CSpriteImage*	broomImage;			//タイトル画面「箒」イメージ
@@ -34,6 +34,11 @@ private:
 	float scale;	//拡縮
 	float trans;	//位置
 
+	float d1;
+	float d2;
+	float offX;
+	float offY;
+
 	float AnimTime[4];
 	float ScaleStart;
 	float ScaleGoal;
@@ -44,15 +49,18 @@ private:
 	float AlphaStart;
 	float AlphaGoal;
 	
-	int animNum;		//アニメーション位置
 	int animFrm;		//アニメーションの経過時間(フレーム)
 	float animTime;		//アニメーションの経過時間(秒)
 
 	enum animState { //タイトル画面のアニメーション状態
-		aWait = 0,
+		aFadeIn = 0,
 		aBroom,
 		aText1,
 		aText2,
+		aWait,
+		aTransition,
 		aFinish,
 	};
+
+	animState state;
 };

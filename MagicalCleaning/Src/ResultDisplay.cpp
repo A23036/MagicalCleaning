@@ -406,12 +406,12 @@ void ResultDisplay::Draw()
 			sprite->Draw(m);
 		}
 		if (animTime >= 1.0f) {
-			state = aFinish;
+			state = aWait;
 			isFinish = true;
 			animFrm = 0;
 		}
 		break;
-	case aFinish:
+	case aWait:
 
 		break;
 	}
