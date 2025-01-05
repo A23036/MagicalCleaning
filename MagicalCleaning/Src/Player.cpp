@@ -185,19 +185,12 @@ void Player::Update()
 		
 		child->SetPos(bone);
 	}
-	
 	/*
 	if (playerNum == 0) {
-		ImGui::Begin("Counter");
-		ImGui::InputFloat("MoveDistance", &moveDistance);
-		ImGui::InputInt("JumpCount", &jumpCountAll);
-		ImGui::InputInt("KnockOutCount", &knockOutCount);
-		ImGui::InputInt("ItemCount", &itemCount);
-		ImGui::InputInt("CleanReaf", &cleanReaf);
-		ImGui::InputInt("BlowCount", &blowCount);
+		ImGui::Begin("Rot");
+		ImGui::InputFloat("Y", &transform.rotation.y);
 		ImGui::End();
-	}
-	*/
+	}*/
 	/*
 	ImGui::SetNextWindowPos(ImVec2(0, 50));
 	ImGui::SetNextWindowSize(ImVec2(100, 160));
@@ -852,7 +845,6 @@ void Player::UpdateOnGround()
 		else {
 			animator->MergePlay(aAttack1, 0);
 			animator->SetPlaySpeed(1.0f * atkSpeed);
-			transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 		}
 		state = sAttack1;
 		isDash = false;
@@ -984,64 +976,11 @@ void Player::UpdateAttack()
 {	
 	anmFrame++;
 
-	// ゴミに攻撃を当てる
-	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
-	
-	if ((!finishAtkAnim && animator->CurrentFrame() >= 20.0f/atkSpeed) //攻撃のヒットしたタイミング
-		|| (canSpeedAtk && anmFrame%fastAtkSpeed == 0)) { //連続攻撃の場合
-		finishAtkAnim = true;
-		//エフェクトの再生
-		VECTOR3 forward = VECTOR3(0, 0, 1.1f*atkRange); // 回転してない時の移動量
-		MATRIX4X4 rotY = XMMatrixRotationY(transform.rotation.y); // Yの回転行列
-		forward = forward * rotY; // キャラの向いてる方への移動量
-		VECTOR3 pos = forward + transform.position;
-		new SlashEffect(pos,atkRange);
-
-		for (Dust* d : dusts) {
-			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
-			SphereCollider atkCol = Collider();			//攻撃判定の球
-			
-			atkCol.center = transform.position + forward; //攻撃判定の球を作る
-			atkCol.radius = 1.0f * atkRange;
-			VECTOR3 pushVec = atkCol.center - dCol.center;
-			float rSum = atkCol.radius + dCol.radius;
-			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
-				// 当たってる
-				d->AddDamage(this,1); //ダメージを与える
-				if (d->GetNum() == 3) { //透明化
-					invisibleTime = 0;
-					isInvisible = true;
-					itemCount++;
-				}
-			}
-		}
-		//他プレイヤーへの攻撃判定
-		for (Player* p : otherPlayers) {
-			SphereCollider pCol = p->Collider(); //他プレイヤーの判定球
-			SphereCollider atkCol = Collider();		//攻撃判定の球
-			atkCol.center = transform.position + forward; //攻撃判定の球を作る
-			atkCol.radius = 1.0f * atkRange;
-			VECTOR3 pushVec = pCol.center - atkCol.center;
-			
-			float rSum = atkCol.radius + pCol.radius;
-			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
-				// 当たってる
-				pushVec = XMVector3Normalize(pushVec);
-				pushVec *= 0.1f;
-				pushVec.y = 0.201f;
-				p->SetBlowVec(pushVec);
-				p->SetSpeedY(pushVec.y);
-				p->SetPlayerState(sBlow);
-				p->SetPlayerPrevState(sBlow);
-				p->SetIsBlow();
-				p->animator->MergePlay(aBlow, 0);
-				p->animator->SetPlaySpeed(2.0f);
-				AddLeaf(p->GetLeaf());
-				p->ResetLeaf();
-				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
-				knockOutCount++;
-			}
-		}
+	if ((!finishAtkAnim && animator->CurrentFrame() >= 20.0f / atkSpeed) //攻撃のヒットしたタイミング
+		|| (canSpeedAtk && anmFrame % fastAtkSpeed == 0)) { //連続攻撃の場合
+		
+		//攻撃判定処理
+		CheckAtkCoillision();
 	}
 	
 	auto di = GameDevice()->m_pDI;
@@ -1080,18 +1019,15 @@ void Player::UpdateAttack()
 		//攻撃アニメーションの終了
 		finishAtkAnim = false;
 		animator->SetPlaySpeed(1.0f);
-		transform.rotation.y -= 15 * DegToRad; //回転を戻す
 		if (atkComboFlg && atkNum < 3) { //連続攻撃判定/連続攻撃が4回目でない
 			if (atkNum == 1) {
 				animator->SetPlaySpeed(1.0f * atkSpeed);
 				animator->MergePlay(aAttack2, 0);
-				transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 				state = sAttack2;
 			}
 			else if (atkNum == 2) {
 				animator->SetPlaySpeed(1.2f * atkSpeed);
 				animator->MergePlay(aAttack3, 0);
-				transform.rotation.y += 15 * DegToRad; //正面方向に回転させる
 				state = sAttack3;
 			}
 			anmFrame = 0;
@@ -1246,6 +1182,101 @@ void Player::UpdateTeleport()
 		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
 	}
 	teleportFrm++;
+}
+
+void Player::CheckAtkCoillision()
+{
+	// ゴミに攻撃を当てる
+	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
+
+	finishAtkAnim = true;
+
+	// 攻撃判定発生位置格納用配列
+	vector<VECTOR3> attackPositions;
+
+	int attackNum = 1; //攻撃判定数
+	// 範囲攻撃が可能な時、攻撃判定を3つ生成
+	if (canRangeAtk) {
+		attackNum = 3;
+	}
+
+	// 攻撃判定の発生位置を計算
+	for (int i = 0; i < attackNum; i++) {
+		VECTOR3 forward;
+		// プレイヤーのY軸回転行列(範囲攻撃の時、プレイヤーの前方と斜め前2個所に攻撃発生)
+		MATRIX4X4 rotY;
+		if (i > 0) {
+			rotY = XMMatrixRotationY(transform.rotation.y + pow(-1,i)* 1.3f);
+			// 斜め前の攻撃はやや前方に
+			forward = VECTOR3(0, 0, 1.8f * atkRange); // 前方ベクトル
+		}
+		else {
+			forward = VECTOR3(0, 0, 1.2f * atkRange); // 前方ベクトル
+			rotY = XMMatrixRotationY(transform.rotation.y);
+		}
+		forward = forward * rotY; // プレイヤーの向いてる方への移動量
+		VECTOR3 pos = forward + transform.position;
+
+		// 攻撃判定位置情報を格納
+		attackPositions.push_back(pos);
+
+		//エフェクトの再生
+		new SlashEffect(pos, atkRange);
+	}
+
+	// 攻撃判定数分だけ当たり判定を計算
+	for (VECTOR3 atkPos : attackPositions) {
+		for (Dust* d : dusts) {
+			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
+			SphereCollider atkCol = Collider();			//攻撃判定の球
+
+			//攻撃判定の球を作る
+			atkCol.center = atkPos;
+			atkCol.radius = 1.0f * atkRange;
+			VECTOR3 pushVec = atkCol.center - dCol.center;
+			float rSum = atkCol.radius + dCol.radius;
+			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+				// 当たってる
+				d->AddDamage(this, 1); //ダメージを与える
+				if (d->GetNum() == 3) { //透明化
+					invisibleTime = 0;
+					isInvisible = true;
+					itemCount++;
+				}
+			}
+		}
+
+		//他プレイヤーへの攻撃判定
+		for (Player* p : otherPlayers) {
+			SphereCollider pCol = p->Collider(); //他プレイヤーの判定球
+			SphereCollider atkCol = Collider();		//攻撃判定の球
+			
+			//攻撃判定の球を作る
+			atkCol.center = atkPos;
+			atkCol.radius = 1.0f * atkRange;
+			VECTOR3 pushVec = pCol.center - atkCol.center;
+
+			float rSum = atkCol.radius + pCol.radius;
+			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+				// 当たってる
+				pushVec = XMVector3Normalize(pushVec);
+				pushVec *= 0.1f;
+				pushVec.y = 0.201f;
+				p->SetBlowVec(pushVec);
+				p->SetSpeedY(pushVec.y);
+				p->SetPlayerState(sBlow);
+				p->SetPlayerPrevState(sBlow);
+				p->SetIsBlow();
+				p->animator->MergePlay(aBlow, 0);
+				p->animator->SetPlaySpeed(2.0f);
+				AddLeaf(p->GetLeaf());
+				p->ResetLeaf();
+				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
+				knockOutCount++;
+			}
+		}
+	}
+
 }
 
 //　プレイヤーの持つ箒

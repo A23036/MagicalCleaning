@@ -93,6 +93,7 @@ public:
 	void AddWeight(int n);
 	void AddScore(int n);
 	void AddCleanReaf();
+	
 
 private:
 	CsvReader* csv;
@@ -109,6 +110,7 @@ private:
 	void UpdateCharge();	//MP変換中処理
 	void UpdateBlow();		//吹っ飛ばされ中処理
 	void UpdateTeleport();	//テレポート処理
+	void CheckAtkCoillision(); //攻撃ヒット判定処理
 
 	float deltaTime;
 	float GRAVITY;		//重力加速度
@@ -133,7 +135,7 @@ private:
 	bool canFly;		//飛行可能判定
 	bool canSpeedAtk;	//連続攻撃可能判定
 	int fastAtkSpeed;	//連続攻撃の攻撃速度(○fに一回)
-	bool canRangeAtk;	//遠距離攻撃可能判定
+	bool canRangeAtk;	//範囲攻撃可能判定
 	bool canFastCharge; //高速変換可能判定
 
 	bool atkComboFlg;	//連続攻撃判定
