@@ -67,8 +67,6 @@ void ResultScene::Draw()
 {
 	sprite->Draw(resultBackImage, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	GameDevice()->m_pFont->Draw(400, 15, _T("RESULTSCENE   Push [T]: TitleScene"), 50, RGB(255, 0, 0));
-
 	GameDevice()->m_mView = XMMatrixLookAtLH(
 		VECTOR3(0, 0, -10), // ƒJƒƒ‰ˆÊ’u
 		VECTOR3(0, 0, 0), // ’Ž‹“_

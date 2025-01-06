@@ -48,7 +48,7 @@ PlayScene::PlayScene()
 	timer = 0;
 	frm = 0;
 	isPlay = false;
-	state = sReady;
+	state = sTransition;
 }
 
 PlayScene::~PlayScene()
@@ -75,6 +75,9 @@ void PlayScene::Update()
 	}
 
 	switch (state) {
+	case sTransition:
+		UpdateTransition();
+		break;
 	case sReady:
 		UpdateReady();
 		break;
@@ -114,6 +117,16 @@ void PlayScene::CsvLoad()
 				GameTime = csv->GetFloat(i, 3);
 			}
 		}
+	}
+}
+
+void PlayScene::UpdateTransition()
+{
+	if (ssld->GetIsTransFinish()) {
+		frm = 0;
+		timer = 0;
+		ssld->SetIsTransFinish(false);
+		state = sReady;
 	}
 }
 

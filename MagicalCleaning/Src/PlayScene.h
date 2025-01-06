@@ -46,6 +46,7 @@ private:
 	static const int MAX_DUST_NUM = 50; //最大生成ゴミ数
 	std::vector<Dust*> dustArray;
 
+	void UpdateTransition();
 	void UpdateReady();
 	void UpdatePose();
 	void UpdateGamePlay();
@@ -54,7 +55,8 @@ private:
 	int GetRandomSize();
 
 	enum GameState {
-		sReady = 0,	//開始前カウントダウン
+		sTransition = 0, //画面トランジション
+		sReady,		//開始前カウントダウン
 		sPose,		//ポーズ中
 		sGamePlay,	//ゲームプレイ中
 		sFinish,	//ゲーム終了演出中

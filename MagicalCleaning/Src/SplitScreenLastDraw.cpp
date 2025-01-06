@@ -21,12 +21,17 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 	vpSingle.TopLeftY = 0;
 	GameDevice()->m_pD3D->m_pDeviceContext->RSSetViewports(1, &vpSingle);
 
+	ec = ObjectManager::FindGameObject<EasingCalc>();
+
 	frameUiImage = new CSpriteImage(_T("data/Image/Play/frameUI.png"));
 	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite3.png"));
 
 	sprite = new CSprite();
 
 	fadeFrm = 0;
+	transFrm = 0;
+
+	isTransFinish = false;
 }
 
 SplitScreenLastDraw::~SplitScreenLastDraw()
@@ -189,6 +194,9 @@ void SplitScreenLastDraw::Draw()
 
 			
 			switch (gameState) {
+			case sTransition:
+				Transition();
+				break;
 			case sReady:
 				sprintf_s(str, "State:Ready");
 				break;
@@ -223,6 +231,39 @@ void SplitScreenLastDraw::Draw()
 
 }
 
+void SplitScreenLastDraw::Transition()
+{
+	float animTime = transFrm * (1.0f / 60.0f);
+
+	float timeRate = (animTime - 0.4f) / 1.0f;
+	float rate = ec->easeOutExpo(timeRate);
+	if (timeRate < 0) {
+		rate = 0;
+	}
+	float height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+
+	sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(205, 200, 255));
+
+	timeRate = (animTime - 0.2f) / 1.0f;
+	rate = ec->easeOutExpo(timeRate);
+	if (timeRate < 0) {
+		rate = 0;
+	}
+	height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+	sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(154, 145, 255));
+
+	timeRate = animTime / 1.0f;
+	rate = ec->easeOutExpo(timeRate);
+	height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+	sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(0,0,0));
+	
+	transFrm++;
+	if (rate >= 1.0f) {
+		isTransFinish = true;
+		transFrm = 0;
+	}
+}
+
 
 
 
@@ -234,6 +275,11 @@ void SplitScreenLastDraw::SetState(int state)
 void SplitScreenLastDraw::SetGameTime(int time)
 {
 	gameTime = time;
+}
+
+void SplitScreenLastDraw::SetIsTransFinish(bool isTrans)
+{
+	isTransFinish = isTrans;
 }
 
 void SplitScreenLastDraw::SetPlayers(vector<Player*> players)

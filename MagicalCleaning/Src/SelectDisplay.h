@@ -26,6 +26,7 @@ public:
 	void Draw() override;
 
 	void DrawUI();
+	void Transition();
 
 	bool GetIsSelectColor(int playerNum) { return playerEntry[playerNum]; };
 	bool GetIsSelected(int color) { return isSelect[color]; };
@@ -60,5 +61,6 @@ private:
 	int animFrm[MAXPLAYER]; //プレイヤーごとの準備完了アニメーション経過フレーム保存
 
 	bool isTransition;	//トランジション中判定
+	bool isFirst;		//初回トランジション判定
 	int transFrm;	//トランジションフレーム
 };

@@ -28,7 +28,8 @@ private:
 	int gameTime;
 
 	enum GameState {
-		sReady = 0,	//開始前カウントダウン
+		sTransition = 0,
+		sReady,	//開始前カウントダウン
 		sPose,		//ポーズ中
 		sGamePlay,	//ゲームプレイ中
 		sFinish,	//ゲーム終了演出中

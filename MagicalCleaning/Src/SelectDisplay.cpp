@@ -12,6 +12,7 @@ SelectDisplay::SelectDisplay()
 	selectUiImage = new CSpriteImage(_T("data/Image/Select/UI.png"));
 
 	isTransition = true; //開始時、フェードイン
+	isFirst = true;
 	transFrm = 0;
 
 	ColorPosY = WINDOW_HEIGHT * 2/5;		//キャラ選択カラー位置Y
@@ -204,7 +205,8 @@ void SelectDisplay::Update()
 		dc->SetCameraSetteing(selectCamera);
 		dc->SetColor(selectColor);
 
-		isReadyAll = true;
+		//isReadyAll = true;
+		isTransition = true;
 	}
 	else {
 		isReadyAll = false;
@@ -213,38 +215,6 @@ void SelectDisplay::Update()
 
 void SelectDisplay::Draw()
 {
-	//開幕トランジション
-	if (isTransition) {
-		float animTime = transFrm * (1.0f / 60.0f);
-
-		float timeRate = (animTime - 0.4f) / 1.0f;
-		float rate = ec->easeOutExpo(timeRate);
-		if (timeRate < 0) {
-			rate = 0;
-		}
-		float height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
-
-		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(205, 200, 255));
-
-		timeRate = (animTime - 0.2f) / 1.0f;
-		rate = ec->easeOutExpo(timeRate);
-		if (timeRate < 0) {
-			rate = 0;
-		}
-		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
-		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(154, 145, 255));
-
-		timeRate = animTime / 1.0f;
-		rate = ec->easeOutExpo(timeRate);
-		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
-		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(0, 0, 0));
-
-		transFrm++;
-		if (animTime < 0.5f) {
-			return;
-		}
-	}
-
 	//UIイメージの設定
 	sprite->SetImage(selectUiImage);
 
@@ -333,6 +303,10 @@ void SelectDisplay::Draw()
 		sprite->Draw(m);
 	}
 
+	//トランジション処理
+	if (isTransition) {
+		Transition();
+	}
 }
 
 void SelectDisplay::DrawUI()
@@ -470,3 +444,70 @@ void SelectDisplay::DrawUI()
 	}
 }
 
+void SelectDisplay::Transition()
+{
+	if (isFirst) {
+		float animTime = transFrm * (1.0f / 60.0f);
+
+		float timeRate = (animTime - 0.4f) / 1.0f;
+		float rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		float height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(205, 200, 255));
+
+		timeRate = (animTime - 0.2f) / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(154, 145, 255));
+
+		timeRate = animTime / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+		sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(0, 0, 0));
+
+		transFrm++;
+		if (rate >= 1.0f) {
+			isTransition = false;
+			isFirst = false;
+			transFrm = 0;
+		}
+	}
+	else {
+		//上記コードを反転させる結果になる処理
+		float animTime = transFrm * (1.0f / 60.0f);
+
+		float timeRate = animTime / 1.0f;
+		float rate = ec->easeOutExpo(timeRate);
+		float posY = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+
+		sprite->DrawRect(0, posY, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(205, 200, 255));
+
+		timeRate = (animTime - 0.2f) / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		posY = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+		sprite->DrawRect(0, posY, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(154, 145, 255));
+
+		timeRate = (animTime - 0.4f) / 1.0f;
+		rate = ec->easeOutExpo(timeRate);
+		if (timeRate < 0) {
+			rate = 0;
+		}
+		posY = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
+		sprite->DrawRect(0, posY, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(0, 0, 0));
+
+		transFrm++;
+		if (rate >= 1.0f) {
+			isReadyAll = true;
+		}
+	}
+	
+}
