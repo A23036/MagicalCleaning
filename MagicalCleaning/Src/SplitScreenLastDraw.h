@@ -39,6 +39,8 @@ private:
 	int gameState;
 	int gameTime;
 
+	int fadeFrm;
+
 	enum GameState {
 		sReady = 0,	//開始前カウントダウン
 		sPose,		//ポーズ中

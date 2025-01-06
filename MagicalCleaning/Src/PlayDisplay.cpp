@@ -58,12 +58,13 @@ void PlayDisplay::Start()
 void PlayDisplay::Update()
 {
 	animTime = (1.0f / 60.0f) * animFrm;
-	if (animTime >= 1.0f) {
-		animFrm = 0;
-	}
+
 	gameState = dc->GetGameState();
 	gameTime = dc->GetGameTime();
 
+	if (animTime >= 1.0f && gameState != sFinish) {
+		animFrm = 0;
+	}
 	animFrm++;
 }
 
@@ -197,8 +198,20 @@ void PlayDisplay::Draw()
 			sprite->Draw(m);
 		}
 	}
-
 	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
+
+	if (gameState == sFinish) {
+		sprite->SetSrc(playUiImage, 270, 550, 100, 36);
+
+		// アニメーションの進行度計算
+		float timeRate = animTime / 1.0f;
+		float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
+
+		float posX = (WINDOW_WIDTH / 2 - sprite->GetSrcWidth() * 4 / 2 + 300) * rate - 300;
+		float alpha = 1.0f * rate;
+
+		sprite->Draw(playUiImage, posX, WINDOW_HEIGHT / 2 - 50, 270, 550, 100, 36, 100 * 4, 36 * 4, alpha);
+	}
 
 	//基本UI表示
 	//プレイヤーごとのUI描画
@@ -659,5 +672,6 @@ void PlayDisplay::Draw()
 		}
 		sprite->Draw(posX, 270);
 	}
+
 
 }

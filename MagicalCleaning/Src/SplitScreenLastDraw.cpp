@@ -1,4 +1,4 @@
-#include "SplitScreenLastDraw.h"
+ #include "SplitScreenLastDraw.h"
 #include "PlayScene.h"
 #include "Camera.h"
 #include "SplitScreen.h"
@@ -26,6 +26,7 @@ SplitScreenLastDraw::SplitScreenLastDraw()
 
 	sprite = new CSprite();
 
+	fadeFrm = 0;
 }
 
 SplitScreenLastDraw::~SplitScreenLastDraw()
@@ -199,14 +200,17 @@ void SplitScreenLastDraw::Draw()
 
 			case sGamePlay:
 				sprintf_s(str, "%02d:%02d", minutes, seconds);
-				GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 30, RGB(255, 0, 0));
+				GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 44, WINDOW_HEIGHT / 2 - 98, str, 40, RGB(255, 0, 0));
 				sprintf_s(str, "State:GamePlay");
 				break;
 
 			case sFinish:
-				sprintf_s(str, "%02d:%02d", minutes, seconds);
-				GameDevice()->m_pFont->Draw(WINDOW_WIDTH / 2 - 33, WINDOW_HEIGHT / 2 - 98, str, 30, RGB(0, 255, 0));
-				sprintf_s(str, "State:Finish");
+				if (gameTime >= 2.0f) {
+					float rate = fadeFrm * (1.0f / 60.0f) / 1.0f;
+					float alpha = rate;
+					sprite->DrawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(0, 0, 0), alpha);
+					fadeFrm++;
+				}
 				break;
 			}
 
