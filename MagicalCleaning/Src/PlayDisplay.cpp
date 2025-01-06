@@ -165,7 +165,7 @@ void PlayDisplay::Draw()
 		}
 		if (gameTime < 10 && gameTime != 0) {
 			posX = (gameTime-1) * 56;
-			sprite->SetSrc(playUiImage, 270 + posX, 470, 48, 64);
+			sprite->SetSrc(playUiImage, 326 + posX, 470, 48, 64);
 			int a = 270 + posX;
 
 			int width, height;
@@ -221,21 +221,52 @@ void PlayDisplay::Draw()
 	sprite->Draw(200, WINDOW_HEIGHT - 130 + 48 * 2 - posY * 2);
 
 	//Leaf所持数の表示
-	sprintf_s<64>(str, "%3d", pl->GetLeaf());
-	//文字影
-	font->Draw(200 - 10, WINDOW_HEIGHT - 115, str, 70, RGB(0, 0, 120));
+	int leaf = pl->GetLeaf();
+	posX = 228;
+	offX = 0;
+	if (leaf >= pl->GetCarWeight()) { //所持上限の時赤文字表示
+		offX = 140;
+	}
 
-	if (rate == 1) { //Leafが所持上限の時赤文字
-		font->Draw(200 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 0, 0));
+	if (leaf >= 10) {
+		offX += (leaf / 10) % 10 * 14;
+		sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 36, 48);
+		sprite->Draw(posX-16, 658);
+		posX += 16;
+		offX -= (leaf / 10) % 10 * 14;
 	}
-	else {
-		font->Draw(200 - 15, WINDOW_HEIGHT - 120, str, 70, RGB(255, 255, 255));
-	}
+
+	offX += leaf % 10 * 14;
+	sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 36, 48);
+	sprite->Draw(posX, 658);
+
 
 	//MP表示
-	sprintf_s<64>(str, "%3d", pl->GetMP());
-	GameDevice()->m_pFont->Draw(340, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
+	//sprintf_s<64>(str, "%3d", pl->GetMP());
+	//GameDevice()->m_pFont->Draw(340, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
 
+	int mp = pl->GetMP();
+	posX = 370;
+
+	if (mp >= 100) {
+		offX = (mp / 100) % 10 * 14;
+		sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 42, 56);
+		sprite->Draw(posX - 44, 667);
+		posX += 22;
+	}
+	
+	if (mp >= 10) {
+		offX = (mp / 10) % 10 * 14;
+		sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 42, 56);
+		sprite->Draw(posX - 22, 667);
+		posX += 22;
+	}
+
+	offX = mp % 10 * 14;
+	sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 42, 56);
+	sprite->Draw(posX, 667);
+
+	// 必要MP割合メーター表示
 	rate = (float)pl->GetMP() / (float)pl->GetPowerCost(pl->GetSelectPower());
 	if (rate >= 1.0f) {
 		rate = 1.0f;
@@ -371,6 +402,7 @@ void PlayDisplay::Draw()
 		int mp = pl->GetMP();
 		if (mp >= pl->GetPowerCost(pl->GetSelectPower())) { //MPは必要コストを超えないようにする
 			mp = pl->GetPowerCost(pl->GetSelectPower());
+			offX = 0;
 		}
 		else {
 			offX = 140;
@@ -407,31 +439,34 @@ void PlayDisplay::Draw()
 	}
 
 	//スコア表示
-	sprite->SetSrc(75, 175, 176, 32, 176 * 1.5, 32 * 1.5);
-	sprite->Draw(WINDOW_WIDTH / 2 - sprite->GetSrcWidth() - 30, 40);
-	sprintf_s<64>(str, "%3d", pl->GetScore());
+	sprite->SetSrc(64, 176, 200, 40, 200 * 1.5, 40 * 1.5);
+	sprite->Draw(WINDOW_WIDTH / 2 - sprite->GetSrcWidth() - 30, 22);
 
-	// テキスト幅を計算する
-	int textWidth = strlen(str) * 60;
+	int score = pl->GetScore();
+	posX = WINDOW_WIDTH / 2 + 150;
+	offX = (score / 100) % 10 * 56;
+	sprite->SetSrc(playUiImage, 270 + offX, 470, 48, 64, 48, 64);
+	sprite->Draw(posX - 48, 20);
 
-	// 描画位置を右揃えに調整
-	posX = (WINDOW_WIDTH / 2 - 130) + textWidth;
+	offX = (score / 10) % 10 * 56;
+	sprite->SetSrc(playUiImage, 270 + offX, 470, 48, 64, 48, 64);
+	sprite->Draw(posX, 20);
 
-	// テキストを描画
-	GameDevice()->m_pFont->Draw(posX + 5, 32 + 5, str, 60, RGB(0, 0, 0));
-	GameDevice()->m_pFont->Draw(posX, 32, str, 60, RGB(255, 255, 255));
-
+	offX = score % 10 * 56;
+	sprite->SetSrc(playUiImage, 270 + offX, 470, 48, 64, 48, 64);
+	sprite->Draw(posX + 48, 20);
+	
 
 	//順位表示
-	posY = 566;
+	posY = 590;
 	switch (pl->GetPlayerNum()) { //プレイヤーごとの表示位置変更
 	case 0:
 	case 2:
-		posX = 50;
+		posX = 20;
 		break;
 	case 1:
 	case 3:
-		posX = 1166;
+		posX = 1200;
 		break;
 	}
 

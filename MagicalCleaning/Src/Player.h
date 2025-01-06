@@ -77,7 +77,7 @@ public:
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
 	float GetMoveDistance() { return moveDistance; };
-	int GetJumpCount() { return jumpCount; };
+	int GetJumpCount() { return jumpCountAll; };
 	int GetKnockOutCount() { return knockOutCount; };
 	int GetItemCount() { return itemCount; };
 	int GetCleanReafCount() { return cleanReafCount; };

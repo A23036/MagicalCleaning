@@ -84,7 +84,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 500;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	atkNum = 0;
