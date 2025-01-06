@@ -74,6 +74,7 @@ public:
 	bool GetIsSetTeleport() { return setTeleport; };
 	VECTOR2 GetTeleportPos() { return VECTOR2(tereportPos.x, tereportPos.z); };
 	bool GetIsInvisible() { return isInvisible; };
+	bool GetIsDamage() { return isDamageCool; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
 	float GetMoveDistance() { return moveDistance; };
@@ -147,6 +148,9 @@ private:
 	bool isInvisible;	//透明フラグ
 	int InvisibleTime;	//透明化時間
 	int invisibleTime;	//透明化経過時間
+	int DamageCoolTime;	//無敵時間
+	int damageTime;		//無敵経過時間
+	bool isDamageCool;	//無敵フラグ
 
 	bool finishAtkAnim;
 	int atkNum;			//現在の攻撃の連続回数

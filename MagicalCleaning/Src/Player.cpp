@@ -84,7 +84,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 100;
 	weight = 0;
 	jumpCount = 0;
 	atkNum = 0;
@@ -94,6 +94,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	tereportPos = VECTOR3(0,0,0);
 	teleportFrm = 0;
 	fastAtkSpeed = 10;
+	damageTime = 0;
 
 	isDash = false;
 	isFly = false;
@@ -111,6 +112,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	atkComboFlg = false;
 	isMagicReady = false;
 	isInvisible = false;
+	isDamageCool = false;
 
 	blowVec = VECTOR3(0, 0, 0);
 
@@ -370,12 +372,23 @@ void Player::Update()
 		}
 	}
 
-	//当たり判定処理
-	//VECTOR3 push;
-	
-	//if (st->HitSphereToMesh(Collider(), &push)) {
-	//	transform.position += push;
-	//}
+	//無敵時間処理
+	if (isDamageCool) {
+		damageTime++;
+		if (damageTime * (1.0f / 60.0f) > DamageCoolTime) {
+			damageTime = 0;
+			isDamageCool = false;
+			mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
+		}
+		else { //透明度を変えて点滅する
+			if (damageTime % 12 > 6) {
+				mesh->m_vDiffuse = VECTOR4(1, 1, 1, 0.3f);
+			}
+			else {
+				mesh->m_vDiffuse = VECTOR4(1, 1, 1, 0.7f);
+			}
+		}
+	}
 
 	//場外処理
 	if (transform.position.y < -30.0f || fabs(transform.position.x) > 60.0f || fabs(transform.position.z) > 60.0f){
@@ -532,11 +545,14 @@ void Player::CsvLoad()
 			if (csv->GetString(i, 1) == "MoveSpeed") {		// 移動速度
 				MOVE_SPEED = csv->GetFloat(i, 3);
 			}
-			if (csv->GetString(i, 1) == "TeleportTime") {		// テレポート待機時間
-				TeleportTime = csv->GetInt(i, 3);
-			}
 			if (csv->GetString(i, 1) == "InvisibleTime") {		// 透明化時間
 				InvisibleTime = csv->GetInt(i, 3);
+			}
+			if (csv->GetString(i, 1) == "DamageCoolTime") {		// 無敵時間
+				DamageCoolTime = csv->GetInt(i, 3);
+			}
+			if (csv->GetString(i, 1) == "TeleportTime") {		// テレポート待機時間
+				TeleportTime = csv->GetInt(i, 3);
 			}
 			if (csv->GetString(i, 1) == "MoveSpeedT") {		// 移動速度テーブル
 				for (int j = 0; j < MsTableNum; j++) {
@@ -683,6 +699,7 @@ void Player::SetIsBlow()
 	isDash = false; 
 	isFly = false;
 	finishAtkAnim = false;
+
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
 	}
@@ -1159,6 +1176,7 @@ void Player::UpdateBlow()
 		jumpCount = 0;
 		speedY = 0;
 		blowVec = VECTOR3(0, 0, 0);
+		isDamageCool = true; //無敵時間の開始
 	}
 }
 
@@ -1257,7 +1275,7 @@ void Player::CheckAtkCoillision()
 			VECTOR3 pushVec = pCol.center - atkCol.center;
 
 			float rSum = atkCol.radius + pCol.radius;
-			if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
+			if (pushVec.LengthSquare() < rSum * rSum && !p->GetIsDamage()) { // 球の当たり判定
 				// 当たってる
 				pushVec = XMVector3Normalize(pushVec);
 				pushVec *= 0.1f;
