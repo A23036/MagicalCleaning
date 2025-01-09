@@ -158,9 +158,8 @@ void PlayDisplay::Draw()
 
 			// アニメーションの進行度計算
 			float timeRate = animTime / 1.0f;
-
 			float alpha = -0.6f * timeRate + 0.6f;	// 透明度
-
+			
 			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
 			sprite->Draw(center.x, center.y);
 		}

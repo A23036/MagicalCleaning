@@ -505,7 +505,7 @@ void SelectDisplay::Transition()
 		sprite->DrawRect(0, posY, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(0, 0, 0));
 
 		transFrm++;
-		if (rate >= 1.0f) {
+		if (rate >= 0.9f) {
 			isReadyAll = true;
 		}
 	}

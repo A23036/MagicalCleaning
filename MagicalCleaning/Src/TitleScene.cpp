@@ -167,11 +167,9 @@ void TitleScene::Draw()
 		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * d2, WINDOW_HEIGHT * d2);
 
 		if (animFrm % 60 < 40) {
-			sprite->SetSrc(0, 0, 612, 32);
+			sprite->SetSrc(0, 0, 344, 64);
 			sprite->Draw(titleText3Image, WINDOW_WIDTH / 2 - (sprite->GetSrcWidth()) / 2, WINDOW_HEIGHT * 3 / 4,
 				0, 0, sprite->GetSrcWidth(), sprite->GetSrcHeight());
-			int n = sprite->GetSrcWidth() / 2;
-			int a = n;
 		}
 		break;
 	case aTransition:

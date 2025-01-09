@@ -58,15 +58,6 @@ PlayScene::~PlayScene()
 
 void PlayScene::Update()
 {
-	ssld->SetState(state);
-	ssld->SetGameTime(timer);
-	dc->SetGameState(state);
-	dc->SetGameTime(timer);
-	dc->SetIsPlay(isPlay);
-
-	SetFinalRank();	//‡ˆÊŒvŽZ
-	dc->SetRank(rank);	//ƒf[ƒ^Ši”[
-
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
 		SceneManager::ChangeScene("TitleScene");
 		frm = 0;
@@ -77,6 +68,9 @@ void PlayScene::Update()
 	switch (state) {
 	case sTransition:
 		UpdateTransition();
+		if (state == sReady) {
+			return;
+		}
 		break;
 	case sReady:
 		UpdateReady();
@@ -95,6 +89,15 @@ void PlayScene::Update()
 	if (state != sPose) {
 		frm++;
 	}
+
+	ssld->SetState(state);
+	ssld->SetGameTime(timer);
+	dc->SetGameState(state);
+	dc->SetGameTime(timer);
+	dc->SetIsPlay(isPlay);
+
+	SetFinalRank();	//‡ˆÊŒvŽZ
+	dc->SetRank(rank);	//ƒf[ƒ^Ši”[
 }
 
 void PlayScene::Draw()
@@ -135,6 +138,7 @@ void PlayScene::UpdateReady()
 	timer = frm * (1.0f / 60.0f);
 	if (timer >= 4) {
 		frm = 0;
+		timer = GameTime;
 		state = sGamePlay;
 		isPlay = true;
 	}

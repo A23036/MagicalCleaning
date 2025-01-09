@@ -90,6 +90,14 @@ void SelectScene::Draw()
 		scrollX = WINDOW_WIDTH;
 	}
 
+	if (frm != 0) {
+		float rate = (float)frm / (float)backFrm;
+		float width = 150 * rate;
+		sprite->DrawRect(20, 90, 150, 20, RGB(120,120,120));
+		sprite->DrawRect(20, 90, width, 20, RGB(200, 20, 20));
+	}
+	
+
 	GameDevice()->m_mView = XMMatrixLookAtLH(
 		VECTOR3(0, 0, -10), // ƒJƒƒ‰ˆÊ’u
 		VECTOR3(0, 0, 0), // ’Ž‹“_

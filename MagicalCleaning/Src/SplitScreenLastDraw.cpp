@@ -198,7 +198,7 @@ void SplitScreenLastDraw::Draw()
 				Transition();
 				break;
 			case sReady:
-				sprintf_s(str, "State:Ready");
+				//sprintf_s(str, "State:Ready");
 				break;
 
 			case sPose:
@@ -255,12 +255,13 @@ void SplitScreenLastDraw::Transition()
 	timeRate = animTime / 1.0f;
 	rate = ec->easeOutExpo(timeRate);
 	height = -WINDOW_HEIGHT * rate + WINDOW_HEIGHT;
-	sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(0,0,0));
+	sprite->DrawRect(0, 0, WINDOW_WIDTH, height, RGB(0, 0, 0));
 	
 	transFrm++;
-	if (rate >= 1.0f) {
+	if (rate == 1.0f) {
 		isTransFinish = true;
 		transFrm = 0;
+		return;
 	}
 }
 

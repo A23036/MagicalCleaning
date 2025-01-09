@@ -19,8 +19,8 @@ Player,CarWeightT,,5,10,20,25,35,40,45,50,99,99
 Player,MoveSpeedC,,1,2,3,4,5,6,7,8,9,10
 Player,JumpNumC,,1,1,2,2,3,3,4,4,5,5
 Player,AtkSpeedC,,1,2,3,4,5,5,10,10,15,20
-Player,AtkRangeC,,1,2,2,5,5,5,10,10,10,15
-Player,CarWeightC,,1,1,2,2,3,3,4,4,5,10
+Player,AtkRangeC,,1,2,2,5,5,5,10,10,10,20
+Player,CarWeightC,,1,1,2,2,3,3,4,4,5,15
 ,,,,,,,,,,,,
 Dust,SmallHP,,1,,,,,,,,,
 Dust,MidiumHP,,5,,,,,,,,,
