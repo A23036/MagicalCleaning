@@ -149,7 +149,12 @@ void PlayScene::UpdateReady()
 	// ”z—ñ‚Ì‰Šú‰»‚Æ Dust ‚Ì¶¬
 	if (dustArray.empty())
 	{
-		for (int i = 0; i < MAX_DUST_NUM; ++i)
+		dustArray.push_back(new Dust(1, VECTOR3(0, 10, -40)));
+		dustArray.push_back(new Dust(1, VECTOR3(-40, 10, 0)));
+		dustArray.push_back(new Dust(1, VECTOR3(0, 10, 40)));
+		dustArray.push_back(new Dust(1, VECTOR3(40, 10, 0)));
+
+		for (int i = 4; i < MAX_DUST_NUM; ++i)
 		{
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
