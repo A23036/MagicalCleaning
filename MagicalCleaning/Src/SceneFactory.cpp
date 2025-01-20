@@ -27,6 +27,7 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	}
 	else if (name == "PlayScene") {
 		ObjectManager::FindGameObject<SplitScreen>()->SetMultiScreen();
+		//ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
 		return new PlayScene();
 	}
 	else if (name == "EditScene") {

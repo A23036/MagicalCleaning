@@ -34,15 +34,19 @@ void SelectScene::Update()
 {
 	auto di = GameDevice()->m_pDI;
 	if (di->CheckKey(KD_TRG, DIK_T)) {
+		GameDevice()->selectBGM->Stop();
 		SceneManager::ChangeScene("TitleScene");
 	}
 	if (di->CheckKey(KD_TRG, DIK_P)) {
+		GameDevice()->selectBGM->Stop();
+		GameDevice()->playBGM->Play();
 		SceneManager::ChangeScene("PlayScene");
 	}
 
 	if (di->CheckJoy(KD_DAT, 1, 0)) {
 		if (frm > backFrm) { //1Pの一定時間以上戻るボタン入力でタイトルに戻る
 			SceneManager::ChangeScene("TitleScene");
+			GameDevice()->selectBGM->Stop();
 		}
 		frm++;
 	}
@@ -67,6 +71,8 @@ void SelectScene::Update()
 		}
 
 		if (sd->GetIsReady()) {
+			GameDevice()->selectBGM->Stop();
+			GameDevice()->playBGM->Play();
 			SceneManager::ChangeScene("PlayScene");
 		}
 	}	
@@ -78,7 +84,7 @@ void SelectScene::Draw()
 	sprite->Draw(selectBackImage, int(-scrollX), 0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	sprite->Draw(selectBackImage, WINDOW_WIDTH - int(scrollX), 0, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	GameDevice()->m_pFont->Draw(400, 20, _T("SELECT SCENE"), 32, RGB(255, 0, 0));
+	//GameDevice()->m_pFont->Draw(400, 20, _T("SELECT SCENE"), 32, RGB(255, 0, 0));
 
 	scrollX += ScrollSpeed;
 	

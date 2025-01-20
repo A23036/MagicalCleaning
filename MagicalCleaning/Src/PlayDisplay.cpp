@@ -17,6 +17,7 @@ PlayDisplay::PlayDisplay()
 	
 	animFrm = 0;
 	animTime = 0;
+	isLastSpurt = false;
 	
 	rotStart = 0;
 	rotGoal = 360 * DegToRad;
@@ -38,6 +39,7 @@ PlayDisplay::PlayDisplay()
 		for (int j = 0; j < MAXPLAYER; j++) {
 			isMaxLv[i][j];
 		}
+		isPlaySound[i] = false;
 	}
 }
 
@@ -79,15 +81,31 @@ void PlayDisplay::Draw()
 	if (gameState == sReady) {
 		if (gameTime == 0) {
 			sprite->SetSrc(countDownImage, 132, 0, 66, 66);
+			if (!isPlaySound[0]) {
+				GameDevice()->countDownSE->Play();
+				isPlaySound[0] = true;
+			}
 		}
 		if (gameTime == 1) {
 			sprite->SetSrc(countDownImage, 66, 0, 66, 66);
+			if (!isPlaySound[1]) {
+				GameDevice()->countDownSE->Play();
+				isPlaySound[1] = true;
+			}
 		}
 		if (gameTime == 2) {
 			sprite->SetSrc(countDownImage, 0, 0, 66, 66);
+			if (!isPlaySound[2]) {
+				GameDevice()->countDownSE->Play();
+				isPlaySound[2] = true;
+			}
 		}
 		if (gameTime == 3) {
 			sprite->SetSrc(countDownImage, 198, 0, 186, 66);
+			if (!isPlaySound[3]) {
+				GameDevice()->whistleSE->Play();
+				isPlaySound[3] = true;
+			}
 		}
 		int width, height;
 		VECTOR2 center;
@@ -120,6 +138,12 @@ void PlayDisplay::Draw()
 	//ラストスパート時UI表示
 	if (gameState == sGamePlay) {
 		if (gameTime == 60) {
+			if (!isLastSpurt){
+				GameDevice()->timeSE->Play();
+				GameDevice()->playBGM->Stop();
+				isLastSpurt = true;
+				GameDevice()->spurtBGM->Play();
+			}
 			sprite->SetSrc(playUiImage, 260, 380, 200, 80);
 			int width, height;
 			VECTOR2 center;
@@ -131,7 +155,7 @@ void PlayDisplay::Draw()
 			// アニメーションの進行度計算
 			float timeRate = animTime / 1.0f;
 			float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
-
+			
 			float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// 拡大倍率
 
 			// 回転中心を画像の中心にするための補正

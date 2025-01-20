@@ -55,12 +55,15 @@ void TitleScene::Update()
 		// 2024.10.27 コードの可読性向上とコントローラー入力対応
 		if ((di->CheckKey(KD_TRG, DIK_S) || di->CheckJoy(KD_TRG, 2)) && state != aTransition){
 			state = aTransition;
+			GameDevice()->gameStartSE->Play();
 			animFrm = 0;
 		}
 		if (di->CheckKey(KD_TRG, DIK_V)) {
 			SceneManager::ChangeScene("ViewMapScene");
 		}
 		if (di->CheckKey(KD_TRG, DIK_P)) {
+			GameDevice()->titleBGM->Stop();
+			GameDevice()->playBGM->Play();
 			SceneManager::ChangeScene("PlayScene");
 		}
 		/*
@@ -71,9 +74,12 @@ void TitleScene::Update()
 	}
 	else if ((di->CheckKey(KD_TRG, DIK_S) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, 2)) && state != aTransition){
 		state = aWait;
+		GameDevice()->titleBGM->Play(AUDIO_LOOP);
 	}
 
 	if (state == aFinish){
+		GameDevice()->titleBGM->Stop();
+		GameDevice()->selectBGM->Play(AUDIO_LOOP);
 		SceneManager::ChangeScene("SelectScene");
 	}
 }
@@ -93,6 +99,7 @@ void TitleScene::Draw()
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT,alpha);
 		if (animTime >= AnimTime[aFadeIn]) {
 			state = aBroom;
+			GameDevice()->swingSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -114,6 +121,7 @@ void TitleScene::Draw()
 
 		if (animTime >= AnimTime[aBroom])
 		{
+			GameDevice()->downSE->Play();
 			state = aText1;
 			animFrm = 0;
 		}
@@ -125,9 +133,9 @@ void TitleScene::Draw()
 		timeRate = animTime / AnimTime[aText1];
 		rate = ec->easeOutBack(timeRate);
 		trans = (TransGoal - TransStart) * rate + TransStart;
-
+		
 		sprite->Draw(titleText1Image, 0, trans, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
-
+		
 		if (animTime >= AnimTime[aText1])
 		{
 			state = aText2;
@@ -144,11 +152,16 @@ void TitleScene::Draw()
 		scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;
 		trans = 1 - scale;
 
+		if (animTime == 0.3f) {
+			GameDevice()->scaleUpSE->Play();
+		}
+
 		sprite->Draw(titleText2Image, WINDOW_WIDTH/2 * trans, WINDOW_HEIGHT/2 * trans, 
 							0, 0, 1280, 720, WINDOW_WIDTH * scale, WINDOW_HEIGHT * scale);
 		if (animTime >= AnimTime[aText2])
 		{
 			state = aWait;
+			GameDevice()->titleBGM->Play(AUDIO_LOOP);
 			animFrm = 0;
 		}
 		break;

@@ -49,6 +49,7 @@ PlayScene::PlayScene()
 	frm = 0;
 	isPlay = false;
 	state = sTransition;
+	//state = sReady;
 }
 
 PlayScene::~PlayScene()
@@ -60,6 +61,8 @@ void PlayScene::Update()
 {
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
 		SceneManager::ChangeScene("TitleScene");
+		GameDevice()->playBGM->Stop();
+		GameDevice()->spurtBGM->Stop();
 		frm = 0;
 		timer = 0;
 		isPlay = false;
@@ -168,6 +171,7 @@ void PlayScene::UpdateGamePlay()
 	timer = GameTime - int(frm * (1.0f / 60.0f));
 	
 	if (timer <= 0){ //ƒQ[ƒ€I—¹
+		GameDevice()->whistleSE->Play();
 		frm = 0;
 		state = sFinish;
 		isPlay = false;
@@ -218,6 +222,8 @@ void PlayScene::UpdateFinish()
 			dc->SetBlowCount(pl->GetBlowCount(), pl->GetPlayerNum());
 		}
 		
+		GameDevice()->playBGM->Stop();
+		GameDevice()->spurtBGM->Stop();
 		SceneManager::ChangeScene("ResultScene");
 	}
 }

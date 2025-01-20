@@ -93,7 +93,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	invisibleTime = 0;
 	tereportPos = VECTOR3(0,0,0);
 	teleportFrm = 0;
-	fastAtkSpeed = 10;
+	fastAtkSpeed = 8;
 	damageTime = 0;
 
 	isDash = false;
@@ -276,6 +276,7 @@ void Player::Update()
 				mp -= MoveSpeedC[msNum];
 				msNum++;
 				new PowerUpEffect(this,transform.position,selectPower);
+				GameDevice()->powerUpSE->Play();
 				if (msNum == MsTableNum - 1) {
 					canTeleport = true;
 				}
@@ -290,6 +291,7 @@ void Player::Update()
 				mp -= JumpNumC[jnNum];
 				jnNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->powerUpSE->Play();
 				if (jnNum == JnTableNum - 1) {
 					canFly = true;
 				}
@@ -304,6 +306,7 @@ void Player::Update()
 				mp -= AtkSpeedC[asNum];
 				asNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->powerUpSE->Play();
 				if (asNum == AsTableNum - 1) {
 					canSpeedAtk = true;
 				}
@@ -318,6 +321,7 @@ void Player::Update()
 				mp -= AtkRangeC[arNum];
 				arNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->powerUpSE->Play();
 				if (arNum == ArTableNum - 1) {
 					canRangeAtk = true;
 				}
@@ -332,6 +336,7 @@ void Player::Update()
 				mp -= CarWeightC[cwNum];
 				cwNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->powerUpSE->Play();
 				if (cwNum == CwTableNum - 1) {
 					canFastCharge = true;
 				}
@@ -349,12 +354,14 @@ void Player::Update()
 		if (selectPower < 0) {
 			selectPower = 4;
 		}
+		GameDevice()->powerSelectSE->Play();
 	}
 	if ((di->CheckKey(KD_TRG, DIK_RIGHT) && playerNum == 0) || di->CheckJoy(KD_TRG, 5, playerNum)) { //強化能力変更
 		selectPower++;
 		if (selectPower > 4) {
 			selectPower = 0;
 		}
+		GameDevice()->powerSelectSE->Play();
 	}
 
 	//テレポート処理
@@ -853,6 +860,7 @@ void Player::UpdateOnGround()
 		jumpCount++;
 		jumpCountAll++;
 		state = sJump;
+		GameDevice()->jumpSE->Play();
 	}
 	if ((di->CheckKey(KD_TRG, DIK_N) && playerNum == 0) || di->CheckJoy(KD_TRG, 0, playerNum)) { //攻撃
 		if (canSpeedAtk) {
@@ -875,6 +883,7 @@ void Player::UpdateOnGround()
 		isDash = false;
 		chargeSpeed = 1.0f;
 		mcEffect = new MagicCircleEffect(transform.position, color);
+		GameDevice()->magicCircleSE->Play();
 	}
 	if (((di->CheckKey(KD_TRG, DIK_R) && playerNum == 0) || di->CheckJoy(KD_TRG, 7, playerNum)) && canTeleport) { //テレポート魔法陣設置
 		setTeleport = true;
@@ -964,6 +973,7 @@ void Player::UpdateJump()
 		}
 		animator->SetPlaySpeed(1.0f);
 		new JumpEffect(transform.position);
+		GameDevice()->jumpSE->Play();
 		jumpCount++;
 		jumpCountAll++;
 	}
@@ -996,6 +1006,15 @@ void Player::UpdateAttack()
 	if ((!finishAtkAnim && animator->CurrentFrame() >= 20.0f / atkSpeed) //攻撃のヒットしたタイミング
 		|| (canSpeedAtk && anmFrame % fastAtkSpeed == 0)) { //連続攻撃の場合
 		
+		if (asNum > 6) {
+			GameDevice()->attack3SE->Play();
+		}
+		else if (asNum > 3) {
+			GameDevice()->attack2SE->Play();
+		}
+		else {
+			GameDevice()->attack1SE->Play();
+		}
 		//攻撃判定処理
 		CheckAtkCoillision();
 	}
@@ -1093,6 +1112,7 @@ void Player::UpdateCharge()
 	if (isMagicReady) {
 		if (chargeSpeed <= (chargeTime * (1.0f / 60.0f)) && leaf > 0) {
 			new LeafEffect(transform.position,VECTOR3(0.5f, 0.5f, 0.5f),1);
+			GameDevice()->chargeSE->Play();
 			mp++;		//MP加算
 			score++;	//スコア加算
 			leaf--; //葉っぱを減らす
@@ -1257,6 +1277,7 @@ void Player::CheckAtkCoillision()
 				// 当たってる
 				d->AddDamage(this, 1); //ダメージを与える
 				if (d->GetNum() == 3) { //透明化
+					GameDevice()->itemSE->Play();
 					invisibleTime = 0;
 					isInvisible = true;
 					itemCount++;
@@ -1277,6 +1298,8 @@ void Player::CheckAtkCoillision()
 			float rSum = atkCol.radius + pCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum && !p->GetIsDamage()) { // 球の当たり判定
 				// 当たってる
+				GameDevice()->blowSE->Play();
+				GameDevice()->blowCheerSE->Play();
 				pushVec = XMVector3Normalize(pushVec);
 				pushVec *= 0.1f;
 				pushVec.y = 0.201f;

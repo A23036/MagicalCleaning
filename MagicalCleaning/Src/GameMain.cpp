@@ -65,7 +65,7 @@ CGameMain::~CGameMain()
 	SAFE_DELETE(m_pDI);
 	SAFE_DELETE(m_pXAudio);
 	SAFE_DELETE(m_pD3D);
-
+	
 	CoUninitialize();   // COMの解放
 }
 
@@ -139,6 +139,48 @@ HRESULT CGameMain::Init()
 	m_vEyePt = VECTOR3(0.0f, 4.0f, -5.0f);
 	m_vLookatPt = VECTOR3(0.0f, 2.0f, 0.0f);
 	m_mView = XMMatrixLookAtLH(m_vEyePt, m_vLookatPt, vUpVec);
+
+	//サウンドデータのロード
+	// BGM
+	titleBGM = new CXAudioSource(m_pXAudio, _T("data/BGM/TitleBGM.wav"));
+	titleBGM->VolumeAudio(0.5f);
+	selectBGM = new CXAudioSource(m_pXAudio, _T("data/BGM/SelectBGM.wav"));
+	selectBGM->VolumeAudio(0.5f);
+	playBGM = new CXAudioSource(m_pXAudio, _T("data/BGM/PlayBGM.wav"));
+	playBGM->VolumeAudio(0.5f);
+	spurtBGM = new CXAudioSource(m_pXAudio, _T("data/BGM/LastSpurtBGM.wav"));
+	spurtBGM->VolumeAudio(0.5f);
+	resultBGM = new CXAudioSource(m_pXAudio, _T("data/BGM/ResultBGM.wav"));
+	//SE
+	gameStartSE = new CXAudioSource(m_pXAudio, _T("data/SE/GameStart.wav"));
+	swingSE		= new CXAudioSource(m_pXAudio, _T("data/SE/Swing.wav"));
+	swingSE->VolumeAudio(1.5f);
+	downSE		= new CXAudioSource(m_pXAudio, _T("data/SE/Down.wav"));
+	scaleUpSE	= new CXAudioSource(m_pXAudio, _T("data/SE/ScaleUp.wav"));
+	colorSelectSE = new CXAudioSource(m_pXAudio, _T("data/SE/ColorSelect.wav"), 4);
+	decisionSE	= new CXAudioSource(m_pXAudio, _T("data/SE/Disision.wav"), 4);
+	backSE		= new CXAudioSource(m_pXAudio, _T("data/SE/Back.wav"), 4);
+	entrySE		= new CXAudioSource(m_pXAudio, _T("data/SE/Entry.wav"), 4);
+	cancelSE	= new CXAudioSource(m_pXAudio, _T("data/SE/Cancel.wav"), 4);
+	jumpSE		= new CXAudioSource(m_pXAudio, _T("data/SE/Jump.wav"), 4);
+	attack1SE	= new CXAudioSource(m_pXAudio, _T("data/SE/Attack1.wav"), 4);
+	attack2SE	= new CXAudioSource(m_pXAudio, _T("data/SE/Attack2.wav"), 4);
+	attack3SE	= new CXAudioSource(m_pXAudio, _T("data/SE/Attack3.wav"), 4);
+	powerUpSE	= new CXAudioSource(m_pXAudio, _T("data/SE/PowerUp.wav"), 4);
+	powerSelectSE = new CXAudioSource(m_pXAudio, _T("data/SE/PowerSelect.wav"), 4);
+	blowSE		= new CXAudioSource(m_pXAudio, _T("data/SE/Blow.wav"), 4);
+	lastSpurtSE = new CXAudioSource(m_pXAudio, _T("data/SE/LastSpurt.wav"), 4);
+	blowCheerSE = new CXAudioSource(m_pXAudio, _T("data/SE/BlowCheer.wav"), 4);
+	magicCircleSE = new CXAudioSource(m_pXAudio, _T("data/SE/MagicCircle.wav"),4);
+	chargeSE = new CXAudioSource(m_pXAudio, _T("data/SE/Charge.wav"), 4);
+	chargeSE->VolumeAudio(2.5f);
+	itemSE = new CXAudioSource(m_pXAudio, _T("data/SE/Item.wav"));
+	itemSE->VolumeAudio(1.5f);
+	timeSE = new CXAudioSource(m_pXAudio, _T("data/SE/Time.wav"));
+	whistleSE = new CXAudioSource(m_pXAudio, _T("data/SE/Whistle.wav"));
+	whistleSE->VolumeAudio(0.6f);
+	countDownSE = new CXAudioSource(m_pXAudio, _T("data/SE/CountDown.wav"));
+	countDownSE->VolumeAudio(2.5f);
 
 	SceneManager::Start();
 	ObjectManager::Start();

@@ -50,6 +50,39 @@ public:
 	CFbxMeshCtrl*	m_pFbxMeshCtrl;	// メッシュコントロールクラス    // -- 2021.2.4
 
 	DWORD           m_dwGameStatus;
+
+	// BGM
+	CXAudioSource* titleBGM;
+	CXAudioSource* selectBGM;
+	CXAudioSource* playBGM;
+	CXAudioSource* spurtBGM;
+	CXAudioSource* resultBGM;
+	//SE
+	CXAudioSource* gameStartSE;
+	CXAudioSource* swingSE;
+	CXAudioSource* downSE;
+	CXAudioSource* scaleUpSE;
+	CXAudioSource* colorSelectSE;
+	CXAudioSource* decisionSE;
+	CXAudioSource* backSE;
+	CXAudioSource* entrySE;
+	CXAudioSource* cancelSE;
+	CXAudioSource* jumpSE;
+	CXAudioSource* attack1SE;
+	CXAudioSource* attack2SE;
+	CXAudioSource* attack3SE;
+	CXAudioSource* powerUpSE;
+	CXAudioSource* powerSelectSE;
+	CXAudioSource* blowSE;
+	CXAudioSource* lastSpurtSE;
+	CXAudioSource* blowCheerSE;
+	CXAudioSource* magicCircleSE;
+	CXAudioSource* chargeSE;
+	CXAudioSource* itemSE;
+	CXAudioSource* timeSE;
+	CXAudioSource* whistleSE;
+	CXAudioSource* countDownSE;
+
 	
 	// カメラ・ライト・ビュー
 	VECTOR3         m_vEyePt;		//カメラ（視点）位置

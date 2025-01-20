@@ -27,6 +27,9 @@ private:
 	int gameState;
 	int gameTime;
 
+	bool isLastSpurt;
+	bool isPlaySound[4];
+
 	enum GameState {
 		sTransition = 0,
 		sReady,	//開始前カウントダウン

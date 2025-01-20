@@ -67,6 +67,7 @@ void SelectDisplay::Update()
 		if (isReady[i]) { //準備完了
 			//準備完了キャンセル処理
 			if (di->CheckJoy(KD_TRG, 1, i)) {
+				GameDevice()->backSE->Play();
 				isReady[i] = false;
 				animFrm[i] = 0;
 			}
@@ -76,10 +77,12 @@ void SelectDisplay::Update()
 		if (isSetUpCamera[i]) { //カメラ設定済
 			//準備完了処理
 			if (di->CheckJoy(KD_TRG, 2, i)) {
+				GameDevice()->entrySE->Play();
 				isReady[i] = true;
 			}
 			//カメラ設定キャンセル処理
 			if (di->CheckJoy(KD_TRG, 1, i)) {
+				GameDevice()->backSE->Play();
 				isSetUpCamera[i] = false;
 			}
 			continue;
@@ -90,6 +93,7 @@ void SelectDisplay::Update()
 			// チェックマーク横方向の移動
 			if (moveFrm[i] >= MoveFrm) {
 				if (ix > 0.8f || ix < -0.8f) { // 左右入力
+					GameDevice()->colorSelectSE->Play();
 					if (selectCamera[i] == 0) {
 						selectCamera[i] = 1;
 					}
@@ -101,10 +105,12 @@ void SelectDisplay::Update()
 			}
 			//カメラ設定決定処理
 			if (di->CheckJoy(KD_TRG, 2, i)) {
+				GameDevice()->decisionSE->Play();
 				isSetUpCamera[i] = true;
 			}
 			//カラー決定キャンセル処理
 			if (di->CheckJoy(KD_TRG, 1, i)) {
+				GameDevice()->backSE->Play();
 				isSelect[selectColor[i]] = false;	//カラーを未選択に
 				playerEntry[i] = false;				//プレイヤーを選択未完了に
 			}
@@ -115,6 +121,7 @@ void SelectDisplay::Update()
 		// 横方向の移動
 		if (moveFrm[i] >= MoveFrm) {
 			if (ix > 0.8f) { // 右方向入力
+				GameDevice()->colorSelectSE->Play();
 				if (selectColor[i] % 3 == 2) { // 右端の場合
 					selectColor[i] -= 2;      // 左端にループ
 				}
@@ -124,6 +131,7 @@ void SelectDisplay::Update()
 				moveFrm[i] = 0;
 			}
 			else if (ix < -0.8f) { // 左方向入力
+				GameDevice()->colorSelectSE->Play();
 				if (selectColor[i] % 3 == 0) { // 左端の場合
 					selectColor[i] += 2;      // 右端にループ
 				}
@@ -137,6 +145,7 @@ void SelectDisplay::Update()
 		// 縦方向の移動
 		if (moveFrm[i] >= MoveFrm) {
 			if (iy > 0.8f) { // 下方向入力
+				GameDevice()->colorSelectSE->Play();
 				if (selectColor[i] / 3 == 1) { // 下端の場合
 					selectColor[i] -= 3;      // 上端にループ
 				}
@@ -146,6 +155,7 @@ void SelectDisplay::Update()
 				moveFrm[i] = 0;
 			}
 			else if (iy < -0.8f) { // 上方向入力
+				GameDevice()->colorSelectSE->Play();
 				if (selectColor[i] / 3 == 0) { // 上端の場合
 					selectColor[i] += 3;      // 下端にループ
 				}
@@ -160,8 +170,10 @@ void SelectDisplay::Update()
 		if (di->CheckJoy(KD_TRG, 2, i)) {
 			if (isSelect[selectColor[i]]) { //決定したカラーがすでに選択されていた時
 				//せんたくされているよ！
+				GameDevice()->cancelSE->Play();
 			}
 			else {
+				GameDevice()->decisionSE->Play();
 				isSelect[selectColor[i]] = true; //カラーを選択済みに
 				playerEntry[i] = true;		//プレイヤーを選択完了に
 			}

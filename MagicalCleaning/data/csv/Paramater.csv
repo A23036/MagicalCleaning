@@ -1,4 +1,4 @@
- p,data,,x,y,z,,,,,,,
+ ,data,,x,y,z,,,,,,,
 Camera,CameraPos,,0,2,-5,,,,,,,
 Camera,LookPos,,0,0.8,1,,,,,,,
 Camera,ChangeTime,,0.5,,,,,,,,,
