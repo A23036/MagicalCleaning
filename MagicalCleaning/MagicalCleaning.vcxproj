@@ -523,7 +523,6 @@
     <ClInclude Include="Src\BlockFileName.h" />
     <ClInclude Include="Src\Camera.h" />
     <ClInclude Include="Src\CapsuleCollider.h" />
-    <ClInclude Include="Src\Coin.h" />
     <ClInclude Include="Src\Collision.h" />
     <ClInclude Include="Src\CsvReader.h" />
     <ClInclude Include="Src\DataCarrier.h" />
@@ -534,8 +533,7 @@
     <ClInclude Include="Src\MagicCircleEffect.h" />
     <ClInclude Include="Src\Particle.h" />
     <ClInclude Include="Src\PlayDisplay.h" />
-    <ClInclude Include="Src\Dust.h" />
-    <ClInclude Include="Src\DustBox.h" />
+    <ClInclude Include="Src\Leaf.h" />
     <ClInclude Include="Src\EasingCalc.h" />
     <ClInclude Include="Src\EditScene.h" />
     <ClInclude Include="Src\FbxMesh.h" />
@@ -572,7 +570,6 @@
     <ClInclude Include="Src\StageEdit.h" />
     <ClInclude Include="Src\TeleportCircleEffect.h" />
     <ClInclude Include="Src\TitleScene.h" />
-    <ClInclude Include="Src\ViewMapScene.h" />
     <ClInclude Include="Src\XAudio.h" />
   </ItemGroup>
   <ItemGroup>
@@ -585,7 +582,6 @@
     <ClCompile Include="Src\Animator.cpp" />
     <ClCompile Include="Src\BBox.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
-    <ClCompile Include="Src\Coin.cpp" />
     <ClCompile Include="Src\Collision.cpp" />
     <ClCompile Include="Src\CsvReader.cpp" />
     <ClCompile Include="Src\DataCarrier.cpp" />
@@ -596,8 +592,7 @@
     <ClCompile Include="Src\MagicCircleEffect.cpp" />
     <ClCompile Include="Src\Particle.cpp" />
     <ClCompile Include="Src\PlayDisplay.cpp" />
-    <ClCompile Include="Src\Dust.cpp" />
-    <ClCompile Include="Src\DustBox.cpp" />
+    <ClCompile Include="Src\Leaf.cpp" />
     <ClCompile Include="Src\EasingCalc.cpp" />
     <ClCompile Include="Src\EditScene.cpp" />
     <ClCompile Include="Src\FbxMesh.cpp" />
@@ -631,7 +626,6 @@
     <ClCompile Include="Src\StageEdit.cpp" />
     <ClCompile Include="Src\TeleportCircleEffect.cpp" />
     <ClCompile Include="Src\TitleScene.cpp" />
-    <ClCompile Include="Src\ViewMapScene.cpp" />
     <ClCompile Include="Src\XAudio.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -58,9 +58,6 @@ void TitleScene::Update()
 			GameDevice()->gameStartSE->Play();
 			animFrm = 0;
 		}
-		if (di->CheckKey(KD_TRG, DIK_V)) {
-			SceneManager::ChangeScene("ViewMapScene");
-		}
 		if (di->CheckKey(KD_TRG, DIK_P)) {
 			GameDevice()->titleBGM->Stop();
 			GameDevice()->playBGM->Play();

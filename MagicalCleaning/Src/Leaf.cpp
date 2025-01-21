@@ -1,9 +1,9 @@
-#include "Dust.h"
+#include "Leaf.h"
 #include "Stage.h"
 #include "Player.h"
 #include "PlayScene.h"
 
-Dust::Dust(int number, VECTOR3 pos)
+Leaf::Leaf(int number, VECTOR3 pos)
 {
 	SetTag("STAGEOBJ");
 	mesh = new CFbxMesh();
@@ -39,20 +39,20 @@ Dust::Dust(int number, VECTOR3 pos)
 		break;
 	}
 	hp = maxHp;
-	dustNum = number;
+	leafNum = number;
 	MaxScale = size;
 }
 
-Dust::~Dust()
+Leaf::~Leaf()
 {
 }
 
-void Dust::Start()
+void Leaf::Start()
 {
 	st = ObjectManager::FindGameObject<Stage>();
 }
 
-void Dust::Update()
+void Leaf::Update()
 {
 	posOld = transform.position;
 
@@ -62,7 +62,7 @@ void Dust::Update()
 
 }
 
-void Dust::Draw()
+void Leaf::Draw()
 {
 	/*
 	// 画面ごとにプレイヤー周辺のみマップ描画
@@ -80,7 +80,7 @@ void Dust::Draw()
 }
 
 
-SphereCollider Dust::Collider(int n)
+SphereCollider Leaf::Collider(int n)
 {
 	SphereCollider col;
 	col.center = transform.position;
@@ -91,7 +91,7 @@ SphereCollider Dust::Collider(int n)
 	return col;
 }
 
-void Dust::AddDamage(Player* player,int damage)
+void Leaf::AddDamage(Player* player,int damage)
 {
 	//葉っぱの飛び散るエフェクトの再生
 	new LeafEffect(transform.position, VECTOR3(size, size, size),10);
@@ -104,7 +104,7 @@ void Dust::AddDamage(Player* player,int damage)
 		player->AddCleanReaf();
 		SceneBase* scene = SceneManager::CurrentScene(); // 現在の PlayScene のインスタンス参照を取得
 		PlayScene* play = dynamic_cast<PlayScene*>(scene);
-		play->DustDestroyed(this); // PlayScene に通知
+		play->LeafDestroyed(this); // PlayScene に通知
 		
 		DestroyMe();
 

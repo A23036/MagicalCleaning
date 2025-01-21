@@ -5,7 +5,7 @@
 #include "PlayDisplay.h"
 #include "SplitScreenLastDraw.h"
 #include "Player.h"
-#include "Dust.h"
+#include "Leaf.h"
 #include "Sky.h"
 
 PlayScene::PlayScene()
@@ -34,7 +34,7 @@ PlayScene::PlayScene()
 
 	cm = new Camera();
 	
-	Dust* d = new Dust(3 ,VECTOR3(0, 1, 0));
+	Leaf* d = new Leaf(3 ,VECTOR3(0, 1, 0));
 	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
 	
@@ -149,16 +149,16 @@ void PlayScene::UpdateReady()
 	// 配列の初期化と Dust の生成
 	if (dustArray.empty())
 	{
-		dustArray.push_back(new Dust(1, VECTOR3(0, 10, -40)));
-		dustArray.push_back(new Dust(1, VECTOR3(-40, 10, 0)));
-		dustArray.push_back(new Dust(1, VECTOR3(0, 10, 40)));
-		dustArray.push_back(new Dust(1, VECTOR3(40, 10, 0)));
+		dustArray.push_back(new Leaf(1, VECTOR3(0, 10, -40)));
+		dustArray.push_back(new Leaf(1, VECTOR3(-40, 10, 0)));
+		dustArray.push_back(new Leaf(1, VECTOR3(0, 10, 40)));
+		dustArray.push_back(new Leaf(1, VECTOR3(40, 10, 0)));
 
 		for (int i = 4; i < MAX_DUST_NUM; ++i)
 		{
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
-			dustArray.push_back(new Dust(size, position));
+			dustArray.push_back(new Leaf(size, position));
 		}
 	}
 }
@@ -189,7 +189,7 @@ void PlayScene::UpdateGamePlay()
 		for (int i = 0; i < (MAX_DUST_NUM - dustArray.size()); i++) {
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
-			Dust* d = new Dust(size, position);
+			Leaf* d = new Leaf(size, position);
 			dustArray.push_back(d);
 		}
 	}
@@ -255,11 +255,11 @@ int PlayScene::GetRandomSize()
 	}
 }
 
-void PlayScene::DustDestroyed(Dust* dust)
+void PlayScene::LeafDestroyed(Leaf* dust)
 {
 	if (dust->GetNum() == 3) { //透明化アイテム
 		VECTOR3 pos = VECTOR3(GetRandomPosition());
-		new Dust(3, pos);
+		new Leaf(3, pos);
 		return;
 	}
 	// 配列内から該当の Dust を削除

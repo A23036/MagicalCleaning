@@ -60,9 +60,6 @@
     <Filter Include="ソース ファイル\10_SelectScene">
       <UniqueIdentifier>{5214ba3c-6035-4968-9445-b55e6e931963}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\11_ViewMapScene">
-      <UniqueIdentifier>{b8f246d9-9f11-407e-bb07-d524ea6d469d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\12_ResultScene">
       <UniqueIdentifier>{2f0c8fe0-fcb9-4a61-a611-580215fbd3fe}</UniqueIdentifier>
     </Filter>
@@ -303,16 +300,13 @@
     <ClInclude Include="Src\Player.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Coin.h">
-      <Filter>ソース ファイル\08_PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Camera.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayDisplay.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Dust.h">
+    <ClInclude Include="Src\Leaf.h">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object3D.h">
@@ -323,9 +317,6 @@
     </ClInclude>
     <ClInclude Include="Src\SelectScene.h">
       <Filter>ソース ファイル\10_SelectScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\DustBox.h">
-      <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\SplitScreen.h">
       <Filter>ソース ファイル\05_フレームワーク</Filter>
@@ -338,9 +329,6 @@
     </ClInclude>
     <ClInclude Include="Src\SelectDisplay.h">
       <Filter>ソース ファイル\10_SelectScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ViewMapScene.h">
-      <Filter>ソース ファイル\11_ViewMapScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\ResultScene.h">
       <Filter>ソース ファイル\12_ResultScene</Filter>
@@ -476,16 +464,13 @@
     <ClCompile Include="Src\Player.cpp">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Coin.cpp">
-      <Filter>ソース ファイル\08_PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Camera.cpp">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayDisplay.cpp">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Dust.cpp">
+    <ClCompile Include="Src\Leaf.cpp">
       <Filter>ソース ファイル\08_PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object3D.cpp">
@@ -497,17 +482,11 @@
     <ClCompile Include="Src\SelectScene.cpp">
       <Filter>ソース ファイル\10_SelectScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DustBox.cpp">
-      <Filter>ソース ファイル\08_PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\SplitScreen.cpp">
       <Filter>ソース ファイル\05_フレームワーク</Filter>
     </ClCompile>
     <ClCompile Include="Src\SplitScreenLastDraw.cpp">
       <Filter>ソース ファイル\05_フレームワーク</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ViewMapScene.cpp">
-      <Filter>ソース ファイル\11_ViewMapScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\EasingCalc.cpp">
       <Filter>ソース ファイル\06_共通</Filter>

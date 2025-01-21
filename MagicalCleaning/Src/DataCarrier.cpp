@@ -6,6 +6,9 @@ DataCarrier::DataCarrier()
 	ObjectManager::SetVisible(this, false);		// DataCarrier‚Í•\Ž¦‚µ‚È‚¢
 	gameTime = 0;
 	isPlay = false;
+	for (int i = 0; i < MAXPLAYER; i++) {
+		selectColor[i] = i;
+	}
 }
 
 DataCarrier::~DataCarrier()

@@ -4,8 +4,7 @@
 #include "CsvReader.h"
 #include "Stage.h"
 #include "Camera.h"
-#include "Dust.h"
-#include "DustBox.h"
+#include "Leaf.h"
 #include "SlashEffect.h"
 #include "PowerUpEffect.h"
 #include "LeafEffect.h"
@@ -84,7 +83,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 150;
 	weight = 0;
 	jumpCount = 0;
 	atkNum = 0;
@@ -456,14 +455,14 @@ void Player::Update()
 	ImGui::End();
 	*/
 
-	// Dustにめり込まないようにする
+	// Leafにめり込まないようにする
 	// 自分の座標は、transform.position
-	// Dustの座標を知る
+	// Leafの座標を知る
 	
-	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
+	std::list<Leaf*> leaves = ObjectManager::FindGameObjects<Leaf>();
 	
-	for (Dust* dust : dusts) {
-		SphereCollider tCol = dust->Collider(dust->GetNum());
+	for (Leaf* leaf : leaves) {
+		SphereCollider tCol = leaf->Collider(leaf->GetNum());
 		SphereCollider pCol = Collider();
 		VECTOR3 pushVec = pCol.center - tCol.center;
 		float rSum = pCol.radius + tCol.radius;
@@ -478,28 +477,6 @@ void Player::Update()
 		}
 	}
 	
-	// DustBoxにめり込まないようにする
-	// 自分の座標は、transform.position
-	// DustBoxの座標を知る
-	/*
-	std::list<DustBox*> boxs = ObjectManager::FindGameObjects<DustBox>();
-
-	for (DustBox* box : boxs) {
-		SphereCollider tCol = box->Collider();
-		SphereCollider pCol = Collider();
-		VECTOR3 pushVec = pCol.center - tCol.center;
-		float rSum = pCol.radius + tCol.radius;
-		if (pushVec.LengthSquare() < rSum * rSum) { // 球の当たり判定
-			// 当たってる
-			// 押し出す方向はpushVec
-			// 押し出す長さを求める
-			float pushLen = rSum - pushVec.Length();
-			pushVec.y = 0.0f; // y軸方向の押し返しを無効にする(地面に埋まったり浮いたりするため)
-			pushVec = XMVector3Normalize(pushVec); // pushVecの長さを１にする
-			transform.position += pushVec * pushLen;
-		}
-	}
-	*/
 	// playerにめり込まないようにする
 	// 自分の座標は、transform.position
 	// playerの座標を知る
@@ -612,7 +589,7 @@ void Player::CsvLoad()
 				}
 			}
 		}
-		if (csv->GetString(i, 0) == "Dust") {
+		if (csv->GetString(i, 0) == "Leaf") {
 			break;
 		}
 	}
@@ -1225,7 +1202,7 @@ void Player::UpdateTeleport()
 void Player::CheckAtkCoillision()
 {
 	// ゴミに攻撃を当てる
-	std::list<Dust*> dusts = ObjectManager::FindGameObjects<Dust>();
+	std::list<Leaf*> dusts = ObjectManager::FindGameObjects<Leaf>();
 
 	finishAtkAnim = true;
 
@@ -1244,7 +1221,7 @@ void Player::CheckAtkCoillision()
 		// プレイヤーのY軸回転行列(範囲攻撃の時、プレイヤーの前方と斜め前2個所に攻撃発生)
 		MATRIX4X4 rotY;
 		if (i > 0) {
-			rotY = XMMatrixRotationY(transform.rotation.y + pow(-1,i)* 1.3f);
+			rotY = XMMatrixRotationY(transform.rotation.y + pow(-1,i)* 1.25f);
 			// 斜め前の攻撃はやや前方に
 			forward = VECTOR3(0, 0, 1.8f * atkRange); // 前方ベクトル
 		}
@@ -1264,7 +1241,7 @@ void Player::CheckAtkCoillision()
 
 	// 攻撃判定数分だけ当たり判定を計算
 	for (VECTOR3 atkPos : attackPositions) {
-		for (Dust* d : dusts) {
+		for (Leaf* d : dusts) {
 			SphereCollider dCol = d->Collider(d->GetNum()); //ゴミの判定球
 			SphereCollider atkCol = Collider();			//攻撃判定の球
 

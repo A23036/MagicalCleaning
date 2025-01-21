@@ -4,7 +4,7 @@
 #include "SplitScreenLastDraw.h"
 #include "DataCarrier.h"
 #include "CsvReader.h"
-#include "Dust.h"
+#include "Leaf.h"
 #include "Stage.h"
 #include "Sky.h"
 #include "Camera.h"
@@ -18,7 +18,7 @@ public:
 	void Draw() override;
 
 	void CsvLoad();
-	void DustDestroyed(Dust* dust);
+	void LeafDestroyed(Leaf* dust);
 	void SetFinalRank();
 
 private:
@@ -44,7 +44,7 @@ private:
 	int rank[MAXPLAYER];	//èáà 
 
 	static const int MAX_DUST_NUM = 50; //ç≈ëÂê∂ê¨ÉSÉ~êî
-	std::vector<Dust*> dustArray;
+	std::vector<Leaf*> dustArray;
 
 	void UpdateTransition();
 	void UpdateReady();

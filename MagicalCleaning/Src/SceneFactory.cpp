@@ -6,7 +6,6 @@
 #include "EditScene.h"
 #include "SplitScreen.h"
 #include "SelectScene.h"
-#include "ViewMapScene.h"
 #include "ResultScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
@@ -37,10 +36,6 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	else if (name == "SelectScene") {
 		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
 		return new SelectScene();
-	}
-	else if (name == "ViewMapScene") {
-		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();
-		return new ViewMapScene();
 	}
 	else if (name == "ResultScene") {
 		ObjectManager::FindGameObject<SplitScreen>()->SetSingleScreen();

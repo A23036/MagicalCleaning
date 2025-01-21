@@ -4,17 +4,17 @@
 #include "Stage.h"
 #include "LeafEffect.h"
 
-class Dust : public Object3D {
+class Leaf : public Object3D {
 public:
-	Dust(int number,VECTOR3 pos);
-	~Dust();
+	Leaf(int number,VECTOR3 pos);
+	~Leaf();
 	void Start() override;
 	void Update();
 	void Draw() override;
 
 	SphereCollider Collider(int n);
 
-	int GetNum() { return dustNum; };
+	int GetNum() { return leafNum; };
 
 	void AddDamage(Player* player,int damage);
 
@@ -25,7 +25,7 @@ private:
 
 	int maxHp;
 	int hp;
-	int dustNum;
+	int leafNum;
 	float size;
 
 	float SmallSize;
@@ -33,7 +33,7 @@ private:
 	float BigSize;
 	float MaxScale;
 
-	enum DustID {
+	enum LeafID {
 		Small = 0,
 		Midium,
 		Big,

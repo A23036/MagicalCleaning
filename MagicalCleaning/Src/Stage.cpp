@@ -2,9 +2,7 @@
 #include "CsvReader.h"
 #include "BlockFileName.h"
 #include "Player.h"
-#include "Coin.h"
-#include "Dust.h"
-#include "DustBox.h"
+#include "Leaf.h"
 #include "Collision.h"
 #include "SplitScreenLastDraw.h"
 #include <iostream>
@@ -22,30 +20,6 @@ Stage::Stage()
 
 	ssld->LoadMap();
 
-	/*
-	mesh = new CFbxMesh();
-
-	mapCol = new CCollision;	// -- 2024.12.2
-	
-	mesh->Load("data/Map2/MapChip/stage01.mesh");
-	mapCol->AddFbxLoad(mesh,XMMatrixTranslation(-25, 0, -25)); //移動させる場合、引数を追加
-	meshes.push_back(mesh);
-
-	mesh = new CFbxMesh();
-	mesh->Load("data/Map2/MapChip/stage02.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(25, 0, -25)); //移動させる場合、引数を追加
-	meshes.push_back(mesh);
-
-	mesh = new CFbxMesh();
-	mesh->Load("data/Map2/MapChip/stage03.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(-25, 0, 25)); //移動させる場合、引数を追加
-	meshes.push_back(mesh);
-	
-	mesh = new CFbxMesh();
-	mesh->Load("data/Map2/MapChip/stage04.mesh");
-	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(25, 0, 25)); //移動させる場合、引数を追加
-	meshes.push_back(mesh);
-	*/
 	mesh = new CFbxMesh();
 	mesh->Load("data/Map2/MapChip/stage_wall.mesh");
 	mapCol->AddFbxLoad(mesh, XMMatrixTranslation(0, 0, 0)); //移動させる場合、引数を追加
@@ -83,19 +57,6 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	//現在のマップ情報
-	/*
-	ImGui::Begin("mapdata");
-	ImGui::InputInt("MapNum0", &mapData[0]);
-	ImGui::InputInt("MapNum1", &mapData[1]);
-	ImGui::InputInt("MapNum2", &mapData[2]);
-	ImGui::InputInt("MapNum3", &mapData[3]);
-	ImGui::InputInt("MapRot0", &mapRotData[0]);
-	ImGui::InputInt("MapRot1", &mapRotData[1]);
-	ImGui::InputInt("MapRot2", &mapRotData[2]);
-	ImGui::InputInt("MapRot3", &mapRotData[3]);
-	ImGui::End();
-	*/
 }
 
 void Stage::Draw()
