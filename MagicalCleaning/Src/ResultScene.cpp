@@ -59,6 +59,7 @@ void ResultScene::Update()
 	if (di->CheckKey(KD_TRG, DIK_T) || di->CheckJoy(KD_TRG, 2, 0)) {
 		if (rd->GetIsFinish()) {
 			SceneManager::ChangeScene("TitleScene");
+			GameDevice()->resultBGM->Stop();
 		}
 	}
 }

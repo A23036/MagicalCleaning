@@ -181,6 +181,11 @@ HRESULT CGameMain::Init()
 	whistleSE->VolumeAudio(0.6f);
 	countDownSE = new CXAudioSource(m_pXAudio, _T("data/SE/CountDown.wav"));
 	countDownSE->VolumeAudio(2.5f);
+	bonus1SE = new CXAudioSource(m_pXAudio, _T("data/SE/Bonus1.wav"));
+	bonus2SE = new CXAudioSource(m_pXAudio, _T("data/SE/Bonus2.wav"));
+	whistleUpSE = new CXAudioSource(m_pXAudio, _T("data/SE/WhistleUp.wav"));;
+	drumSE = new CXAudioSource(m_pXAudio, _T("data/SE/Drum.wav"));;
+	cymbalSE = new CXAudioSource(m_pXAudio, _T("data/SE/Cymbals.wav"));;
 
 	SceneManager::Start();
 	ObjectManager::Start();

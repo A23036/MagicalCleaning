@@ -64,6 +64,7 @@ void ResultDisplay::Draw()
 		sprite->Draw(resultUiImage1, posX, posY, 480, 384, 168, 32, 168 * 2, 32 * 2);
 		if (animTime >= 2.0f) {
 			state = aChart1;
+			GameDevice()->downSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -98,6 +99,7 @@ void ResultDisplay::Draw()
 		
 		if (animTime >= 1.0f) {
 			state = aChart2;
+			GameDevice()->whistleUpSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -180,6 +182,7 @@ void ResultDisplay::Draw()
 		
 		if (animTime >= 2.0f) {
 			state = aBonus1;
+			GameDevice()->swingSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -203,6 +206,7 @@ void ResultDisplay::Draw()
 
 		if (animTime >= 1.5f) {
 			state = aScore1;
+			GameDevice()->bonus1SE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -260,6 +264,7 @@ void ResultDisplay::Draw()
 		}
 		if (animTime >= 0.5f) {
 			state = aBonus2;
+			GameDevice()->swingSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -282,6 +287,7 @@ void ResultDisplay::Draw()
 
 		if (animTime >= 1.5f) {
 			state = aScore2;
+			GameDevice()->bonus2SE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -342,6 +348,7 @@ void ResultDisplay::Draw()
 		}
 		if (animTime >= 0.5f) {
 			state = aCount;
+			GameDevice()->drumSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -374,6 +381,7 @@ void ResultDisplay::Draw()
 		}
 		if (animTime >= 4.0f) {
 			state = aRank;
+			GameDevice()->cymbalSE->Play();
 			animFrm = 0;
 		}
 		break;
@@ -409,6 +417,7 @@ void ResultDisplay::Draw()
 			state = aWait;
 			isFinish = true;
 			animFrm = 0;
+			GameDevice()->resultBGM->Play();
 		}
 		break;
 	case aWait:

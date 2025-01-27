@@ -82,6 +82,11 @@ public:
 	CXAudioSource* timeSE;
 	CXAudioSource* whistleSE;
 	CXAudioSource* countDownSE;
+	CXAudioSource* bonus1SE;
+	CXAudioSource* bonus2SE;
+	CXAudioSource* whistleUpSE;
+	CXAudioSource* drumSE;
+	CXAudioSource* cymbalSE;
 
 	
 	// カメラ・ライト・ビュー
