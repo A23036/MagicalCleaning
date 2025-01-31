@@ -35,7 +35,7 @@ Leaf::Leaf(int number, VECTOR3 pos)
 		transform.scale = VECTOR3(SmallSize, SmallSize, SmallSize);
 		size = 0.5f;
 		maxHp = 1;
-		mesh->m_vDiffuse = VECTOR4(1.0f, 0.1f, 0.1f, 1.0);
+		mesh->m_vDiffuse = VECTOR4(2.0f, 0.2f, 0.2f, 1.0);
 		break;
 	}
 	hp = maxHp;
