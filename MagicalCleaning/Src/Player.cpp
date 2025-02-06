@@ -83,13 +83,13 @@ Player::Player(int num,int color) : playerNum(num),color(color)// ƒvƒŒƒCƒV[ƒ“‚Å
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 150;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	atkNum = 0;
 	chargeSpeed = 1.0f;
 	chargeTime = 0.0f;
-	invisibleTime = 0;
+	invisibleTime = 0.0f;
 	tereportPos = VECTOR3(0,0,0);
 	teleportFrm = 0;
 	fastAtkSpeed = 8;
@@ -275,6 +275,7 @@ void Player::Update()
 				mp -= MoveSpeedC[msNum];
 				msNum++;
 				new PowerUpEffect(this,transform.position,selectPower);
+				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 				GameDevice()->powerUpSE->Play();
 				if (msNum == MsTableNum - 1) {
 					canTeleport = true;
@@ -290,6 +291,7 @@ void Player::Update()
 				mp -= JumpNumC[jnNum];
 				jnNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 				GameDevice()->powerUpSE->Play();
 				if (jnNum == JnTableNum - 1) {
 					canFly = true;
@@ -305,6 +307,7 @@ void Player::Update()
 				mp -= AtkSpeedC[asNum];
 				asNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 				GameDevice()->powerUpSE->Play();
 				if (asNum == AsTableNum - 1) {
 					canSpeedAtk = true;
@@ -320,6 +323,7 @@ void Player::Update()
 				mp -= AtkRangeC[arNum];
 				arNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 				GameDevice()->powerUpSE->Play();
 				if (arNum == ArTableNum - 1) {
 					canRangeAtk = true;
@@ -335,6 +339,7 @@ void Player::Update()
 				mp -= CarWeightC[cwNum];
 				cwNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
+				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 				GameDevice()->powerUpSE->Play();
 				if (cwNum == CwTableNum - 1) {
 					canFastCharge = true;
@@ -439,8 +444,7 @@ void Player::Update()
 	ImGui::SetNextWindowPos(ImVec2(0, 220));
 	ImGui::SetNextWindowSize(ImVec2(200, 120));
 	ImGui::Begin("CheckJoy");
-	auto* pdi = GameDevice()->m_pDI;
-	DIJOYSTATE2 joyState = pdi->GetJoyState(0);
+
 	for (int i = 0; i < 32; i++)
 	{
 		// Šeƒ{ƒ^ƒ“‚Ì‰Ÿ‰ºó‘Ô‚ðŠm”F
@@ -448,6 +452,13 @@ void Player::Update()
 		{
 			ImGui::Text("%dP : Button %d is pressed", playerNum,i); // ƒ{ƒ^ƒ“”Ô†‚ð•\Ž¦
 		}
+	}
+	
+	if (di->IfJoyFF(playerNum)) {
+		ImGui::Text("True");
+	}
+	else {
+		ImGui::Text("False");
 	}
 	float rx = di->GetJoyState().lRx;
 	float ry = di->GetJoyState().lRy;
@@ -530,7 +541,7 @@ void Player::CsvLoad()
 				MOVE_SPEED = csv->GetFloat(i, 3);
 			}
 			if (csv->GetString(i, 1) == "InvisibleTime") {		// “§–¾‰»ŽžŠÔ
-				InvisibleTime = csv->GetInt(i, 3);
+				InvisibleTime = csv->GetFloat(i, 3);
 			}
 			if (csv->GetString(i, 1) == "DamageCoolTime") {		// –³“GŽžŠÔ
 				DamageCoolTime = csv->GetInt(i, 3);
@@ -683,6 +694,7 @@ void Player::SetIsBlow()
 	isDash = false; 
 	isFly = false;
 	finishAtkAnim = false;
+	GameDevice()->m_pDI->PlayJoyEffect(1, 1, playerNum); // U“®‚ÌÄ¶
 
 	if (mcEffect != nullptr) {
 		mcEffect->SetIsFinish();
@@ -838,6 +850,7 @@ void Player::UpdateOnGround()
 		jumpCountAll++;
 		state = sJump;
 		GameDevice()->jumpSE->Play();
+		GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 	}
 	if ((di->CheckKey(KD_TRG, DIK_N) && playerNum == 0) || di->CheckJoy(KD_TRG, 0, playerNum)) { //UŒ‚
 		if (canSpeedAtk) {
@@ -1093,6 +1106,7 @@ void Player::UpdateCharge()
 			mp++;		//MP‰ÁŽZ
 			score++;	//ƒXƒRƒA‰ÁŽZ
 			leaf--; //—t‚Á‚Ï‚ðŒ¸‚ç‚·
+			GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 			if (chargeSpeed > 0.1f) {
 				chargeSpeed -= 0.1f;
 			}
@@ -1252,6 +1266,7 @@ void Player::CheckAtkCoillision()
 			float rSum = atkCol.radius + dCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum) { // ‹…‚Ì“–‚½‚è”»’è
 				// “–‚½‚Á‚Ä‚é
+				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // U“®‚ÌÄ¶
 				d->AddDamage(this, 1); //ƒ_ƒ[ƒW‚ð—^‚¦‚é
 				if (d->GetNum() == 3) { //“§–¾‰»
 					GameDevice()->itemSE->Play();
@@ -1275,10 +1290,11 @@ void Player::CheckAtkCoillision()
 			float rSum = atkCol.radius + pCol.radius;
 			if (pushVec.LengthSquare() < rSum * rSum && !p->GetIsDamage()) { // ‹…‚Ì“–‚½‚è”»’è
 				// “–‚½‚Á‚Ä‚é
+				GameDevice()->m_pDI->PlayJoyEffect(0, 1, playerNum); // U“®‚ÌÄ¶
 				GameDevice()->blowSE->Play();
 				GameDevice()->blowCheerSE->Play();
 				pushVec = XMVector3Normalize(pushVec);
-				pushVec *= 0.1f;
+				pushVec *= 0.2f;
 				pushVec.y = 0.201f;
 				p->SetBlowVec(pushVec);
 				p->SetSpeedY(pushVec.y);

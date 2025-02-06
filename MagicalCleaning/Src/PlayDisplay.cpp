@@ -696,5 +696,12 @@ void PlayDisplay::Draw()
 		sprite->Draw(posX, 270);
 	}
 
-
+	//“§–¾‰»ŽžAŽc‚èŽžŠÔ•\Ž¦
+	if (pl->GetIsInvisible()) {
+		float time = pl->GetInvisibleTime() / 60.0f;
+		float rate = (15.0f - time) / 15.0f;
+		float width = 150 * rate;
+		sprite->DrawRect(WINDOW_WIDTH/2 - 75, WINDOW_HEIGHT/2 - 60, width,20, RGB(220, 20, 20));
+		//sprite->DrawRect(20, 90, width, 20, RGB(200, 20, 20));
+	}
 }
