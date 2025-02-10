@@ -40,6 +40,8 @@ PlayDisplay::PlayDisplay()
 			isMaxLv[i][j];
 		}
 		isPlaySound[i] = false;
+		blowPlayerList[i] = -1;
+		blowAnimFrm[i] = 0;
 	}
 }
 
@@ -76,6 +78,8 @@ void PlayDisplay::Draw()
 	int posX = 0, posY = 0, offX = 0, offY = 0;
 
 	auto font = GameDevice()->m_pFont;
+
+	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
 
 	//ゲーム開始時のカウントダウン表示
 	if (gameState == sReady) {
@@ -702,6 +706,95 @@ void PlayDisplay::Draw()
 		float rate = (15.0f - time) / 15.0f;
 		float width = 150 * rate;
 		sprite->DrawRect(WINDOW_WIDTH/2 - 75, WINDOW_HEIGHT/2 - 60, width,20, RGB(220, 20, 20));
-		//sprite->DrawRect(20, 90, width, 20, RGB(200, 20, 20));
 	}
+
+	//吹っ飛ばされた、UIアニメーションUI再生
+	if (blowPlayerList[plNum] != -1) {
+		//アイコンの設定
+		sprite->SetSrc(playUiImage, 256 + 72 * dc->GetColor(blowPlayerList[plNum]), 624, 68, 64);
+		//アイコンアニメーション
+		DrawBlowPlayer(blowPlayerList[plNum], plNum);
+	}
+}
+
+void PlayDisplay::SetBlowPlayer(int atkPlayerNum, int blowPlayerNum)
+{
+	blowPlayerList[blowPlayerNum] = atkPlayerNum;
+}
+
+void PlayDisplay::DrawBlowPlayer(int atkPlayerNum, int blowPlayerNum)
+{
+	float time = blowAnimFrm[blowPlayerNum] / 60.0f;
+	
+	int width, height;
+	VECTOR2 center;
+	width = sprite->GetSrcWidth();
+	height = sprite->GetSrcHeight();
+	center.x = WINDOW_WIDTH / 2;
+	center.y = WINDOW_HEIGHT / 2 - 150;
+
+	//プレイヤーアイコンアニメーション処理
+
+	//アイコンの出現
+	if (time < 0.5f) {
+		// アニメーションの進行度計算
+		float timeRate = time / 0.5f;
+		float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
+
+		// 回転中心を画像の中心にするための補正
+		float pivotX = width / 2.0f;
+		float pivotY = height / 2.0f;
+
+		float scale = 3 * rate;	// 拡大倍率
+
+		// ワールド行列の計算
+		MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+			* XMMatrixScaling(scale, scale, 1.0f)
+			* XMMatrixTranslation(center.x, center.y, 0);
+
+		// スプライトをワールド行列を使用して描画
+		sprite->Draw(m);
+	}
+	else if (0.5f <= time < 1.5f) {
+		// ワールド行列の計算
+		MATRIX4X4 m = XMMatrixTranslation(-width / 2.0f, -height / 2.0f, 0)
+			* XMMatrixScaling(3.0f, 3.0f, 1.0f)
+			* XMMatrixTranslation(center.x, center.y, 0);
+
+		// スプライトをワールド行列を使用して描画
+		sprite->Draw(m);
+	}
+
+	if (time > 0.2f) {
+		//アイコンの設定
+		sprite->SetSrc(playUiImage, 258, 594, 28, 28);
+		
+		width = sprite->GetSrcWidth();
+		height = sprite->GetSrcHeight();
+		// 回転中心を画像の中心にするための補正
+		float pivotX = width / 2.0f;
+		float pivotY = height / 2.0f;
+
+		//0°~45°で揺れる
+		float rotation = (XM_PI / 4) * (0.5f * sin(time * XM_2PI * 2) + 0.5f);
+
+		// ワールド行列の計算
+		MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+			* XMMatrixRotationZ(rotation)
+			* XMMatrixScaling(3.0f, 3.0f, 1.0f)
+			* XMMatrixTranslation(center.x + 100, center.y - 70, 0);
+
+		// スプライトをワールド行列を使用して描画
+		sprite->Draw(m);
+	}
+	
+
+	blowAnimFrm[blowPlayerNum]++;
+
+	//アニメーション終了後,吹っ飛ばしたプレイヤー情報を初期化
+	if (time > 1.5f) {
+		blowPlayerList[blowPlayerNum] = -1;
+		blowAnimFrm[blowPlayerNum] = 0;
+	}
+
 }

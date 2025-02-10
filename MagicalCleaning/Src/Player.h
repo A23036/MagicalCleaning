@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "MagicCircleEffect.h"
 #include "TeleportCircleEffect.h"
+#include "PlayDisplay.h"
 
 using namespace std;
 
@@ -105,6 +106,7 @@ private:
 	list<Player*> otherPlayers;
 	MagicCircleEffect* mcEffect;
 	TeleportCircleEffect* tpEffect;
+	PlayDisplay* pd;
 
 	void UpdateOnGround();	//’nãˆ—
 	void UpdateJump();		//‹ó’†ˆ—

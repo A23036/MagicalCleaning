@@ -45,7 +45,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	CsvLoad(); // csvからデータの設定
 
 	// プレイヤーの持つ箒の生成
-	child = new Broom(this,playerNum);
+	child = new Broom(this,color);
 
 	animator = new Animator(); // インスタンスを作成
 
@@ -83,7 +83,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 0;
+	mp = 100;
 	weight = 0;
 	jumpCount = 0;
 	atkNum = 0;
@@ -163,6 +163,7 @@ void Player::Start()
 	dc = ObjectManager::FindGameObject<DataCarrier>();
 	st = ObjectManager::FindGameObject<Stage>();
 	cm = ObjectManager::FindGameObject<Camera>();
+	pd = ObjectManager::FindGameObject<PlayDisplay>();
 }
 
 void Player::Update()
@@ -1306,6 +1307,7 @@ void Player::CheckAtkCoillision()
 				AddLeaf(p->GetLeaf());
 				p->ResetLeaf();
 				new LeafEffect(p->Position(), VECTOR3(1, 1, 1), p->GetLeaf());
+				pd->SetBlowPlayer(playerNum,p->GetPlayerNum());
 				knockOutCount++;
 			}
 		}

@@ -6,6 +6,9 @@
 /// <summary>
 /// プレイヤーごとの各種情報を表示する処理
 /// </summary>
+
+using namespace std;
+
 class PlayDisplay : public Object3D
 {
 public:
@@ -14,6 +17,9 @@ public:
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+
+	void SetBlowPlayer(int atkPlayerNum,int blowPlayerNum);
+	void DrawBlowPlayer(int atkPlayerNum, int blowPlayerNum);
 
 private:
 	CSprite* sprite;
@@ -28,7 +34,10 @@ private:
 	int gameTime;
 
 	bool isLastSpurt;
-	bool isPlaySound[4];
+	bool isPlaySound[4]; //カウントダウンSEを最初だけ再生するためのフラグ
+	
+	int blowPlayerList[MAXPLAYER];	//吹っ飛ばされたプレイヤー
+	float blowAnimFrm[MAXPLAYER];	//吹っ飛ばしたプレイヤー表示アニメーション経過時間
 
 	enum GameState {
 		sTransition = 0,
