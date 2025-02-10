@@ -16,6 +16,13 @@ enum Color {
 	Black,
 };
 
+enum SettingState {
+	sColor,
+	sCamera,
+	sReady,
+	sEnd,
+};
+
 class SelectDisplay : public Object3D
 {
 public:
@@ -28,6 +35,11 @@ public:
 	void DrawUI();
 	void Transition();
 
+	void UpdateColorSelect(int playerNum,int ix,int iy);
+	void UpdateCameraSetting(int playerNum,int ix,int iy);
+	void UpdateReady(int playerNum);
+	void UpdateEnd(int playerNum);
+
 	bool GetIsSelectColor(int playerNum) { return playerEntry[playerNum]; };
 	bool GetIsSelected(int color) { return isSelect[color]; };
 	int GetSelectColor(int playerNum) { return selectColor[playerNum]; };
@@ -38,6 +50,8 @@ private:
 	EasingCalc* ec;
 	CSprite* sprite;
 	CSpriteImage* selectUiImage;	//セレクト画面UIイメージ
+	
+	SettingState state[MAXPLAYER];
 	
 	int ColorPosY;			//キャラ選択カラー位置Y
 	int ColorIconSize;		//キャラ選択カラーサイズ

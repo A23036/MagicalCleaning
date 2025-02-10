@@ -23,21 +23,21 @@ SelectDisplay::SelectDisplay()
 	BackUiPos = VECTOR2(20,20);	//戻るUI位置
 
 	isReadyAll = false;
+	MoveFrm = 10;
 
 	for (int i = 0; i < 4; i++) {
+		state[i] = sColor;
 		playerEntry[i] = false;
 		isSetUpCamera[i] = false;
 		isReady[i] = false;
 		selectCamera[i] = 0;
-		moveFrm[i] = 15;
+		moveFrm[i] = MoveFrm;
 		animFrm[i] = 0;
 	}
 
 	for (int i = 0; i < 6; i++) {
 		isSelect[i] = false;
 	}
-
-	MoveFrm = 10;
 
 	//カラー選択初期値
 	selectColor[0] = 0;
@@ -56,6 +56,7 @@ void SelectDisplay::Update()
 {
 	auto di = GameDevice()->m_pDI;
 
+	//プレイヤーごとの設定処理
 	for (int i = 0; i < MAXPLAYER; i++) {
 		// コントローラースティックの入力を取得、正規化
 		float ix = di->GetJoyState(i).lX / 1000.0f; // 左右の入力 -1.0~1.0
@@ -64,140 +65,18 @@ void SelectDisplay::Update()
 		//カーソル移動用フレーム加算
 		moveFrm[i]++;
 
-		if (isReady[i]) { //準備完了
-			//準備完了キャンセル処理
-			if (di->CheckJoy(KD_TRG, 1, i)) {
-				GameDevice()->backSE->Play();
-				isReady[i] = false;
-				animFrm[i] = 0;
-			}
-			continue;
-		}
-
-		if (isSetUpCamera[i]) { //カメラ設定済
-			//準備完了処理
-			if (di->CheckJoy(KD_TRG, 2, i)) {
-				GameDevice()->entrySE->Play();
-				isReady[i] = true;
-			}
-			//カメラ設定キャンセル処理
-			if (di->CheckJoy(KD_TRG, 1, i)) {
-				GameDevice()->backSE->Play();
-				isSetUpCamera[i] = false;
-			}
-			continue;
-		}
-
-
-		if (playerEntry[i]) { //カラー選択済
-			// チェックマーク横方向の移動
-			if (moveFrm[i] >= MoveFrm) {
-				if (ix > 0.8f || ix < -0.8f) { // 左右入力
-					GameDevice()->colorSelectSE->Play();
-					if (selectCamera[i] == 0) {
-						selectCamera[i] = 1;
-					}
-					else {
-						selectCamera[i] = 0;
-					}
-					moveFrm[i] = 0;
-				}
-			}
-			//カメラ設定決定処理
-			if (di->CheckJoy(KD_TRG, 2, i)) {
-				GameDevice()->decisionSE->Play();
-				isSetUpCamera[i] = true;
-			}
-			//カラー決定キャンセル処理
-			if (di->CheckJoy(KD_TRG, 1, i)) {
-				GameDevice()->backSE->Play();
-				isSelect[selectColor[i]] = false;	//カラーを未選択に
-				playerEntry[i] = false;				//プレイヤーを選択未完了に
-			}
-			continue;
-		}
-
-		//カラーの選択
-		// 横方向の移動
-		if (moveFrm[i] >= MoveFrm) {
-			if (ix > 0.8f) { // 右方向入力
-				GameDevice()->colorSelectSE->Play();
-				if (selectColor[i] % 3 == 2) { // 右端の場合
-					selectColor[i] -= 2;      // 左端にループ
-				}
-				else {
-					selectColor[i]++;         // 右に移動
-				}
-				moveFrm[i] = 0;
-			}
-			else if (ix < -0.8f) { // 左方向入力
-				GameDevice()->colorSelectSE->Play();
-				if (selectColor[i] % 3 == 0) { // 左端の場合
-					selectColor[i] += 2;      // 右端にループ
-				}
-				else {
-					selectColor[i]--;         // 左に移動
-				}
-				moveFrm[i] = 0;
-			}
-		}
-
-		// 縦方向の移動
-		if (moveFrm[i] >= MoveFrm) {
-			if (iy > 0.8f) { // 下方向入力
-				GameDevice()->colorSelectSE->Play();
-				if (selectColor[i] / 3 == 1) { // 下端の場合
-					selectColor[i] -= 3;      // 上端にループ
-				}
-				else {
-					selectColor[i] += 3;      // 下に移動
-				}
-				moveFrm[i] = 0;
-			}
-			else if (iy < -0.8f) { // 上方向入力
-				GameDevice()->colorSelectSE->Play();
-				if (selectColor[i] / 3 == 0) { // 上端の場合
-					selectColor[i] += 3;      // 下端にループ
-				}
-				else {
-					selectColor[i] -= 3;      // 上に移動
-				}
-				moveFrm[i] = 0;
-			}
-		}
-
-		//カラー決定処理
-		if (di->CheckJoy(KD_TRG, 2, i)) {
-			if (isSelect[selectColor[i]]) { //決定したカラーがすでに選択されていた時
-				//せんたくされているよ！
-				GameDevice()->cancelSE->Play();
-			}
-			else {
-				GameDevice()->decisionSE->Play();
-				isSelect[selectColor[i]] = true; //カラーを選択済みに
-				playerEntry[i] = true;		//プレイヤーを選択完了に
-			}
-		}
-
-		//選択カラーごとの位置情報の設定
-		switch (selectColor[i]) {
-		case Red:
-			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 - UiSpace - ColorIconDispSize, ColorPosY);
+		switch (state[i]) {
+		case sColor:
+			UpdateColorSelect(i,ix,iy);
 			break;
-		case Blue:
-			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2, ColorPosY);
+		case sCamera:
+			UpdateCameraSetting(i,ix,iy);
 			break;
-		case Yellow:
-			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 + UiSpace + ColorIconDispSize, ColorPosY);
+		case sReady:
+			UpdateReady(i);
 			break;
-		case Green:
-			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 - UiSpace - ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
-			break;
-		case Purple:
-			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2, ColorPosY + UiSpace + ColorIconDispSize);
-			break;
-		case Black:
-			cursorPos[i] = VECTOR2(WINDOW_WIDTH / 2 - ColorIconDispSize / 2 + UiSpace + ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
+		case sEnd:
+			UpdateEnd(i);
 			break;
 		}
 	}
@@ -217,7 +96,6 @@ void SelectDisplay::Update()
 		dc->SetCameraSetteing(selectCamera);
 		dc->SetColor(selectColor);
 
-		//isReadyAll = true;
 		isTransition = true;
 	}
 	else {
@@ -522,4 +400,161 @@ void SelectDisplay::Transition()
 		}
 	}
 	
+}
+
+void SelectDisplay::UpdateColorSelect(int playerNum, int ix, int iy)
+{
+	auto di = GameDevice()->m_pDI;
+
+	//カラーの選択
+		// 横方向の移動
+	if (moveFrm[playerNum] >= MoveFrm) {
+		if (ix > 0.8f) { // 右方向入力
+			GameDevice()->colorSelectSE->Play();
+			if (selectColor[playerNum] % 3 == 2) { // 右端の場合
+				selectColor[playerNum] -= 2;      // 左端にループ
+			}
+			else {
+				selectColor[playerNum]++;         // 右に移動
+			}
+			moveFrm[playerNum] = 0;
+		}
+		else if (ix < -0.8f) { // 左方向入力
+			GameDevice()->colorSelectSE->Play();
+			if (selectColor[playerNum] % 3 == 0) { // 左端の場合
+				selectColor[playerNum] += 2;      // 右端にループ
+			}
+			else {
+				selectColor[playerNum]--;         // 左に移動
+			}
+			moveFrm[playerNum] = 0;
+		}
+	}
+
+	// 縦方向の移動
+	if (moveFrm[playerNum] >= MoveFrm) {
+		if (iy > 0.8f) { // 下方向入力
+			GameDevice()->colorSelectSE->Play();
+			if (selectColor[playerNum] / 3 == 1) { // 下端の場合
+				selectColor[playerNum] -= 3;      // 上端にループ
+			}
+			else {
+				selectColor[playerNum] += 3;      // 下に移動
+			}
+			moveFrm[playerNum] = 0;
+		}
+		else if (iy < -0.8f) { // 上方向入力
+			GameDevice()->colorSelectSE->Play();
+			if (selectColor[playerNum] / 3 == 0) { // 上端の場合
+				selectColor[playerNum] += 3;      // 下端にループ
+			}
+			else {
+				selectColor[playerNum] -= 3;      // 上に移動
+			}
+			moveFrm[playerNum] = 0;
+		}
+	}
+
+	//カラー決定処理
+	if (di->CheckJoy(KD_TRG, 2, playerNum)) {
+		if (isSelect[selectColor[playerNum]]) { //決定したカラーがすでに選択されていた時
+			//せんたくされているよ！
+			GameDevice()->cancelSE->Play();
+		}
+		else {
+			GameDevice()->decisionSE->Play();
+			isSelect[selectColor[playerNum]] = true; //カラーを選択済みに
+			playerEntry[playerNum] = true;		//プレイヤーを選択完了に
+			state[playerNum] = sCamera;
+		}
+	}
+
+	//選択カラーごとの位置情報の設定
+	int offX = WINDOW_WIDTH / 2 - ColorIconDispSize / 2; //表示位置x座標オフセット
+	
+	switch (selectColor[playerNum]) {
+	case Red:
+		cursorPos[playerNum] = VECTOR2(offX - UiSpace - ColorIconDispSize, ColorPosY);
+		break;
+	case Blue:
+		cursorPos[playerNum] = VECTOR2(offX, ColorPosY);
+		break;
+	case Yellow:
+		cursorPos[playerNum] = VECTOR2(offX + UiSpace + ColorIconDispSize, ColorPosY);
+		break;
+	case Green:
+		cursorPos[playerNum] = VECTOR2(offX - UiSpace - ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
+		break;
+	case Purple:
+		cursorPos[playerNum] = VECTOR2(offX, ColorPosY + UiSpace + ColorIconDispSize);
+		break;
+	case Black:
+		cursorPos[playerNum] = VECTOR2(offX + UiSpace + ColorIconDispSize, ColorPosY + UiSpace + ColorIconDispSize);
+		break;
+	}
+}
+
+void SelectDisplay::UpdateCameraSetting(int playerNum, int ix, int iy)
+{
+	auto di = GameDevice()->m_pDI;
+
+	// チェックマーク横方向の移動
+	if (moveFrm[playerNum] >= MoveFrm) {
+		if (ix > 0.8f || ix < -0.8f) { // 左右入力
+			GameDevice()->colorSelectSE->Play();
+			if (selectCamera[playerNum] == 0) {
+				selectCamera[playerNum] = 1;
+			}
+			else {
+				selectCamera[playerNum] = 0;
+			}
+			moveFrm[playerNum] = 0;
+		}
+	}
+
+	//カメラ設定決定処理
+	if (di->CheckJoy(KD_TRG, 2, playerNum)) {
+		GameDevice()->decisionSE->Play();
+		isSetUpCamera[playerNum] = true;
+		state[playerNum] = sReady;
+	}
+	//カラー決定キャンセル処理
+	else if (di->CheckJoy(KD_TRG, 1, playerNum)) {
+		GameDevice()->backSE->Play();
+		isSelect[selectColor[playerNum]] = false;	//カラーを未選択に
+		playerEntry[playerNum] = false;				//プレイヤーを選択未完了に
+		state[playerNum] = sColor;
+	}
+}
+
+void SelectDisplay::UpdateReady(int playerNum)
+{
+	auto di = GameDevice()->m_pDI;
+
+	//準備完了処理
+	if (di->CheckJoy(KD_TRG, 2, playerNum)) {
+		GameDevice()->entrySE->Play();
+		isReady[playerNum] = true;
+		GameDevice()->m_pDI->PlayJoyEffect(0, 1, playerNum); // 振動の再生
+		state[playerNum] = sEnd;
+	}
+	//カメラ設定キャンセル処理
+	else if (di->CheckJoy(KD_TRG, 1, playerNum)) {
+		GameDevice()->backSE->Play();
+		isSetUpCamera[playerNum] = false;
+		state[playerNum] = sCamera;
+	}
+}
+
+void SelectDisplay::UpdateEnd(int playerNum)
+{
+	auto di = GameDevice()->m_pDI;
+
+	//準備完了キャンセル処理
+	if (di->CheckJoy(KD_TRG, 1, playerNum)) { //キャンセルボタンの入力
+		GameDevice()->backSE->Play();
+		isReady[playerNum] = false;
+		animFrm[playerNum] = 0;
+		state[playerNum] = sReady;
+	}
 }
