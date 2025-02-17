@@ -1,13 +1,18 @@
 #pragma once
 #include "SceneBase.h"
-#include "PlayDisplay.h"
-#include "SplitScreenLastDraw.h"
-#include "DataCarrier.h"
-#include "CsvReader.h"
-#include "Leaf.h"
-#include "Stage.h"
-#include "Sky.h"
-#include "Camera.h"
+#include "Player.h"
+
+class PlayDisplay;
+class SplitScreenLastDraw;
+class DataCarrier;
+class CsvReader;
+class Leaf;
+class Stage;
+class Sky;
+class Camera;
+class PlayDisplay;
+
+using namespace std;
 
 class PlayScene : public SceneBase
 {

@@ -9,6 +9,11 @@
 #include "PowerUpEffect.h"
 #include "LeafEffect.h"
 #include "JumpEffect.h"
+#include "Animator.h"
+#include "DataCarrier.h"
+#include "MagicCircleEffect.h"
+#include "TeleportCircleEffect.h"
+#include "PlayDisplay.h"
 
 Player::Player()
 {

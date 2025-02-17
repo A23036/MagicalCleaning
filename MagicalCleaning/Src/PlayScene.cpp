@@ -7,6 +7,8 @@
 #include "Player.h"
 #include "Leaf.h"
 #include "Sky.h"
+#include "PlayDisplay.h"
+#include "CsvReader.h"
 
 PlayScene::PlayScene()
 {

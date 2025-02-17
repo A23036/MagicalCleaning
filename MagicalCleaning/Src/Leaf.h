@@ -1,8 +1,9 @@
 #pragma once
 #include "Object3D.h"
-#include "Player.h"
-#include "Stage.h"
-#include "LeafEffect.h"
+
+class Player;
+class Stage;
+class LeafEffect;
 
 class Leaf : public Object3D {
 public:

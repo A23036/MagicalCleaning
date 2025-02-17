@@ -1,13 +1,13 @@
 #pragma once
 #include "Object3D.h"
-#include "CsvReader.h"
-#include "SplitScreen.h"
-#include "DataCarrier.h"
-#include "Stage.h"
+
+class CsvReader;
+class SplitScreen;
+class DataCarrier;
+class Stage;
+class Player;
 
 using namespace std;
-
-class Player;
 
 class Camera : public Object3D {
 public:

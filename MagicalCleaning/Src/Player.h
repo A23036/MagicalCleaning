@@ -1,14 +1,15 @@
 #pragma once
 // Player.h
 #include "Object3D.h"
-#include "CsvReader.h"
-#include "Animator.h"
-#include "DataCarrier.h"
-#include "Stage.h"
-#include "Camera.h"
-#include "MagicCircleEffect.h"
-#include "TeleportCircleEffect.h"
-#include "PlayDisplay.h"
+
+class CsvReader;
+class Animator;
+class DataCarrier;
+class Stage;
+class Camera;
+class MagicCircleEffect;
+class TeleportCircleEffect;
+class PlayDisplay;
 
 using namespace std;
 

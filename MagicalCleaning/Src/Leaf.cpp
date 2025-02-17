@@ -2,6 +2,7 @@
 #include "Stage.h"
 #include "Player.h"
 #include "PlayScene.h"
+#include "LeafEffect.h"
 
 Leaf::Leaf(int number, VECTOR3 pos)
 {

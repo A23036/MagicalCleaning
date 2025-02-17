@@ -1,7 +1,8 @@
 #pragma once
 #include "Object3D.h"
-#include "DataCarrier.h"
-#include "EasingCalc.h"
+
+class DataCarrier;
+class EasingCalc;
 
 /// <summary>
 /// プレイヤーごとの各種情報を表示する処理

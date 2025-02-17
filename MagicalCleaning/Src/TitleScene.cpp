@@ -1,6 +1,8 @@
 #include "TitleScene.h"
 #include "GameMain.h"
-
+#include "EasingCalc.h"
+#include "CsvReader.h"
+#include "DataCarrier.h"
 
 TitleScene::TitleScene()
 {
@@ -63,11 +65,6 @@ void TitleScene::Update()
 			GameDevice()->playBGM->Play();
 			SceneManager::ChangeScene("PlayScene");
 		}
-		/*
-		if (di->CheckKey(KD_TRG, DIK_E)) {
-			SceneManager::ChangeScene("EditScene");
-		}
-		*/
 	}
 	else if ((di->CheckKey(KD_TRG, DIK_S) || di->CheckKey(KD_TRG, DIK_P) || di->CheckJoy(KD_TRG, 2)) && state != aTransition){
 		state = aWait;

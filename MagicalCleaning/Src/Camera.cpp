@@ -1,7 +1,9 @@
 #include "Camera.h"
 #include "Player.h"
 #include "CsvReader.h"
-#include <iostream>
+#include "SplitScreen.h"
+#include "DataCarrier.h"
+#include "Stage.h"
 
 Camera::Camera()
 {

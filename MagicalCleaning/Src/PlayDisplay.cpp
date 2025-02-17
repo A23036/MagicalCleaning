@@ -4,6 +4,7 @@
 #include "DataCarrier.h"
 #include "EasingCalc.h"
 
+
 PlayDisplay::PlayDisplay()
 {
 	SetPriority(-9999); 	// ÅŒã‚æ‚èˆê‚Â‘O‚Éˆ—‚·‚é

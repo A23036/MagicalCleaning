@@ -1,8 +1,9 @@
 #pragma once
 #include "SceneBase.h"
-#include "EasingCalc.h"
-#include "CsvReader.h"
-#include "DataCarrier.h"
+
+class EasingCalc;
+class CsvReader;
+class DataCarrier;
 
 class TitleScene : public SceneBase
 {

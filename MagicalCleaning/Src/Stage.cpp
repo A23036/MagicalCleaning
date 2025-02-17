@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "CsvReader.h"
+#include "MeshCollider.h"
 #include "BlockFileName.h"
 #include "Player.h"
 #include "Leaf.h"
