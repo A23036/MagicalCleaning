@@ -99,6 +99,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	teleportFrm = 0;
 	fastAtkSpeed = 8;
 	damageTime = 0;
+	itemNum = -1;
 
 	isDash = false;
 	isFly = false;
@@ -374,10 +375,18 @@ void Player::Update()
 		GameDevice()->powerSelectSE->Play();
 	}
 
-	//テレポート処理
 	auto* pdi = GameDevice()->m_pDI;
 	DIJOYSTATE2 joyState = pdi->GetJoyState(playerNum);
-
+	
+	//アイテム使用処理
+	if (joyState.rgbButtons[11] & 0x80) {
+		if (itemNum != -1) {
+			UseItem(itemNum);
+			itemNum = -1;
+		}
+	}
+	 
+	//テレポート処理
 	// テレポート先が設置されていて吹っ飛ばされていないとき
 	if (((di->CheckKey(KD_TRG, DIK_F) && playerNum == 0) 
 		|| joyState.rgbButtons[10] & 0x80) && setTeleport && state != sBlow) {
@@ -428,7 +437,7 @@ void Player::Update()
 	if (isInvisible) {
 		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 0.2f);
 		invisibleTime++;
-		if (invisibleTime * (1.0f / 60.0f) > InvisibleTime) {
+		if (invisibleTime * (1.0f / 60.0f) > InvisibleTime[dc->GetRank(playerNum) - 1]) {
 			invisibleTime = 0;
 			isInvisible = false;
 			mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
@@ -547,7 +556,10 @@ void Player::CsvLoad()
 				MOVE_SPEED = csv->GetFloat(i, 3);
 			}
 			if (csv->GetString(i, 1) == "InvisibleTime") {		// 透明化時間
-				InvisibleTime = csv->GetFloat(i, 3);
+				InvisibleTime[0] = csv->GetFloat(i, 3);
+				InvisibleTime[1] = csv->GetFloat(i, 4);
+				InvisibleTime[2] = csv->GetFloat(i, 5);
+				InvisibleTime[3] = csv->GetFloat(i, 6);
 			}
 			if (csv->GetString(i, 1) == "DamageCoolTime") {		// 無敵時間
 				DamageCoolTime = csv->GetInt(i, 3);
@@ -673,6 +685,11 @@ int Player::GetMaxPowerLv(int selectPower)
 	}
 }
 
+float Player::GetInvisibleTime()
+{
+	return  InvisibleTime[dc->GetRank(playerNum) - 1];
+}
+
 void Player::SetPlayerState(int state)
 {
 	this->state = state;
@@ -745,6 +762,20 @@ void Player::AddScore(int n)
 void Player::AddCleanReaf()
 {
 	cleanReafCount++;
+}
+
+void Player::UseItem(int num)
+{
+	switch (num) {
+	case 0:
+		GameDevice()->itemSE->Play();
+		invisibleTime = 0;
+		isInvisible = true;
+		itemCount++;
+		break;
+	default:
+		break;
+	}
 }
 
 void Player::UpdateOnGround()
@@ -1275,10 +1306,7 @@ void Player::CheckAtkCoillision()
 				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // 振動の再生
 				d->AddDamage(this, 1); //ダメージを与える
 				if (d->GetNum() == 3) { //透明化
-					GameDevice()->itemSE->Play();
-					invisibleTime = 0;
-					isInvisible = true;
-					itemCount++;
+					itemNum = 0;
 				}
 			}
 		}

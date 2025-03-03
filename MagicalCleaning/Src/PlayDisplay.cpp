@@ -701,10 +701,27 @@ void PlayDisplay::Draw()
 		sprite->Draw(posX, 270);
 	}
 
+	//アイテム所持アイコン表示
+	if (pl->GetItemNum() != -1) {
+		switch (pl->GetItemNum()) {
+		case 0:
+			sprite->SetSrc(playUiImage, 289, 593, 30, 30, 90, 90);
+			if (pl->GetPlayerNum() % 2) { //画面位置によって表示位置を変更
+				sprite->Draw(1260, 400);
+			}
+			else {
+				sprite->Draw(20, 400);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 	//透明化時、残り時間表示
 	if (pl->GetIsInvisible()) {
-		float time = pl->GetInvisibleTime() / 60.0f;
-		float rate = (15.0f - time) / 15.0f;
+		float time = pl->GetCurInvisibleTime() / 60.0f;
+		float rate = (pl->GetInvisibleTime() - time) / pl->GetInvisibleTime();
 		float width = 150 * rate;
 		sprite->DrawRect(WINDOW_WIDTH/2 - 75, WINDOW_HEIGHT/2 - 60, width,20, RGB(220, 20, 20));
 	}
@@ -767,7 +784,7 @@ void PlayDisplay::DrawBlowPlayer(int atkPlayerNum, int blowPlayerNum)
 	}
 
 	if (time > 0.2f) {
-		//アイコンの設定
+		//アイコンの設定 
 		sprite->SetSrc(playUiImage, 258, 594, 28, 28);
 		
 		width = sprite->GetSrcWidth();

@@ -76,7 +76,8 @@ public:
 	bool GetIsSetTeleport() { return setTeleport; };
 	VECTOR2 GetTeleportPos() { return VECTOR2(tereportPos.x, tereportPos.z); };
 	bool GetIsInvisible() { return isInvisible; };
-	float GetInvisibleTime() { return  invisibleTime; };
+	float GetCurInvisibleTime() { return  invisibleTime; };
+	float GetInvisibleTime();
 	bool GetIsDamage() { return isDamageCool; };
 	bool GetIsDash() { return isDash; };
 	bool GetIsFly() { return isFly; };
@@ -86,6 +87,7 @@ public:
 	int GetItemCount() { return itemCount; };
 	int GetCleanReafCount() { return cleanReafCount; };
 	int GetBlowCount() { return blowCount; };
+	int GetItemNum() { return itemNum; };
 	void SetPlayerState(int state);
 	void SetPlayerPrevState(int state);
 	void SetBlowVec(VECTOR3 vec);
@@ -97,6 +99,7 @@ public:
 	void AddWeight(int n);
 	void AddScore(int n);
 	void AddCleanReaf();
+	void UseItem(int num);
 	
 
 private:
@@ -149,9 +152,12 @@ private:
 	float chargeSpeed;	//MP変換スピード
 	float chargeTime;	//MP変換経過時間
 	VECTOR3 blowVec;	//吹っ飛ばしベクトル
+	int itemNum;		//アイテム番号(-1:未所持,0:ステルス)
 	bool isInvisible;	//透明フラグ
-	float InvisibleTime;	//透明化時間
-	float invisibleTime;	//透明化経過時間
+
+	float InvisibleTime[MAXPLAYER];	//透明化時間
+	float invisibleTime;			//透明化経過時間
+
 	int DamageCoolTime;	//無敵時間
 	int damageTime;		//無敵経過時間
 	bool isDamageCool;	//無敵フラグ
