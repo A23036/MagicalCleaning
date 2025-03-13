@@ -88,7 +88,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	speedY = 0;
 	score = 0;
 	leaf = 0;
-	mp = 100;
+	mp = 0;
 	weight = 0;
 	jumpCount = 0;
 	atkNum = 0;
@@ -380,12 +380,12 @@ void Player::Update()
 	
 	//アイテム使用処理
 	if (joyState.rgbButtons[11] & 0x80) {
-		if (itemNum != -1) {
+		if (itemNum != -1) { //アイテム取得状態
 			UseItem(itemNum);
 			itemNum = -1;
 		}
 	}
-	 
+	
 	//テレポート処理
 	// テレポート先が設置されていて吹っ飛ばされていないとき
 	if (((di->CheckKey(KD_TRG, DIK_F) && playerNum == 0) 
