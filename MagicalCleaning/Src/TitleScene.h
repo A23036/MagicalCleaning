@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneBase.h"
+#include "CsvTitleDataLoader.h"
 
 //プロトタイプ宣言
 class EasingCalc;
@@ -13,12 +14,20 @@ class TitleScene : public SceneBase
 {
 public:
 	TitleScene();
-	~TitleScene();
+	virtual ~TitleScene();
 	void Init();
 	void Update() override;
 	void Draw() override;
 
-	void CsvLoad(); //CSVファイルからデータの設定を行う
+	//アニメーション状態ごとの画面表示処理
+	void DrawFadeIn();
+	void DrawBroom();
+	void DrawText1();
+	void DrawText2();
+	void DrawWait();
+	void DrawTransition();
+
+	void CsvLoad(); //CSVファイルから読み込んだデータの設定を行う
 
 private:
 	//各種データ管理クラスのポインタ
@@ -32,7 +41,10 @@ private:
 	CSpriteImage*	titleText3Image;	//「PRESS ANYBUTTON」テキストイメージ
 	CSprite* sprite;
 
-	//CSVファイルからロードされる定数
+	//CSVファイルから読み込んだデータを格納する構造体
+	AnimParams animParams;
+
+	//アニメーション用変数
 	float AnimTime[4];	//各アニメーションの時間
 	float ScaleStart;	//拡大率の開始値
 	float ScaleGoal;	//拡大率の終了値

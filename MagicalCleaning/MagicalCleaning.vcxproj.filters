@@ -96,6 +96,18 @@
     <Filter Include="ソース ファイル\08_PlayScene\0804_Effect\SlashEffect">
       <UniqueIdentifier>{601a26a2-ca8b-47ae-9186-41c69c1b2b2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\08_PlayScene\0800_Player\Player">
+      <UniqueIdentifier>{c1612be7-70be-4f35-bdc5-342a0b192243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\08_PlayScene\0800_Player\Broom">
+      <UniqueIdentifier>{6f015bdd-d8b5-4954-9fb7-b9bf6c62ec91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\07_TitleScene\CsvTitleDataLoader">
+      <UniqueIdentifier>{0e304e2b-12fa-423b-8039-bccb46b9ed00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\12_CsvLoadBase">
+      <UniqueIdentifier>{4bb44096-b4d8-4607-b2a0-36c8b91d35ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Hlsl\DisplaceSkinMesh.hlsli">
@@ -354,9 +366,6 @@
     <ClInclude Include="Src\DataCarrier.h">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Player.h">
-      <Filter>ソース ファイル\08_PlayScene\0800_Player</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Camera.h">
       <Filter>ソース ファイル\08_PlayScene\0801_Camera</Filter>
     </ClInclude>
@@ -390,8 +399,17 @@
     <ClInclude Include="Src\SlashEffect.h">
       <Filter>ソース ファイル\08_PlayScene\0804_Effect\SlashEffect</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Player.h">
+      <Filter>ソース ファイル\08_PlayScene\0800_Player\Player</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Broom.h">
-      <Filter>ソース ファイル\08_PlayScene\0800_Player</Filter>
+      <Filter>ソース ファイル\08_PlayScene\0800_Player\Broom</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CsvTitleDataLoader.h">
+      <Filter>ソース ファイル\07_TitleScene\CsvTitleDataLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CsvLoadBase.h">
+      <Filter>ソース ファイル\12_CsvLoadBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -524,9 +542,6 @@
     <ClCompile Include="Src\DataCarrier.cpp">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Player.cpp">
-      <Filter>ソース ファイル\08_PlayScene\0800_Player</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Camera.cpp">
       <Filter>ソース ファイル\08_PlayScene\0801_Camera</Filter>
     </ClCompile>
@@ -557,8 +572,17 @@
     <ClCompile Include="Src\SlashEffect.cpp">
       <Filter>ソース ファイル\08_PlayScene\0804_Effect\SlashEffect</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Player.cpp">
+      <Filter>ソース ファイル\08_PlayScene\0800_Player\Player</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Broom.cpp">
-      <Filter>ソース ファイル\08_PlayScene\0800_Player</Filter>
+      <Filter>ソース ファイル\08_PlayScene\0800_Player\Broom</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CsvTitleDataLoader.cpp">
+      <Filter>ソース ファイル\07_TitleScene\CsvTitleDataLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CsvLoadBase.cpp">
+      <Filter>ソース ファイル\12_CsvLoadBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
