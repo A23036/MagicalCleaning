@@ -3,6 +3,7 @@
 #include "Object3D.h"
 
 class CsvReader;
+class Broom;
 class Animator;
 class DataCarrier;
 class Stage;
@@ -33,18 +34,6 @@ enum SelectPowerID { //選択中強化能力
 	pAS,
 	pAR,
 	pCW,
-};
-
-class Broom : public Object3D {
-public:
-	Broom(Object3D* parentModel, int num);
-	~Broom();
-	void Update() override;
-	void Draw() override;
-	void SetPos(MATRIX4X4 m);
-private:
-	Object3D* parent;
-	MATRIX4X4 mat;
 };
 
 class Player : public Object3D {
@@ -237,5 +226,3 @@ private:
 
 	Broom* child; //自身の持っている箒のポインタ
 };
-
-

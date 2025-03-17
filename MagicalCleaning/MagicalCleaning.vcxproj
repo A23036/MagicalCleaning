@@ -521,6 +521,7 @@
     <ClInclude Include="Src\Animator.h" />
     <ClInclude Include="Src\BBox.h" />
     <ClInclude Include="Src\BlockFileName.h" />
+    <ClInclude Include="Src\Broom.h" />
     <ClInclude Include="Src\Camera.h" />
     <ClInclude Include="Src\CapsuleCollider.h" />
     <ClInclude Include="Src\Collision.h" />
@@ -581,6 +582,7 @@
     <ClCompile Include="Libs\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Animator.cpp" />
     <ClCompile Include="Src\BBox.cpp" />
+    <ClCompile Include="Src\Broom.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\Collision.cpp" />
     <ClCompile Include="Src\CsvReader.cpp" />
