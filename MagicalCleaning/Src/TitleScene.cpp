@@ -4,8 +4,15 @@
 #include "CsvReader.h"
 #include "DataCarrier.h"
 
+// ---------------------------------------------------------------------------
+// コンストラクタ
+// ---------------------------------------------------------------------------
 TitleScene::TitleScene()
 {
+	//変数の初期化
+	Init();
+
+	//定数のCSV読み込み
 	CsvLoad();
 
 	//スプライトイメージのロード
@@ -17,26 +24,12 @@ TitleScene::TitleScene()
 	
 	sprite = new CSprite();
 	ec = new EasingCalc();
-	dc = SingleInstantiate<DataCarrier>(); //DataCarrierはシングルトンで生成
-
-	state = aFadeIn;
-	animFrm = 0;
-	animTime = 0;
-
-	timeRate = 0;
-	rate = 0;
-
-	alpha = 0;
-	rot = 0;
-	scale = 0;
-	trans = 0;
-
-	d1 = 0;
-	d2 = 0;
-	offX = 0;
-	offY = 0;
+	dc = SingleInstantiate<DataCarrier>(); //DataCarrierはシングルトンで生成(シーン遷移で消えないため)
 }
 
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
 TitleScene::~TitleScene()
 {
 	SAFE_DELETE(titleBackImage);
@@ -49,6 +42,34 @@ TitleScene::~TitleScene()
 	SAFE_DELETE(csv);
 }
 
+// ---------------------------------------------------------------------------
+// 各変数の初期化処理
+// ---------------------------------------------------------------------------
+void TitleScene::Init()
+{
+	state = aFadeIn;
+	animFrm = 0;
+	animTime = 0.0f;
+
+	timeRate = 0.0f;
+	rate = 0.0f;
+
+	alpha = 0.0f;
+	rot = 0.0f;
+	scale = 0.0f;
+	trans = 0.0f;
+
+	moveY = 0.0f;
+	moveScale = 0.0f;
+	offX = 0.0f;
+	offY = 0.0f;
+}
+
+// ---------------------------------------------------------------------------
+// タイトル画面の更新処理
+// 
+// キー/ボタン入力でのシーン遷移を行う
+// ---------------------------------------------------------------------------
 void TitleScene::Update()
 {
 	auto di = GameDevice()->m_pDI;
@@ -78,6 +99,11 @@ void TitleScene::Update()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// タイトル画面の描画処理
+// 
+// タイトル画面でのスプライト描画、アニメーション処理を行う
+// ---------------------------------------------------------------------------
 void TitleScene::Draw()
 {
 	animTime = animFrm * (1.0f / 60.0f);
@@ -162,16 +188,16 @@ void TitleScene::Draw()
 	case aWait: //アニメーション終了、プレイヤーの入力待機
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-		d1 = sinf(animFrm / 120.0f * XM_2PI) * 5.0f;
-		d2 = 1 + fabs(sinf(animFrm / 300.0f * XM_2PI) * 0.05f);
+		moveY = sinf(animFrm / 120.0f * XM_2PI) * 5.0f;
+		moveScale = 1 + fabs(sinf(animFrm / 300.0f * XM_2PI) * 0.05f);
 
 		// 中央で拡縮するためのオフセットを計算
-		offX = (WINDOW_WIDTH * (1 - d2)) / 2;
-		offY = (WINDOW_HEIGHT * (1 - d2)) / 2;
+		offX = (WINDOW_WIDTH * (1 - moveScale)) / 2;
+		offY = (WINDOW_HEIGHT * (1 - moveScale)) / 2;
 
-		sprite->Draw(broomImage, 0, d1, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
+		sprite->Draw(broomImage, 0, moveY, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 		sprite->Draw(titleText1Image, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
-		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * d2, WINDOW_HEIGHT * d2);
+		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * moveScale, WINDOW_HEIGHT * moveScale);
 
 		if (animFrm % 60 < 40) {
 			sprite->SetSrc(0, 0, 344, 64);
@@ -181,9 +207,9 @@ void TitleScene::Draw()
 		break;
 	case aTransition:
 		sprite->Draw(titleBackImage, 0, 0, 0, 0, 1536, 864, WINDOW_WIDTH, WINDOW_HEIGHT);
-		sprite->Draw(broomImage, 0, d1, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
+		sprite->Draw(broomImage, 0, moveY, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
 		sprite->Draw(titleText1Image, 0, 0, 0, 0, 1280, 720, WINDOW_WIDTH, WINDOW_HEIGHT);
-		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * d2, WINDOW_HEIGHT * d2);
+		sprite->Draw(titleText2Image, offX, offY, 0, 0, 1280, 720, WINDOW_WIDTH * moveScale, WINDOW_HEIGHT * moveScale);
 
 		timeRate = animTime / 1.0f;
 		rate = ec->easeOutExpo(timeRate);
@@ -214,16 +240,14 @@ void TitleScene::Draw()
 
 	}
 
-	//　デバッグ用アニメーションタイム表示
-	/*
-	char str[64];
-	sprintf_s<64>(str, "%.1f", animFrm * (1.0f / 60.0f));
-	GameDevice()->m_pFont->Draw(0, 0, str, 50, RGB(255, 255, 255));
-	*/
 	animFrm++;
 }
 
-
+// ---------------------------------------------------------------------------
+// CSV読み込み処理 ※アピールポイント
+// 
+// アニメーション処理に使用する定数のCSV読み込みを行う
+// ---------------------------------------------------------------------------
 void TitleScene::CsvLoad()
 {
 	// csvからデータ読み込み
@@ -250,7 +274,7 @@ void TitleScene::CsvLoad()
 				RotateStart = csv->GetFloat(i, 3) * DegToRad;
 			}
 			if (csv->GetString(i, 1) == "RotateGoal") {	// 終了時回転
-				RotateGoal = csv->GetFloat(i, 3) * DegToRad;;
+				RotateGoal = csv->GetFloat(i, 3) * DegToRad;
 			}
 			if (csv->GetString(i, 1) == "TransStart") {	// 開始時位置
 				TransStart = csv->GetFloat(i, 3);
