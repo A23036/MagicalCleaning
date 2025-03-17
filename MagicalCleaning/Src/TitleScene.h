@@ -31,7 +31,6 @@ public:
 
 private:
 	//各種データ管理クラスのポインタ
-	CsvReader*	csv;
 	EasingCalc*	 ec;
 	DataCarrier* dc;
 	CSpriteImage*	titleBackImage;		//タイトル画面背景イメージ

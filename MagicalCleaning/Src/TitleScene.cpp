@@ -1,7 +1,6 @@
 #include "TitleScene.h"
 #include "GameMain.h"
 #include "EasingCalc.h"
-#include "CsvReader.h"
 #include "DataCarrier.h"
 
 // ---------------------------------------------------------------------------
@@ -39,7 +38,6 @@ TitleScene::~TitleScene()
 	SAFE_DELETE(titleText3Image);
 	SAFE_DELETE(sprite);
 	SAFE_DELETE(ec);
-	SAFE_DELETE(csv);
 }
 
 // ---------------------------------------------------------------------------
