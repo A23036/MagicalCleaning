@@ -11,9 +11,6 @@ TitleScene::TitleScene()
 	//変数の初期化
 	Init();
 
-	//定数のCSV読み込み
-	CsvLoad();
-
 	//スプライトイメージのロード
 	titleBackImage	= new CSpriteImage(_T("data/Image/Title/title.png"));
 	broomImage		= new CSpriteImage(_T("data/Image/Title/Broom.png"));
@@ -45,6 +42,9 @@ TitleScene::~TitleScene()
 // ---------------------------------------------------------------------------
 void TitleScene::Init()
 {
+	//定数のCSV読み込み
+	CsvLoad();
+
 	state = aFadeIn;
 	animFrm = 0;
 	animTime = 0.0f;
@@ -296,21 +296,20 @@ void TitleScene::DrawTransition()
 // ---------------------------------------------------------------------------
 void TitleScene::CsvLoad()
 {
-	CsvTitleDataLoader animLoader("data/csv/AnimParam.csv");
-	animLoader.Load();
-	animParams = animLoader.GetAnimParams();
+	CsvTitleDataLoader dataLoader("data/csv/AnimParam.csv");
+	dataLoader.Load();
+	titleParams = dataLoader.GetTitleParams();
 
-	//読み込んだデータの代入
+	//読み込んだ構造体からデータの代入
 	for (int i = 0; i < 4; i++) {
-		AnimTime[i] = animParams.AnimTime[i];
+		AnimTime[i] = titleParams.AnimTime[i];
 	}
-
-	ScaleStart = animParams.ScaleStart;
-	ScaleGoal  = animParams.ScaleGoal;
-	RotateStart = animParams.RotateStart;
-	RotateGoal = animParams.RotateGoal;
-	TransStart = animParams.TransStart;
-	TransGoal = animParams.TransGoal;
-	AlphaStart = animParams.AlphaStart;
-	AlphaGoal = animParams.AlphaGoal;
+	ScaleStart = titleParams.ScaleStart;
+	ScaleGoal  = titleParams.ScaleGoal;
+	RotateStart = titleParams.RotateStart;
+	RotateGoal = titleParams.RotateGoal;
+	TransStart = titleParams.TransStart;
+	TransGoal = titleParams.TransGoal;
+	AlphaStart = titleParams.AlphaStart;
+	AlphaGoal = titleParams.AlphaGoal;
 }

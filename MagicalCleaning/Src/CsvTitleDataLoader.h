@@ -1,8 +1,8 @@
 #pragma once
 #include "CsvLoadBase.h"
 
-// アニメーションパラメータ構造体
-struct AnimParams {
+// パラメータ構造体
+struct TitleParams {
     float AnimTime[4];
     float ScaleStart;
     float ScaleGoal;
@@ -19,7 +19,7 @@ struct AnimParams {
 // ---------------------------------------------------------------------------
 class CsvTitleDataLoader : public CsvLoadBase {
 private:
-    AnimParams animParams;
+    TitleParams titleParams;
 
 public:
     CsvTitleDataLoader(const std::string& filePath);
@@ -27,5 +27,5 @@ public:
     void Load() override;
 
     // 読み込んだデータを取得
-    const AnimParams& GetAnimParams() const { return animParams; }
+    const TitleParams& GetTitleParams() const { return titleParams; }
 };

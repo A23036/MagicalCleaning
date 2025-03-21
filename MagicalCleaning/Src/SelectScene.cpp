@@ -1,26 +1,22 @@
 #include "SelectScene.h"
 #include "SceneBase.h"
-#include "SelectDisplay.h"
 #include "Player.h"
+#include "SelectDisplay.h"
+#include "CsvReader.h"
 
+// ---------------------------------------------------------------------------
+// コンストラクタ
+// ---------------------------------------------------------------------------
 SelectScene::SelectScene()
 {
-	CsvLoad();
-	sprite = new CSprite();
+	//変数の初期化
+	Init();
+
+	//スプライトイメージのロード
 	selectBackImage = new CSpriteImage(_T("data/Image/Select/BackImage.png"));
-
-	for (int i = 0; i < 6; i++) {
-		players[i] = new Player(VECTOR3(i*0.5f - 1.2f, -3, 0), VECTOR3(0, 180 * DegToRad, 0), i);
-		initPos[i] = VECTOR3(i * 0.5f - 1.2f, -3, 0);
-		players[i]->SetScale(0.6f, 0.6f, 0.6f);
-	}
-
+	
+	sprite = new CSprite();
 	sd = new SelectDisplay();
-
-	frm = 0;
-	backFrm = 120;
-
-	scrollX = 0.0f;
 }
 
 SelectScene::~SelectScene()
@@ -28,6 +24,21 @@ SelectScene::~SelectScene()
 	SAFE_DELETE(sprite);
 	SAFE_DELETE(selectBackImage);
 	SAFE_DELETE(csv);
+}
+
+void SelectScene::Init()
+{
+	//定数のCSV読み込み
+	CsvLoad();
+
+	for (int i = 0; i < 6; i++) {
+		players[i] = new Player(VECTOR3(i * 0.5f - 1.2f, -3, 0), VECTOR3(0, 180 * DegToRad, 0), i);
+		initPos[i] = VECTOR3(i * 0.5f - 1.2f, -3, 0);
+		players[i]->SetScale(0.6f, 0.6f, 0.6f);
+	}
+	frm = 0;
+	BackFrm = 120;
+	scrollX = 0.0f;
 }
 
 void SelectScene::Update()
@@ -44,7 +55,7 @@ void SelectScene::Update()
 	}
 
 	if (di->CheckJoy(KD_DAT, 1, 0)) {
-		if (frm > backFrm) { //1Pの一定時間以上戻るボタン入力でタイトルに戻る
+		if (frm > BackFrm) { //1Pの一定時間以上戻るボタン入力でタイトルに戻る
 			SceneManager::ChangeScene("TitleScene");
 			GameDevice()->selectBGM->Stop();
 		}
@@ -97,7 +108,7 @@ void SelectScene::Draw()
 	}
 
 	if (frm != 0) {
-		float rate = (float)frm / (float)backFrm;
+		float rate = (float)frm / (float)BackFrm;
 		float width = 150 * rate;
 		sprite->DrawRect(20, 90, 150, 20, RGB(120,120,120));
 		sprite->DrawRect(20, 90, width, 20, RGB(200, 20, 20));
@@ -113,6 +124,16 @@ void SelectScene::Draw()
 void SelectScene::CsvLoad()
 {
 	// csvからデータ読み込み
+
+	CsvSelectDataLoader dataLoader("data/csv/AnimParam.csv");
+	dataLoader.Load();
+	selectParams = dataLoader.GetSelectParams();
+
+	//読み込んだデータの代入
+	ScrollSpeed = selectParams.ScrollSpeed;
+	BackFrm = selectParams.BackFrm;
+
+	/*
 	csv = new CsvReader("data/csv/AnimParam.csv");
 	if (csv->GetLines() < 1) {
 		MessageBox(NULL, "AnimParam.csvが読めません", "エラー", MB_OK);
@@ -126,4 +147,5 @@ void SelectScene::CsvLoad()
 			}
 		}
 	}
+	*/
 }

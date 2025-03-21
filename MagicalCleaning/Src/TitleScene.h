@@ -30,7 +30,7 @@ public:
 	void CsvLoad(); //CSVファイルから読み込んだデータの設定を行う
 
 private:
-	//各種データ管理クラスのポインタ
+	//各種クラスのポインタ
 	EasingCalc*	 ec;
 	DataCarrier* dc;
 	CSpriteImage*	titleBackImage;		//タイトル画面背景イメージ
@@ -41,7 +41,7 @@ private:
 	CSprite* sprite;
 
 	//CSVファイルから読み込んだデータを格納する構造体
-	AnimParams animParams;
+	TitleParams titleParams;
 
 	//アニメーション用変数
 	float AnimTime[4];	//各アニメーションの時間
