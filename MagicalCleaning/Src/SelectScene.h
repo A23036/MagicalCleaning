@@ -14,7 +14,7 @@ class SelectScene : public SceneBase
 {
 public:
 	SelectScene();
-	~SelectScene();
+	virtual ~SelectScene();
 	void Init();
 	void Update() override;
 	void Draw() override;

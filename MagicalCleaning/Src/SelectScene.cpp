@@ -19,6 +19,9 @@ SelectScene::SelectScene()
 	sd = new SelectDisplay();
 }
 
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
 SelectScene::~SelectScene()
 {
 	SAFE_DELETE(sprite);
@@ -26,6 +29,9 @@ SelectScene::~SelectScene()
 	SAFE_DELETE(csv);
 }
 
+// ---------------------------------------------------------------------------
+// 各変数の初期化処理
+// ---------------------------------------------------------------------------
 void SelectScene::Init()
 {
 	//定数のCSV読み込み
@@ -41,6 +47,11 @@ void SelectScene::Init()
 	scrollX = 0.0f;
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の更新処理
+// 
+// キー/ボタン入力でプレイヤーの色とカメラ設定を行う
+// ---------------------------------------------------------------------------
 void SelectScene::Update()
 {
 	auto di = GameDevice()->m_pDI;
@@ -89,6 +100,12 @@ void SelectScene::Update()
 	}	
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の描画処理
+// 
+// セレクト画面でのスプライト描画、アニメーション処理と
+// プレイヤーキャラクターの描画を行う
+// ---------------------------------------------------------------------------
 void SelectScene::Draw()
 {
 	// 背景スクロール処理
@@ -121,10 +138,13 @@ void SelectScene::Draw()
 		VECTOR3(0, 1, 0)); // 上ベクトル
 }
 
+// ---------------------------------------------------------------------------
+// CSV読み込み処理
+// 
+// セレクト画面での処理に使用する定数のCSV読み込みを行う
+// ---------------------------------------------------------------------------
 void SelectScene::CsvLoad()
 {
-	// csvからデータ読み込み
-
 	CsvSelectDataLoader dataLoader("data/csv/AnimParam.csv");
 	dataLoader.Load();
 	selectParams = dataLoader.GetSelectParams();
@@ -132,20 +152,4 @@ void SelectScene::CsvLoad()
 	//読み込んだデータの代入
 	ScrollSpeed = selectParams.ScrollSpeed;
 	BackFrm = selectParams.BackFrm;
-
-	/*
-	csv = new CsvReader("data/csv/AnimParam.csv");
-	if (csv->GetLines() < 1) {
-		MessageBox(NULL, "AnimParam.csvが読めません", "エラー", MB_OK);
-	}
-
-	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
-		if (csv->GetString(i, 0) == "Select") {
-			
-			if (csv->GetString(i, 1) == "ScrollSpeed") {	// 背景スクロールスピード
-				ScrollSpeed = csv->GetFloat(i, 3);
-			}
-		}
-	}
-	*/
 }
