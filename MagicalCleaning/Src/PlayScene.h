@@ -18,7 +18,7 @@ class PlayScene : public SceneBase
 {
 public:
 	PlayScene();
-	~PlayScene();
+	virtual ~PlayScene();
 	void Update() override;
 	void Draw() override;
 
@@ -26,7 +26,16 @@ public:
 	void LeafDestroyed(Leaf* dust);
 	void SetFinalRank();
 
+	void UpdateTransition();
+	void UpdateReady();
+	void UpdatePose();
+	void UpdateGamePlay();
+	void UpdateFinish();
+	VECTOR3 GetRandomPosition();
+	int GetRandomSize();
+
 private:
+	//各種クラスのポインタ
 	PlayDisplay* pd;
 	SplitScreenLastDraw* ssld;
 	DataCarrier* dc;
@@ -35,8 +44,13 @@ private:
 	Sky* sky;
 	Camera* cm;
 
+	//各プレイヤーを格納した配列
 	vector<Player*> players;
+	
+	//ステージ上のリーフを格納した配列
+	vector<Leaf*> leafArray;
 
+	//各プレイヤーのポインタ
 	Player* p1;
 	Player* p2;
 	Player* p3;
@@ -48,16 +62,7 @@ private:
 	bool isPlay;	//ゲーム中フラグ
 	int rank[MAXPLAYER];	//順位
 
-	static const int MAX_DUST_NUM = 50; //最大生成ゴミ数
-	std::vector<Leaf*> dustArray;
-
-	void UpdateTransition();
-	void UpdateReady();
-	void UpdatePose();
-	void UpdateGamePlay();
-	void UpdateFinish();
-	VECTOR3 GetRandomPosition();
-	int GetRandomSize();
+	static const int MAX_LEAF_NUM = 50; //最大生成リーフ数
 
 	enum GameState {
 		sTransition = 0, //画面トランジション

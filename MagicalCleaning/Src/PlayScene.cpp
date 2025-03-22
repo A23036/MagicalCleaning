@@ -24,7 +24,7 @@ PlayScene::PlayScene()
 	p1 = new Player(0, dc->GetColor(0));
 	p1->SetPosition(0, 0, -45);
 	p1->SetTag("Player1");
-	p2= new Player(1, dc->GetColor(1));
+	p2 = new Player(1, dc->GetColor(1));
 	p2->SetPosition(-45, 0, 0);
 	p2->SetTag("Player2");
 	p3 = new Player(2, dc->GetColor(2));
@@ -149,18 +149,18 @@ void PlayScene::UpdateReady()
 	}
 
 	// 配列の初期化と Dust の生成
-	if (dustArray.empty())
+	if (leafArray.empty())
 	{
-		dustArray.push_back(new Leaf(1, VECTOR3(0, 10, -40)));
-		dustArray.push_back(new Leaf(1, VECTOR3(-40, 10, 0)));
-		dustArray.push_back(new Leaf(1, VECTOR3(0, 10, 40)));
-		dustArray.push_back(new Leaf(1, VECTOR3(40, 10, 0)));
+		leafArray.push_back(new Leaf(1, VECTOR3(0, 10, -40)));
+		leafArray.push_back(new Leaf(1, VECTOR3(-40, 10, 0)));
+		leafArray.push_back(new Leaf(1, VECTOR3(0, 10, 40)));
+		leafArray.push_back(new Leaf(1, VECTOR3(40, 10, 0)));
 
-		for (int i = 4; i < MAX_DUST_NUM; ++i)
+		for (int i = 4; i < MAX_LEAF_NUM; ++i)
 		{
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
-			dustArray.push_back(new Leaf(size, position));
+			leafArray.push_back(new Leaf(size, position));
 		}
 	}
 }
@@ -187,12 +187,12 @@ void PlayScene::UpdateGamePlay()
 	
 
 	// インスタンスがなくなったら再生成
-	if (dustArray.size() < MAX_DUST_NUM) {
-		for (int i = 0; i < (MAX_DUST_NUM - dustArray.size()); i++) {
+	if (leafArray.size() < MAX_LEAF_NUM) {
+		for (int i = 0; i < (MAX_LEAF_NUM - leafArray.size()); i++) {
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
 			Leaf* d = new Leaf(size, position);
-			dustArray.push_back(d);
+			leafArray.push_back(d);
 		}
 	}
 	
@@ -265,10 +265,10 @@ void PlayScene::LeafDestroyed(Leaf* dust)
 		return;
 	}
 	// 配列内から該当の Dust を削除
-	auto it = std::find(dustArray.begin(), dustArray.end(), dust);
-	if (it != dustArray.end())
+	auto it = std::find(leafArray.begin(), leafArray.end(), dust);
+	if (it != leafArray.end())
 	{
-		dustArray.erase(it); // 配列から削除
+		leafArray.erase(it); // 配列から削除
 	}
 }
 
