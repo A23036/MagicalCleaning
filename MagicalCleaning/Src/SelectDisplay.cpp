@@ -1,6 +1,10 @@
 #include "SelectDisplay.h"
+#include "DataCarrier.h"
 #include "EasingCalc.h"
 
+// ---------------------------------------------------------------------------
+// コンストラクタ
+// ---------------------------------------------------------------------------
 SelectDisplay::SelectDisplay()
 {
 	SetDrawOrder(-10000);	// 一番最後に描画する
@@ -11,47 +15,53 @@ SelectDisplay::SelectDisplay()
 	sprite = new CSprite();
 	selectUiImage = new CSpriteImage(_T("data/Image/Select/UI.png"));
 
-	isTransition = true; //開始時、フェードイン
-	isFirst = true;
-	transFrm = 0;
-
-	ColorPosY = WINDOW_HEIGHT * 2/5;		//キャラ選択カラー位置Y
-	ColorIconSize = 64;						//キャラ選択カラーサイズ
-	ColorIconDispSize = 100;				//キャラ選択カラー表示サイズ
-	UiSpace = 50;							//キャラ選択カラー幅
-	GuideUiPosY = WINDOW_HEIGHT - 100;		//操作方法ガイドUI位置Y
-	BackUiPos = VECTOR2(20,20);	//戻るUI位置
-
-	isReadyAll = false;
-	MoveFrm = 10;
-
-	for (int i = 0; i < 4; i++) {
-		state[i] = sColor;
-		playerEntry[i] = false;
-		isSetUpCamera[i] = false;
-		isReady[i] = false;
-		selectCamera[i] = 0;
-		moveFrm[i] = MoveFrm;
-		animFrm[i] = 0;
-	}
-
-	for (int i = 0; i < 6; i++) {
-		isSelect[i] = false;
-	}
-
-	//カラー選択初期値
-	selectColor[0] = 0;
-	selectColor[1] = 0;
-	selectColor[2] = 0;
-	selectColor[3] = 0;
+	//変数の初期化
+	Init();
 }
 
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
 SelectDisplay::~SelectDisplay()
 {
 	SAFE_DELETE(sprite);
 	SAFE_DELETE(selectUiImage);
 }
 
+// ---------------------------------------------------------------------------
+// 各変数の初期化処理
+// ---------------------------------------------------------------------------
+void SelectDisplay::Init()
+{
+	//定数のCSV読み込み
+	CsvLoad();
+
+	isTransition = true;
+	isFirst		= true;
+	isReadyAll	= false;
+	transFrm	= 0;
+
+	for (int i = 0; i < MAXPLAYER; i++) {
+		state[i]			= sColor;
+		playerEntry[i]		= false;
+		isSetUpCamera[i]	= false;
+		isReady[i]			= false;
+		selectCamera[i]		= 0;
+		moveFrm[i]			= MoveFrm;
+		animFrm[i]			= 0;
+		selectColor[i]		= 0;
+	}
+
+	for (int i = 0; i < 6; i++) {
+		isSelect[i] = false;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// セレクト画面の更新処理
+// 
+// セレクト画面のUI動作処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::Update()
 {
 	auto di = GameDevice()->m_pDI;
@@ -103,6 +113,11 @@ void SelectDisplay::Update()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の描画処理
+// 
+// セレクト画面のUI描画処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::Draw()
 {
 	//UIイメージの設定
@@ -199,6 +214,11 @@ void SelectDisplay::Draw()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の描画処理サブ関数
+// 
+// セレクト画面のプレイヤーの状態に応じたUIの描画を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::DrawUI()
 {
 	for (int i = 0; i < MAXPLAYER; i++) {
@@ -334,6 +354,11 @@ void SelectDisplay::DrawUI()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面のトランジション関数
+// 
+// セレクト画面のトランジション処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::Transition()
 {
 	if (isFirst) {
@@ -402,6 +427,11 @@ void SelectDisplay::Transition()
 	
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の更新処理サブ関数
+// 
+// プレイヤーがカラー選択中の処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::UpdateColorSelect(int playerNum, int ix, int iy)
 {
 	auto di = GameDevice()->m_pDI;
@@ -458,7 +488,7 @@ void SelectDisplay::UpdateColorSelect(int playerNum, int ix, int iy)
 	//カラー決定処理
 	if (di->CheckJoy(KD_TRG, 2, playerNum)) {
 		if (isSelect[selectColor[playerNum]]) { //決定したカラーがすでに選択されていた時
-			//せんたくされているよ！
+			//選択されているよ！
 			GameDevice()->cancelSE->Play();
 		}
 		else {
@@ -494,6 +524,11 @@ void SelectDisplay::UpdateColorSelect(int playerNum, int ix, int iy)
 	}
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の更新処理サブ関数
+// 
+// プレイヤーが選択中のカメラ設定の処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::UpdateCameraSetting(int playerNum, int ix, int iy)
 {
 	auto di = GameDevice()->m_pDI;
@@ -527,6 +562,11 @@ void SelectDisplay::UpdateCameraSetting(int playerNum, int ix, int iy)
 	}
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の更新処理サブ関数
+// 
+// プレイヤーの準備完了選択時の処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::UpdateReady(int playerNum)
 {
 	auto di = GameDevice()->m_pDI;
@@ -546,6 +586,11 @@ void SelectDisplay::UpdateReady(int playerNum)
 	}
 }
 
+// ---------------------------------------------------------------------------
+// セレクト画面の更新処理サブ関数
+// 
+// プレイヤーの準備完了選択時の処理を行う
+// ---------------------------------------------------------------------------
 void SelectDisplay::UpdateEnd(int playerNum)
 {
 	auto di = GameDevice()->m_pDI;
@@ -557,4 +602,25 @@ void SelectDisplay::UpdateEnd(int playerNum)
 		animFrm[playerNum] = 0;
 		state[playerNum] = sReady;
 	}
+}
+
+// ---------------------------------------------------------------------------
+// CSV読み込み処理
+// 
+// セレクト画面でのUI描画処理に使用する定数のCSV読み込みを行う
+// ---------------------------------------------------------------------------
+void SelectDisplay::CsvLoad()
+{
+	CsvSelectDataLoader dataLoader("data/csv/AnimParam.csv");
+	dataLoader.Load();
+	selectDisParams = dataLoader.GetSelectDisParams();
+
+	//読み込んだデータの代入
+	ColorPosY		= selectDisParams.ColorPosY;
+	ColorIconSize	= selectDisParams.ColorIconSize;
+	ColorIconDispSize = selectDisParams.ColorIconDispSize;
+	UiSpace			= selectDisParams.UiSpace;
+	GuideUiPosY		= selectDisParams.GuideUiPosY;
+	MoveFrm			= selectDisParams.MoveFrm;
+	BackUiPos		= selectDisParams.BackUiPos;
 }

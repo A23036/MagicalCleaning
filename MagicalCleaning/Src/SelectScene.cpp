@@ -2,7 +2,6 @@
 #include "SceneBase.h"
 #include "Player.h"
 #include "SelectDisplay.h"
-#include "CsvReader.h"
 
 // ---------------------------------------------------------------------------
 // コンストラクタ

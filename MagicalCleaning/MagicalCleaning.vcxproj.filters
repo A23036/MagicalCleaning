@@ -120,6 +120,12 @@
     <Filter Include="ソース ファイル\08_SelectScene\SelectScene">
       <UniqueIdentifier>{6fb35cd2-fed6-4c5f-8c0b-b155789508a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\PlayScene">
+      <UniqueIdentifier>{074190bd-b8a6-4a5d-9ccb-cda0ce9b5f74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\PlayDisplay">
+      <UniqueIdentifier>{e7fcaf41-9310-430d-b788-bae5ee6e8406}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Hlsl\DisplaceSkinMesh.hlsli">
@@ -324,9 +330,6 @@
     <ClInclude Include="Src\MainControl.h">
       <Filter>ソース ファイル\00_Windowsメイン</Filter>
     </ClInclude>
-    <ClInclude Include="Src\PlayScene.h">
-      <Filter>ソース ファイル\09_PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\MeshCollider.h">
       <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
     </ClInclude>
@@ -338,9 +341,6 @@
     </ClInclude>
     <ClInclude Include="Src\StageEdit.h">
       <Filter>ソース ファイル\11_EditScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PlayDisplay.h">
-      <Filter>ソース ファイル\09_PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object3D.h">
       <Filter>ソース ファイル\06_共通</Filter>
@@ -426,6 +426,12 @@
     <ClInclude Include="Src\CsvSelectDataLoader.h">
       <Filter>ソース ファイル\08_SelectScene\CsvSelectDataLoader</Filter>
     </ClInclude>
+    <ClInclude Include="Src\PlayScene.h">
+      <Filter>ソース ファイル\09_PlayScene\PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PlayDisplay.h">
+      <Filter>ソース ファイル\09_PlayScene\PlayDisplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
@@ -503,9 +509,6 @@
     <ClCompile Include="Src\MainControl.cpp">
       <Filter>ソース ファイル\00_Windowsメイン</Filter>
     </ClCompile>
-    <ClCompile Include="Src\PlayScene.cpp">
-      <Filter>ソース ファイル\09_PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\MeshCollider.cpp">
       <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
     </ClCompile>
@@ -517,9 +520,6 @@
     </ClCompile>
     <ClCompile Include="Src\StageEdit.cpp">
       <Filter>ソース ファイル\11_EditScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\PlayDisplay.cpp">
-      <Filter>ソース ファイル\09_PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object3D.cpp">
       <Filter>ソース ファイル\06_共通</Filter>
@@ -601,6 +601,12 @@
     </ClCompile>
     <ClCompile Include="Src\CsvSelectDataLoader.cpp">
       <Filter>ソース ファイル\08_SelectScene\CsvSelectDataLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayScene.cpp">
+      <Filter>ソース ファイル\09_PlayScene\PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayDisplay.cpp">
+      <Filter>ソース ファイル\09_PlayScene\PlayDisplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
