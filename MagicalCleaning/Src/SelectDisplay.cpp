@@ -611,7 +611,7 @@ void SelectDisplay::UpdateEnd(int playerNum)
 // ---------------------------------------------------------------------------
 void SelectDisplay::CsvLoad()
 {
-	CsvSelectDataLoader dataLoader("data/csv/AnimParam.csv");
+	CsvSelectDataLoader dataLoader("data/csv/SceneParam.csv");
 	dataLoader.Load();
 	selectDisParams = dataLoader.GetSelectDisParams();
 

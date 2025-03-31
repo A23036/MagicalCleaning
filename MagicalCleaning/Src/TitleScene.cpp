@@ -296,7 +296,7 @@ void TitleScene::DrawTransition()
 // ---------------------------------------------------------------------------
 void TitleScene::CsvLoad()
 {
-	CsvTitleDataLoader dataLoader("data/csv/AnimParam.csv");
+	CsvTitleDataLoader dataLoader("data/csv/SceneParam.csv");
 	dataLoader.Load();
 	titleParams = dataLoader.GetTitleParams();
 

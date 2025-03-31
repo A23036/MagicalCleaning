@@ -10,42 +10,61 @@
 #include "PlayDisplay.h"
 #include "CsvReader.h"
 
+// ---------------------------------------------------------------------------
+// コンストラクタ
+// ---------------------------------------------------------------------------
 PlayScene::PlayScene()
 {
-	CsvLoad();
+	//DataCarrierのポインタを取得
+	dc = ObjectManager::FindGameObject<DataCarrier>();
+
+	//初期化処理
+	Init();
 
 	pd = new PlayDisplay();
-
-	dc = ObjectManager::FindGameObject<DataCarrier>();
-	
 	st = new Stage();
 	sky = new Sky();
-
-	p1 = new Player(0, dc->GetColor(0));
-	p1->SetPosition(0, 0, -45);
-	p1->SetTag("Player1");
-	p2 = new Player(1, dc->GetColor(1));
-	p2->SetPosition(-45, 0, 0);
-	p2->SetTag("Player2");
-	p3 = new Player(2, dc->GetColor(2));
-	p3->SetPosition(0, 0, 45);
-	p3->SetTag("Player3");
-	p4 = new Player(3, dc->GetColor(3));
-	p4->SetPosition(45, 0, 0);
-	p4->SetTag("Player4");
-
 	cm = new Camera();
 	
-	Leaf* d = new Leaf(3 ,VECTOR3(0, 1, 0));
-	
 	ssld = ObjectManager::FindGameObject<SplitScreenLastDraw>();
-	
+	ssld->SetPlayers(players);
+}
+
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
+PlayScene::~PlayScene()
+{
+	SAFE_DELETE(csv);
+}
+
+// ---------------------------------------------------------------------------
+// 各変数の初期化処理
+// ---------------------------------------------------------------------------
+void PlayScene::Init()
+{
+	//定数のCSV読み込み
+	CsvLoad();
+
+	//各プレイヤーを生成、ポインタを配列に格納
+	p1 = new Player(0, dc->GetColor(0));
+	p2 = new Player(1, dc->GetColor(1));
+	p3 = new Player(2, dc->GetColor(2));
+	p4 = new Player(3, dc->GetColor(3));
 	players.push_back(p1);
 	players.push_back(p2);
 	players.push_back(p3);
 	players.push_back(p4);
 
-	ssld->SetPlayers(players);
+	//各プレイヤー位置の初期化、タグの設定
+	for (int i = 0; i < MAXPLAYER; i++) {
+		string str = "Player" + to_string(i+1);
+		players[i]->SetPosition(InitPos[i].x, InitPos[i].y, InitPos[i].z);
+		players[i]->SetTag(str);
+	}
+
+	//アイテムリーフの初期生成(ステージ中央)
+	Leaf* leaf = new Leaf(3, VECTOR3(0, 1, 0));
 
 	timer = 0;
 	frm = 0;
@@ -54,13 +73,14 @@ PlayScene::PlayScene()
 	//state = sReady;
 }
 
-PlayScene::~PlayScene()
-{
-	SAFE_DELETE(csv);
-}
-
+// ---------------------------------------------------------------------------
+// プレイ画面の更新処理
+// 
+// 経過時間などによるゲーム状態の遷移、各プレイヤーの順位計算などを行う
+// ---------------------------------------------------------------------------
 void PlayScene::Update()
 {
+	//Tキーの入力でタイトル画面へ遷移
 	if (GameDevice()->m_pDI->CheckKey(KD_TRG, DIK_T)) {
 		SceneManager::ChangeScene("TitleScene");
 		GameDevice()->playBGM->Stop();
@@ -70,6 +90,7 @@ void PlayScene::Update()
 		isPlay = false;
 	}
 
+	//ゲーム状態ごとの処理
 	switch (state) {
 	case sTransition:
 		UpdateTransition();
@@ -91,43 +112,29 @@ void PlayScene::Update()
 		break;
 	}
 
+	//ポーズ中でなければ経過時間を加算
 	if (state != sPose) {
 		frm++;
 	}
 
+	//SplitScreenLastDrawで表示する時間のセット
 	ssld->SetState(state);
 	ssld->SetGameTime(timer);
+
+	//DataCarrierへゲーム情報の登録
 	dc->SetGameState(state);
 	dc->SetGameTime(timer);
 	dc->SetIsPlay(isPlay);
 
-	SetFinalRank();	//順位計算
-	dc->SetRank(rank);	//データ格納
+	SetFinalRank();		//順位計算
+	dc->SetRank(rank);	//順位データをセット
 }
 
-void PlayScene::Draw()
-{
-	//GameDevice()->m_pFont->Draw(750, 15, _T("PLAY SCENE"), 32, RGB(255, 0, 0));	
-}
-
-void PlayScene::CsvLoad()
-{
-	// csvからデータ読み込み
-	csv = new CsvReader("data/csv/AnimParam.csv");
-	if (csv->GetLines() < 1) {
-		MessageBox(NULL, "AnimParam.csvが読めません", "エラー", MB_OK);
-	}
-
-	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
-		if (csv->GetString(i, 0) == "Play") {
-			
-			if (csv->GetString(i, 1) == "GameTime") {	// 終了時透明度
-				GameTime = csv->GetFloat(i, 3);
-			}
-		}
-	}
-}
-
+// ---------------------------------------------------------------------------
+// プレイ画面の更新処理サブ関数
+// 
+// トランジション中の処理を行う
+// ---------------------------------------------------------------------------
 void PlayScene::UpdateTransition()
 {
 	if (ssld->GetIsTransFinish()) {
@@ -138,6 +145,11 @@ void PlayScene::UpdateTransition()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// プレイ画面の更新処理サブ関数
+// 
+// カウントダウン中の処理、リーフの初期生成を行う
+// ---------------------------------------------------------------------------
 void PlayScene::UpdateReady()
 {
 	timer = frm * (1.0f / 60.0f);
@@ -148,15 +160,16 @@ void PlayScene::UpdateReady()
 		isPlay = true;
 	}
 
-	// 配列の初期化と Dust の生成
+	// 配列の初期化とLeafの生成
 	if (leafArray.empty())
 	{
+		//各プレイヤーのスタート位置前方に固定出現
 		leafArray.push_back(new Leaf(1, VECTOR3(0, 10, -40)));
 		leafArray.push_back(new Leaf(1, VECTOR3(-40, 10, 0)));
 		leafArray.push_back(new Leaf(1, VECTOR3(0, 10, 40)));
 		leafArray.push_back(new Leaf(1, VECTOR3(40, 10, 0)));
 
-		for (int i = 4; i < MAX_LEAF_NUM; ++i)
+		for (int i = 4; i < MaxLeafNum; ++i)
 		{
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
@@ -165,6 +178,11 @@ void PlayScene::UpdateReady()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// プレイ画面の更新処理サブ関数
+// 
+// ポーズ中の処理
+// ---------------------------------------------------------------------------
 void PlayScene::UpdatePose()
 {
 	if (GameDevice()->m_pDI->CheckJoy(KD_TRG, 9, 0)) {
@@ -173,6 +191,11 @@ void PlayScene::UpdatePose()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// プレイ画面の更新処理サブ関数
+// 
+// ゲーム中の処理、リーフの再生成を行う
+// ---------------------------------------------------------------------------
 void PlayScene::UpdateGamePlay()
 {
 	timer = GameTime - int(frm * (1.0f / 60.0f));
@@ -184,11 +207,9 @@ void PlayScene::UpdateGamePlay()
 		isPlay = false;
 	}
 
-	
-
-	// インスタンスがなくなったら再生成
-	if (leafArray.size() < MAX_LEAF_NUM) {
-		for (int i = 0; i < (MAX_LEAF_NUM - leafArray.size()); i++) {
+	// leafのインスタンスがなくなったら再生成
+	if (leafArray.size() < MaxLeafNum) {
+		for (int i = 0; i < (MaxLeafNum - leafArray.size()); i++) {
 			int size = GetRandomSize();
 			VECTOR3 position = GetRandomPosition();
 			Leaf* d = new Leaf(size, position);
@@ -203,12 +224,17 @@ void PlayScene::UpdateGamePlay()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// プレイ画面の更新処理サブ関数
+// 
+// ゲーム終了時の処理、順位計算とボーナス用変数の格納を行う
+// ---------------------------------------------------------------------------
 void PlayScene::UpdateFinish()
 {
 	timer = frm * (1.0f / 60.0f);
 	if (timer >= 4) { //リザルトへ
 		std::list<Player*> players = ObjectManager::FindGameObjects<Player>();
-		int max=0;
+		int max = 0;
 		int winner = -1;
 		for (Player* pl : players)
 		{
@@ -235,14 +261,24 @@ void PlayScene::UpdateFinish()
 	}
 }
 
+// ---------------------------------------------------------------------------
+// リーフのランダムな配置を返す関数
+// 
+// CSVファイルから取得した座標をもとにリーフのランダムな位置を返す
+// ---------------------------------------------------------------------------
 VECTOR3 PlayScene::GetRandomPosition()
 {
-	int x = Random(-40,40);		// -40 ~ 40
-	int z = Random(-40, 40);	// -40 ~ 40
-	int y = Random(10, 15);		// 10~15
+	int x = Random(LeafSpawnRangeMin, LeafSpawnRangeMax);
+	int z = Random(LeafSpawnRangeMin, LeafSpawnRangeMax);
+	int y = Random(LeafSpawnHeightMin, LeafSpawnHeightMax);
 	return VECTOR3(x, y, z);
 }
 
+// ---------------------------------------------------------------------------
+// リーフのサイズをランダムに返す関数
+// 
+// CSVファイルから取得した確率をもとにリーフのランダムなサイズを返す
+// ---------------------------------------------------------------------------
 int PlayScene::GetRandomSize()
 {
 	int size = Random(0, 20);
@@ -257,21 +293,29 @@ int PlayScene::GetRandomSize()
 	}
 }
 
-void PlayScene::LeafDestroyed(Leaf* dust)
+// ---------------------------------------------------------------------------
+// リーフの消去時の処理
+// 
+// CSVファイルから取得した確率をもとにリーフのランダムなサイズを返す
+// ---------------------------------------------------------------------------
+void PlayScene::LeafDestroyed(Leaf* leaf)
 {
-	if (dust->GetNum() == 3) { //透明化アイテム
+	if (leaf->GetNum() == 3) { //透明化アイテム
 		VECTOR3 pos = VECTOR3(GetRandomPosition());
 		new Leaf(3, pos);
 		return;
 	}
-	// 配列内から該当の Dust を削除
-	auto it = std::find(leafArray.begin(), leafArray.end(), dust);
+	// 配列内から該当のLeafを削除
+	auto it = std::find(leafArray.begin(), leafArray.end(), leaf);
 	if (it != leafArray.end())
 	{
 		leafArray.erase(it); // 配列から削除
 	}
 }
 
+// ---------------------------------------------------------------------------
+// プレイヤーのスコアから順位の計算を行う関数
+// ---------------------------------------------------------------------------
 void PlayScene::SetFinalRank()
 {
 	int i = 0, j = 0, max = -1;
@@ -288,5 +332,29 @@ void PlayScene::SetFinalRank()
 				rank[i]++; 
 			}
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CSV読み込み処理
+// 
+// プレイ画面での処理に使用する定数のCSV読み込みを行う
+// ---------------------------------------------------------------------------
+void PlayScene::CsvLoad()
+{
+	CsvPlayDataLoader dataLoader("data/csv/SceneParam.csv");
+	dataLoader.Load();
+	playParams = dataLoader.GetPlayParams();
+
+	//読み込んだ構造体からデータの代入
+	GameTime = playParams.GameTime;
+	MaxLeafNum = playParams.MaxLeafNum;
+	LeafSpawnRangeMin = playParams.LeafSpawnRangeMin;	
+	LeafSpawnRangeMax = playParams.LeafSpawnRangeMax;
+	LeafSpawnHeightMin = playParams.LeafSpawnHeightMin;
+	LeafSpawnHeightMax = playParams.LeafSpawnHeightMax;
+
+	for (int i = 0; i < MAXPLAYER; i++) {
+		InitPos[i] = playParams.InitPos[i];
 	}
 }

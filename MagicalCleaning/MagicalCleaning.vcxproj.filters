@@ -57,9 +57,6 @@
     <Filter Include="ソース ファイル\11_EditScene">
       <UniqueIdentifier>{ece38b31-79e1-4bea-bc61-a0a5333af717}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\07_TitleScene\CsvTitleDataLoader">
-      <UniqueIdentifier>{0e304e2b-12fa-423b-8039-bccb46b9ed00}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\12_CsvLoadBase">
       <UniqueIdentifier>{4bb44096-b4d8-4607-b2a0-36c8b91d35ac}</UniqueIdentifier>
     </Filter>
@@ -69,62 +66,80 @@
     <Filter Include="ソース ファイル\09_PlayScene">
       <UniqueIdentifier>{4f55240d-3df0-4a98-9478-dd6bc43408e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0900_Player">
-      <UniqueIdentifier>{f724c8cb-8852-494c-a0c7-4335be8d013a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0900_Player\Player">
-      <UniqueIdentifier>{c1612be7-70be-4f35-bdc5-342a0b192243}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0900_Player\Broom">
-      <UniqueIdentifier>{6f015bdd-d8b5-4954-9fb7-b9bf6c62ec91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0901_Camera">
-      <UniqueIdentifier>{eb837fdb-8e52-4f45-8739-054d67353759}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0902_Stage">
-      <UniqueIdentifier>{fde8d94e-a822-47d3-a542-294d8629dd5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0903_Leaf">
-      <UniqueIdentifier>{5cfaa5c6-1326-4796-b741-8a6e78e3366f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect">
-      <UniqueIdentifier>{5e885e03-7f9b-4906-8fa3-28b306a2269f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect\JumpEffect">
-      <UniqueIdentifier>{f5e97910-1614-4cc9-a30e-5b7cd93ff7cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect\LeafEffect">
-      <UniqueIdentifier>{cc749455-5a8e-40b8-9735-ef1577cd2469}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect\MagicCircleEffect">
-      <UniqueIdentifier>{daceb81f-6e71-4b1b-86b6-96f7f7dcac95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect\PowerUpEffect">
-      <UniqueIdentifier>{953b610f-e57d-463c-9cdc-fc7bdd9c057f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect\TeleportCircleEffect">
-      <UniqueIdentifier>{0ad99bb7-6643-485f-a9c0-ae91c8750fd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0904_Effect\SlashEffect">
-      <UniqueIdentifier>{601a26a2-ca8b-47ae-9186-41c69c1b2b2c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\07_TitleScene\TitleScene">
+    <Filter Include="ソース ファイル\07_TitleScene\0700_TitleScene">
       <UniqueIdentifier>{7bab3a8e-24cd-43f4-887c-dfa0aa946247}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\08_SelectScene\SelectDisplay">
-      <UniqueIdentifier>{6444c27d-a992-409b-ab2a-4663a118c7b7}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\07_TitleScene\0701_CsvTitleDataLoader">
+      <UniqueIdentifier>{0e304e2b-12fa-423b-8039-bccb46b9ed00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\08_SelectScene\CsvSelectDataLoader">
-      <UniqueIdentifier>{c13c9af8-f5c1-4579-bfa9-375485b9230d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\08_SelectScene\SelectScene">
+    <Filter Include="ソース ファイル\08_SelectScene\0800_SelectScene">
       <UniqueIdentifier>{6fb35cd2-fed6-4c5f-8c0b-b155789508a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\PlayScene">
+    <Filter Include="ソース ファイル\08_SelectScene\0801_SelectDisplay">
+      <UniqueIdentifier>{6444c27d-a992-409b-ab2a-4663a118c7b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\08_SelectScene\0802_CsvSelectDataLoader">
+      <UniqueIdentifier>{c13c9af8-f5c1-4579-bfa9-375485b9230d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0900_PlayScene">
       <UniqueIdentifier>{074190bd-b8a6-4a5d-9ccb-cda0ce9b5f74}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\PlayDisplay">
+    <Filter Include="ソース ファイル\09_PlayScene\0901_PlayDisplay">
       <UniqueIdentifier>{e7fcaf41-9310-430d-b788-bae5ee6e8406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player">
+      <UniqueIdentifier>{f724c8cb-8852-494c-a0c7-4335be8d013a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\Player">
+      <UniqueIdentifier>{c1612be7-70be-4f35-bdc5-342a0b192243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\Broom">
+      <UniqueIdentifier>{6f015bdd-d8b5-4954-9fb7-b9bf6c62ec91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0903_Camera">
+      <UniqueIdentifier>{eb837fdb-8e52-4f45-8739-054d67353759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0904_Stage">
+      <UniqueIdentifier>{fde8d94e-a822-47d3-a542-294d8629dd5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0905_Leaf">
+      <UniqueIdentifier>{5cfaa5c6-1326-4796-b741-8a6e78e3366f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect">
+      <UniqueIdentifier>{5e885e03-7f9b-4906-8fa3-28b306a2269f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect\JumpEffect">
+      <UniqueIdentifier>{f5e97910-1614-4cc9-a30e-5b7cd93ff7cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect\LeafEffect">
+      <UniqueIdentifier>{cc749455-5a8e-40b8-9735-ef1577cd2469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect\MagicCircleEffect">
+      <UniqueIdentifier>{daceb81f-6e71-4b1b-86b6-96f7f7dcac95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect\PowerUpEffect">
+      <UniqueIdentifier>{953b610f-e57d-463c-9cdc-fc7bdd9c057f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect\TeleportCircleEffect">
+      <UniqueIdentifier>{0ad99bb7-6643-485f-a9c0-ae91c8750fd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0906_Effect\SlashEffect">
+      <UniqueIdentifier>{601a26a2-ca8b-47ae-9186-41c69c1b2b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\10_ResultScene\1000_ResultScene">
+      <UniqueIdentifier>{76270f95-6725-431d-b4ec-4e6da4e7ebd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\10_ResultScene\1001_ResultDisplay">
+      <UniqueIdentifier>{3af2103f-7249-4110-88ca-3624e5ac3d28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\11_EditScene\1100_EditScene">
+      <UniqueIdentifier>{03a970ea-b109-4909-805d-a09205db1317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\11_EditScene\1101_StageEdit">
+      <UniqueIdentifier>{1d31e7b8-d6c7-477a-9bde-cf67bcc63f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\CsvPlayDataLoader">
+      <UniqueIdentifier>{7457f5cc-6b62-4635-9430-fbc916146dbd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -336,12 +351,6 @@
     <ClInclude Include="Src\CsvReader.h">
       <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="Src\EditScene.h">
-      <Filter>ソース ファイル\11_EditScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\StageEdit.h">
-      <Filter>ソース ファイル\11_EditScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Object3D.h">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClInclude>
@@ -357,80 +366,89 @@
     <ClInclude Include="Src\EasingCalc.h">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ResultScene.h">
-      <Filter>ソース ファイル\10_ResultScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Particle.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ResultDisplay.h">
-      <Filter>ソース ファイル\10_ResultScene</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect</Filter>
     </ClInclude>
     <ClInclude Include="Src\DataCarrier.h">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClInclude>
     <ClInclude Include="Src\Camera.h">
-      <Filter>ソース ファイル\09_PlayScene\0901_Camera</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0903_Camera</Filter>
     </ClInclude>
     <ClInclude Include="Src\Leaf.h">
-      <Filter>ソース ファイル\09_PlayScene\0903_Leaf</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0905_Leaf</Filter>
     </ClInclude>
     <ClInclude Include="Src\Stage.h">
-      <Filter>ソース ファイル\09_PlayScene\0902_Stage</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0904_Stage</Filter>
     </ClInclude>
     <ClInclude Include="Src\BlockFileName.h">
-      <Filter>ソース ファイル\09_PlayScene\0902_Stage</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0904_Stage</Filter>
     </ClInclude>
     <ClInclude Include="Src\Sky.h">
-      <Filter>ソース ファイル\09_PlayScene\0902_Stage</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0904_Stage</Filter>
     </ClInclude>
     <ClInclude Include="Src\JumpEffect.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\JumpEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\JumpEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\LeafEffect.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\LeafEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\LeafEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\MagicCircleEffect.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\MagicCircleEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\MagicCircleEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\PowerUpEffect.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\PowerUpEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\PowerUpEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\TeleportCircleEffect.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\TeleportCircleEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\TeleportCircleEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\SlashEffect.h">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\SlashEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\SlashEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\Player.h">
-      <Filter>ソース ファイル\09_PlayScene\0900_Player\Player</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\Player</Filter>
     </ClInclude>
     <ClInclude Include="Src\Broom.h">
-      <Filter>ソース ファイル\09_PlayScene\0900_Player\Broom</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\Broom</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvTitleDataLoader.h">
-      <Filter>ソース ファイル\07_TitleScene\CsvTitleDataLoader</Filter>
+      <Filter>ソース ファイル\07_TitleScene\0701_CsvTitleDataLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvLoadBase.h">
       <Filter>ソース ファイル\12_CsvLoadBase</Filter>
     </ClInclude>
     <ClInclude Include="Src\TitleScene.h">
-      <Filter>ソース ファイル\07_TitleScene\TitleScene</Filter>
+      <Filter>ソース ファイル\07_TitleScene\0700_TitleScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\SelectScene.h">
-      <Filter>ソース ファイル\08_SelectScene\SelectScene</Filter>
+      <Filter>ソース ファイル\08_SelectScene\0800_SelectScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\SelectDisplay.h">
-      <Filter>ソース ファイル\08_SelectScene\SelectDisplay</Filter>
+      <Filter>ソース ファイル\08_SelectScene\0801_SelectDisplay</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvSelectDataLoader.h">
-      <Filter>ソース ファイル\08_SelectScene\CsvSelectDataLoader</Filter>
+      <Filter>ソース ファイル\08_SelectScene\0802_CsvSelectDataLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayScene.h">
-      <Filter>ソース ファイル\09_PlayScene\PlayScene</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0900_PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayDisplay.h">
-      <Filter>ソース ファイル\09_PlayScene\PlayDisplay</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0901_PlayDisplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResultScene.h">
+      <Filter>ソース ファイル\10_ResultScene\1000_ResultScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResultDisplay.h">
+      <Filter>ソース ファイル\10_ResultScene\1001_ResultDisplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditScene.h">
+      <Filter>ソース ファイル\11_EditScene\1100_EditScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StageEdit.h">
+      <Filter>ソース ファイル\11_EditScene\1101_StageEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CsvPlayDataLoader.h">
+      <Filter>ソース ファイル\09_PlayScene\CsvPlayDataLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -515,12 +533,6 @@
     <ClCompile Include="Src\CsvReader.cpp">
       <Filter>ソース ファイル\02_ゲームライブラリ</Filter>
     </ClCompile>
-    <ClCompile Include="Src\EditScene.cpp">
-      <Filter>ソース ファイル\11_EditScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\StageEdit.cpp">
-      <Filter>ソース ファイル\11_EditScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object3D.cpp">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClCompile>
@@ -536,77 +548,86 @@
     <ClCompile Include="Src\EasingCalc.cpp">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ResultScene.cpp">
-      <Filter>ソース ファイル\10_ResultScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Particle.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ResultDisplay.cpp">
-      <Filter>ソース ファイル\10_ResultScene</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect</Filter>
     </ClCompile>
     <ClCompile Include="Src\DataCarrier.cpp">
       <Filter>ソース ファイル\06_共通</Filter>
     </ClCompile>
     <ClCompile Include="Src\Camera.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0901_Camera</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0903_Camera</Filter>
     </ClCompile>
     <ClCompile Include="Src\Leaf.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0903_Leaf</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0905_Leaf</Filter>
     </ClCompile>
     <ClCompile Include="Src\Stage.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0902_Stage</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0904_Stage</Filter>
     </ClCompile>
     <ClCompile Include="Src\Sky.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0902_Stage</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0904_Stage</Filter>
     </ClCompile>
     <ClCompile Include="Src\JumpEffect.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\JumpEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\JumpEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\LeafEffect.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\LeafEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\LeafEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\MagicCircleEffect.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\MagicCircleEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\MagicCircleEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\PowerUpEffect.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\PowerUpEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\PowerUpEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\TeleportCircleEffect.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\TeleportCircleEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\TeleportCircleEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\SlashEffect.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0904_Effect\SlashEffect</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0906_Effect\SlashEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\Player.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0900_Player\Player</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\Player</Filter>
     </ClCompile>
     <ClCompile Include="Src\Broom.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0900_Player\Broom</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\Broom</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvTitleDataLoader.cpp">
-      <Filter>ソース ファイル\07_TitleScene\CsvTitleDataLoader</Filter>
+      <Filter>ソース ファイル\07_TitleScene\0701_CsvTitleDataLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvLoadBase.cpp">
       <Filter>ソース ファイル\12_CsvLoadBase</Filter>
     </ClCompile>
     <ClCompile Include="Src\TitleScene.cpp">
-      <Filter>ソース ファイル\07_TitleScene\TitleScene</Filter>
+      <Filter>ソース ファイル\07_TitleScene\0700_TitleScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\SelectScene.cpp">
-      <Filter>ソース ファイル\08_SelectScene\SelectScene</Filter>
+      <Filter>ソース ファイル\08_SelectScene\0800_SelectScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\SelectDisplay.cpp">
-      <Filter>ソース ファイル\08_SelectScene\SelectDisplay</Filter>
+      <Filter>ソース ファイル\08_SelectScene\0801_SelectDisplay</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvSelectDataLoader.cpp">
-      <Filter>ソース ファイル\08_SelectScene\CsvSelectDataLoader</Filter>
+      <Filter>ソース ファイル\08_SelectScene\0802_CsvSelectDataLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayScene.cpp">
-      <Filter>ソース ファイル\09_PlayScene\PlayScene</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0900_PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayDisplay.cpp">
-      <Filter>ソース ファイル\09_PlayScene\PlayDisplay</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0901_PlayDisplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ResultScene.cpp">
+      <Filter>ソース ファイル\10_ResultScene\1000_ResultScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ResultDisplay.cpp">
+      <Filter>ソース ファイル\10_ResultScene\1001_ResultDisplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditScene.cpp">
+      <Filter>ソース ファイル\11_EditScene\1100_EditScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StageEdit.cpp">
+      <Filter>ソース ファイル\11_EditScene\1101_StageEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CsvPlayDataLoader.cpp">
+      <Filter>ソース ファイル\09_PlayScene\CsvPlayDataLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -144,7 +144,7 @@ void SelectScene::Draw()
 // ---------------------------------------------------------------------------
 void SelectScene::CsvLoad()
 {
-	CsvSelectDataLoader dataLoader("data/csv/AnimParam.csv");
+	CsvSelectDataLoader dataLoader("data/csv/SceneParam.csv");
 	dataLoader.Load();
 	selectParams = dataLoader.GetSelectParams();
 

@@ -526,6 +526,7 @@
     <ClInclude Include="Src\CapsuleCollider.h" />
     <ClInclude Include="Src\Collision.h" />
     <ClInclude Include="Src\CsvLoadBase.h" />
+    <ClInclude Include="Src\CsvPlayDataLoader.h" />
     <ClInclude Include="Src\CsvReader.h" />
     <ClInclude Include="Src\CsvSelectDataLoader.h" />
     <ClInclude Include="Src\CsvTitleDataLoader.h" />
@@ -589,6 +590,7 @@
     <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\Collision.cpp" />
     <ClCompile Include="Src\CsvLoadBase.cpp" />
+    <ClCompile Include="Src\CsvPlayDataLoader.cpp" />
     <ClCompile Include="Src\CsvReader.cpp" />
     <ClCompile Include="Src\CsvSelectDataLoader.cpp" />
     <ClCompile Include="Src\CsvTitleDataLoader.cpp" />
