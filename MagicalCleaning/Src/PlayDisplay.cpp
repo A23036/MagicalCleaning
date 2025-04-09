@@ -4,48 +4,43 @@
 #include "DataCarrier.h"
 #include "EasingCalc.h"
 
+//定数定義
+namespace {
+	//アニメーション用定数
+	static const float ROT_START = 0.0f;
+	static const float ROT_GOAL = 360.0f * DegToRad;
+	static const float SCALE_START = 0.0f;
+	static const float SCALE_GOAL = 2.0f;
 
+	//能力UI位置座標定数
+	static const int ICON_POS_BASE = 64;
+	static const int TEXT_POS_BASE = 68;
+
+	//プレイヤー初期化用定数
+	static const int NOT_PLAYER = -1;
+}
+
+// ---------------------------------------------------------------------------
+// コンストラクタ
+// ---------------------------------------------------------------------------
 PlayDisplay::PlayDisplay()
 {
 	SetPriority(-9999); 	// 最後より一つ前に処理する
 	SetDrawOrder(-10000);	// 一番最後に描画する
+
+	//変数の初期化
+	Init();
 
 	countDownImage = new CSpriteImage(_T("data/Image/Play/CountDown.png"));
 	playUiImage = new CSpriteImage(_T("data/Image/Play/UISprite.png"));
 	playUiImage2 = new CSpriteImage(_T("data/Image/Play/UISprite2.png"));
 
 	sprite = new CSprite();
-	
-	animFrm = 0;
-	animTime = 0;
-	isLastSpurt = false;
-	
-	rotStart = 0;
-	rotGoal = 360 * DegToRad;
-	ScaleStart = 0.0f;
-	ScaleGoal = 2.0f;
-
-	for (int i = 0; i < 4; i++) {
-		msIconPosX[i] = 0;
-		jnIconPosX[i] = 64;
-		asIconPosX[i] = 128;
-		arIconPosX[i] = 192;
-		cwIconPosX[i] = 256;
-
-		msTextPosX[i] = 0;
-		jnTextPosX[i] = 68;
-		asTextPosX[i] = 68*2;
-		arTextPosX[i] = 68*3;
-		cwTextPosX[i] = 68*4;
-		for (int j = 0; j < MAXPLAYER; j++) {
-			isMaxLv[i][j];
-		}
-		isPlaySound[i] = false;
-		blowPlayerList[i] = -1;
-		blowAnimFrm[i] = 0;
-	}
 }
 
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
 PlayDisplay::~PlayDisplay()
 {
 	SAFE_DELETE(countDownImage);
@@ -54,12 +49,53 @@ PlayDisplay::~PlayDisplay()
 	SAFE_DELETE(sprite);
 }
 
+// ---------------------------------------------------------------------------
+// 開始時に呼ばれる関数
+// 
+// オブジェクトを生成後、最初にUpdate()の前に呼ばれる
+// ---------------------------------------------------------------------------
 void PlayDisplay::Start()
 {
 	dc = ObjectManager::FindGameObject<DataCarrier>();
 	ec = ObjectManager::FindGameObject<EasingCalc>();
 }
 
+// ---------------------------------------------------------------------------
+// 各変数の初期化処理
+// ---------------------------------------------------------------------------
+void PlayDisplay::Init()
+{
+	animFrm = 0;
+	animTime = 0;
+	isLastSpurt = false;
+
+	for (int i = 0; i < 4; i++) {
+		msIconPosX[i] = 0;
+		jnIconPosX[i] = ICON_POS_BASE;
+		asIconPosX[i] = ICON_POS_BASE * 2;
+		arIconPosX[i] = ICON_POS_BASE * 3;
+		cwIconPosX[i] = ICON_POS_BASE * 4;
+
+		msTextPosX[i] = 0;
+		jnTextPosX[i] = TEXT_POS_BASE;
+		asTextPosX[i] = TEXT_POS_BASE * 2;
+		arTextPosX[i] = TEXT_POS_BASE * 3;
+		cwTextPosX[i] = TEXT_POS_BASE * 4;
+
+		for (int j = 0; j < MAXPLAYER; j++) {
+			isMaxLv[i][j] = false;
+		}
+		isPlaySound[i] = false;
+		blowPlayerList[i] = NOT_PLAYER;
+		blowAnimFrm[i] = 0;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// プレイ画面UIの更新処理
+// 
+// UI描画のためのゲーム状態、経過時間の取得を行う
+// ---------------------------------------------------------------------------
 void PlayDisplay::Update()
 {
 	animTime = (1.0f / 60.0f) * animFrm;
@@ -73,45 +109,155 @@ void PlayDisplay::Update()
 	animFrm++;
 }
 
+// ---------------------------------------------------------------------------
+// プレイ画面UIの描画処理
+// 
+// 各プレイヤー画面ごとにそれぞれのUI描画を行う
+// ---------------------------------------------------------------------------
 void PlayDisplay::Draw()
 {
-	char str[64]; //文字列
-	int posX = 0, posY = 0, offX = 0, offY = 0;
-
-	auto font = GameDevice()->m_pFont;
-
+	//スプライトの透明度の初期化
 	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
 
-	//ゲーム開始時のカウントダウン表示
+	//アニメーションUI表示
+	DrawAnimationUI();
+
+	//プレイヤーごとの基本UI表示
+	std::string s = "Player";
+	int n = ObjectManager::DrawCounter();
+	s = s + std::to_string(n + 1);
+	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
+	int plNum = pl->GetPlayerNum();
+
+	//基本UI描画
+	DrawBaseUI(pl);
+
+	//透明化時、残り時間表示
+	if (pl->GetIsInvisible()) {
+		float time = pl->GetCurInvisibleTime() / 60.0f;
+		float rate = (pl->GetInvisibleTime() - time) / pl->GetInvisibleTime();
+		float width = 150 * rate;
+		sprite->DrawRect(WINDOW_WIDTH/2 - 75, WINDOW_HEIGHT/2 - 60, width,20, RGB(220, 20, 20));
+	}
+
+	//吹っ飛ばされた、UIアニメーションUI再生
+	if (blowPlayerList[plNum] != -1) {
+		//アイコンの設定
+		sprite->SetSrc(playUiImage, 256 + 72 * dc->GetColor(blowPlayerList[plNum]), 624, 68, 64);
+		//アイコンアニメーション
+		DrawBlowPlayer(blowPlayerList[plNum], plNum);
+	}
+}
+
+// ---------------------------------------------------------------------------
+// プレイ画面アニメーションUIの描画処理
+// 
+// 各プレイヤー画面ごとにアニメーションUIの描画を行う
+// ---------------------------------------------------------------------------
+void PlayDisplay::DrawAnimationUI()
+{
+	//開始待機中
 	if (gameState == sReady) {
-		if (gameTime == 0) {
-			sprite->SetSrc(countDownImage, 132, 0, 66, 66);
-			if (!isPlaySound[0]) {
-				GameDevice()->countDownSE->Play();
-				isPlaySound[0] = true;
-			}
+		//カウントダウン表示
+		DrawCountDown();
+	}
+
+	//ゲームプレイ中
+	if (gameState == sGamePlay) {
+		//ラストスパート時UI表示
+		DrawLastSpurt();
+
+		if (gameTime < 10 && gameTime != 0) {
+			//終了カウントダウンアニメーション表示
+			DrawFinishCount();
 		}
-		if (gameTime == 1) {
-			sprite->SetSrc(countDownImage, 66, 0, 66, 66);
-			if (!isPlaySound[1]) {
-				GameDevice()->countDownSE->Play();
-				isPlaySound[1] = true;
-			}
+	}
+	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
+
+	//終了時
+	if (gameState == sFinish) {
+		DrawFinish();
+	}
+}
+
+// ---------------------------------------------------------------------------
+// プレイ画面アニメーションUIの描画処理サブ関数
+// 
+// バトル開始前カウントダウンのアニメーション描画を行う
+// ---------------------------------------------------------------------------
+void PlayDisplay::DrawCountDown()
+{
+	if (gameTime == 0) {
+		sprite->SetSrc(countDownImage, 132, 0, 66, 66);
+		if (!isPlaySound[0]) {
+			GameDevice()->countDownSE->Play();
+			isPlaySound[0] = true;
 		}
-		if (gameTime == 2) {
-			sprite->SetSrc(countDownImage, 0, 0, 66, 66);
-			if (!isPlaySound[2]) {
-				GameDevice()->countDownSE->Play();
-				isPlaySound[2] = true;
-			}
+	}
+	if (gameTime == 1) {
+		sprite->SetSrc(countDownImage, 66, 0, 66, 66);
+		if (!isPlaySound[1]) {
+			GameDevice()->countDownSE->Play();
+			isPlaySound[1] = true;
 		}
-		if (gameTime == 3) {
-			sprite->SetSrc(countDownImage, 198, 0, 186, 66);
-			if (!isPlaySound[3]) {
-				GameDevice()->whistleSE->Play();
-				isPlaySound[3] = true;
-			}
+	}
+	if (gameTime == 2) {
+		sprite->SetSrc(countDownImage, 0, 0, 66, 66);
+		if (!isPlaySound[2]) {
+			GameDevice()->countDownSE->Play();
+			isPlaySound[2] = true;
 		}
+	}
+	if (gameTime == 3) {
+		sprite->SetSrc(countDownImage, 198, 0, 186, 66);
+		if (!isPlaySound[3]) {
+			GameDevice()->whistleSE->Play();
+			isPlaySound[3] = true;
+		}
+	}
+	int width, height;
+	VECTOR2 center;
+	width = sprite->GetSrcWidth();
+	height = sprite->GetSrcHeight();
+	center.x = WINDOW_WIDTH / 2;
+	center.y = WINDOW_HEIGHT / 2;
+
+	// アニメーションの進行度計算
+	float timeRate = animTime / 1.0f;
+	float rate = ec->easeOutBack(timeRate); // 滑らかな拡大
+	
+	float rotation = (ROT_GOAL - ROT_START) * rate + ROT_START;	// 回転
+	float scale = (SCALE_GOAL - SCALE_START) * rate + SCALE_START;	// 拡大倍率
+
+	// 回転中心を画像の中心にするための補正
+	float pivotX = width / 2.0f;
+	float pivotY = height / 2.0f;
+
+	// ワールド行列の計算
+	MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+		* XMMatrixRotationZ(rotation)
+		* XMMatrixScaling(scale, scale, 1.0f)
+		* XMMatrixTranslation(center.x, center.y, 0);
+
+	// スプライトをワールド行列を使用して描画
+	sprite->Draw(m);
+}
+
+// ---------------------------------------------------------------------------
+// プレイ画面アニメーションUIの描画処理サブ関数
+// 
+// バトル中のラストスパートのアニメーション描画を行う
+// ---------------------------------------------------------------------------
+void PlayDisplay::DrawLastSpurt()
+{
+	if (gameTime == 60) {
+		if (!isLastSpurt) {
+			GameDevice()->timeSE->Play();
+			GameDevice()->playBGM->Stop();
+			isLastSpurt = true;
+			GameDevice()->spurtBGM->Play();
+		}
+		sprite->SetSrc(playUiImage, 260, 380, 200, 80);
 		int width, height;
 		VECTOR2 center;
 		width = sprite->GetSrcWidth();
@@ -121,10 +267,9 @@ void PlayDisplay::Draw()
 
 		// アニメーションの進行度計算
 		float timeRate = animTime / 1.0f;
-		float rate = ec->easeOutBack(timeRate); // 滑らかな拡大
+		float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
 
-		float rotation = (rotGoal - rotStart) * rate + rotStart;	// 回転
-		float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// 拡大倍率
+		float scale = (SCALE_GOAL - SCALE_START) * rate + SCALE_START;	// 拡大倍率
 
 		// 回転中心を画像の中心にするための補正
 		float pivotX = width / 2.0f;
@@ -132,121 +277,98 @@ void PlayDisplay::Draw()
 
 		// ワールド行列の計算
 		MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
-			* XMMatrixRotationZ(rotation)
 			* XMMatrixScaling(scale, scale, 1.0f)
 			* XMMatrixTranslation(center.x, center.y, 0);
 
 		// スプライトをワールド行列を使用して描画
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
 		sprite->Draw(m);
 	}
-
-	//ラストスパート時UI表示
-	if (gameState == sGamePlay) {
-		if (gameTime == 60) {
-			if (!isLastSpurt){
-				GameDevice()->timeSE->Play();
-				GameDevice()->playBGM->Stop();
-				isLastSpurt = true;
-				GameDevice()->spurtBGM->Play();
-			}
-			sprite->SetSrc(playUiImage, 260, 380, 200, 80);
-			int width, height;
-			VECTOR2 center;
-			width = sprite->GetSrcWidth();
-			height = sprite->GetSrcHeight();
-			center.x = WINDOW_WIDTH / 2;
-			center.y = WINDOW_HEIGHT / 2;
-
-			// アニメーションの進行度計算
-			float timeRate = animTime / 1.0f;
-			float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
-			
-			float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// 拡大倍率
-
-			// 回転中心を画像の中心にするための補正
-			float pivotX = width / 2.0f;
-			float pivotY = height / 2.0f;
-
-			// ワールド行列の計算
-			MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
-				* XMMatrixScaling(scale, scale, 1.0f)
-				* XMMatrixTranslation(center.x, center.y, 0);
-
-			// スプライトをワールド行列を使用して描画
-			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.6f);
-			sprite->Draw(m);
-		}
-		if (gameTime == 59) {
-			sprite->SetSrc(playUiImage, 260, 380, 200, 80, 400, 160);
-			int width, height;
-			VECTOR2 center;
-			width = sprite->GetSrcWidth();
-			height = sprite->GetSrcHeight();
-			center.x = WINDOW_WIDTH / 2 - width;
-			center.y = WINDOW_HEIGHT / 2 - height;
-
-			// アニメーションの進行度計算
-			float timeRate = animTime / 1.0f;
-			float alpha = -0.6f * timeRate + 0.6f;	// 透明度
-			
-			sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
-			sprite->Draw(center.x, center.y);
-		}
-		if (gameTime < 10 && gameTime != 0) {
-			posX = (gameTime-1) * 56;
-			sprite->SetSrc(playUiImage, 326 + posX, 470, 48, 64);
-			int a = 270 + posX;
-
-			int width, height;
-			VECTOR2 center;
-			width = sprite->GetSrcWidth();
-			height = sprite->GetSrcHeight();
-			center.x = WINDOW_WIDTH / 2;
-			center.y = WINDOW_HEIGHT / 2;
-
-			// アニメーションの進行度計算
-			float timeRate = animTime / 1.0f;
-			float rate = ec->easeOutBack(timeRate); // 滑らかな拡大
-
-			float rotation = (rotGoal - rotStart) * rate + rotStart;	// 回転
-			float scale = (ScaleGoal - ScaleStart) * rate + ScaleStart;	// 拡大倍率
-
-			// 回転中心を画像の中心にするための補正
-			float pivotX = width / 2.0f;
-			float pivotY = height / 2.0f;
-
-			// ワールド行列の計算
-			MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
-				* XMMatrixRotationZ(rotation)
-				* XMMatrixScaling(scale, scale, 1.0f)
-				* XMMatrixTranslation(center.x, center.y, 0);
-
-			sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.5f);
-			// スプライトをワールド行列を使用して描画
-			sprite->Draw(m);
-		}
-	}
-	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 1.0f);
-
-	if (gameState == sFinish) {
-		sprite->SetSrc(playUiImage, 270, 550, 100, 36);
+	if (gameTime == 59) {
+		sprite->SetSrc(playUiImage, 260, 380, 200, 80, 400, 160);
+		int width, height;
+		VECTOR2 center;
+		width = sprite->GetSrcWidth();
+		height = sprite->GetSrcHeight();
+		center.x = WINDOW_WIDTH / 2 - width;
+		center.y = WINDOW_HEIGHT / 2 - height;
 
 		// アニメーションの進行度計算
 		float timeRate = animTime / 1.0f;
-		float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
+		float alpha = -0.6f * timeRate + 0.6f;	// 透明度
 
-		float posX = (WINDOW_WIDTH / 2 - sprite->GetSrcWidth() * 4 / 2 + 300) * rate - 300;
-		float alpha = 1.0f * rate;
-
-		sprite->Draw(playUiImage, posX, WINDOW_HEIGHT / 2 - 50, 270, 550, 100, 36, 100 * 4, 36 * 4, alpha);
+		sprite->m_vDiffuse = VECTOR4(1, 1, 1, alpha);
+		sprite->Draw(center.x, center.y);
 	}
+}
 
-	//基本UI表示
-	//プレイヤーごとのUI描画
-	std::string s = "Player";
-	int n = ObjectManager::DrawCounter();
-	s = s + std::to_string(n + 1);
-	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
+// ---------------------------------------------------------------------------
+// プレイ画面アニメーションUIの描画処理サブ関数
+// 
+// バトル終了カウントダウンのアニメーション描画を行う
+// ---------------------------------------------------------------------------
+void PlayDisplay::DrawFinishCount()
+{
+	int posX = (gameTime - 1) * 56;
+	sprite->SetSrc(playUiImage, 326 + posX, 470, 48, 64);
+	int a = 270 + posX;
+
+	int width, height;
+	VECTOR2 center;
+	width = sprite->GetSrcWidth();
+	height = sprite->GetSrcHeight();
+	center.x = WINDOW_WIDTH / 2;
+	center.y = WINDOW_HEIGHT / 2;
+
+	// アニメーションの進行度計算
+	float timeRate = animTime / 1.0f;
+	float rate = ec->easeOutBack(timeRate); // 滑らかな拡大
+
+	float rotation = (ROT_GOAL - ROT_START) * rate + ROT_START;	// 回転
+	float scale = (SCALE_GOAL - SCALE_START) * rate + SCALE_START;	// 拡大倍率
+
+	// 回転中心を画像の中心にするための補正
+	float pivotX = width / 2.0f;
+	float pivotY = height / 2.0f;
+
+	// ワールド行列の計算
+	MATRIX4X4 m = XMMatrixTranslation(-pivotX, -pivotY, 0)
+		* XMMatrixRotationZ(rotation)
+		* XMMatrixScaling(scale, scale, 1.0f)
+		* XMMatrixTranslation(center.x, center.y, 0);
+
+	sprite->m_vDiffuse = VECTOR4(1, 1, 1, 0.5f);
+	// スプライトをワールド行列を使用して描画
+	sprite->Draw(m);
+}
+
+// ---------------------------------------------------------------------------
+// プレイ画面アニメーションUIの描画処理サブ関数
+// 
+// バトル終了時のアニメーション描画を行う
+// ---------------------------------------------------------------------------
+void PlayDisplay::DrawFinish()
+{
+	sprite->SetSrc(playUiImage, 270, 550, 100, 36);
+
+	// アニメーションの進行度計算
+	float timeRate = animTime / 1.0f;
+	float rate = ec->easeOutExpo(timeRate); // 滑らかな拡大
+
+	float posX = (WINDOW_WIDTH / 2 - sprite->GetSrcWidth() * 4 / 2 + 300) * rate - 300;
+	float alpha = 1.0f * rate;
+
+	sprite->Draw(playUiImage, posX, WINDOW_HEIGHT / 2 - 50, 270, 550, 100, 36, 100 * 4, 36 * 4, alpha);
+}
+
+// ---------------------------------------------------------------------------
+// プレイ画面UIの描画処理
+// 
+// バトル中の基本UI描画を行う
+// ---------------------------------------------------------------------------
+void PlayDisplay::DrawBaseUI(Player* pl)
+{
+	int posX = 0, posY = 0, offX = 0, offY = 0;
 
 	//Leaf、MP、能力表示----------
 	//UIベース
@@ -272,7 +394,7 @@ void PlayDisplay::Draw()
 	if (leaf >= 10) {
 		offX += (leaf / 10) % 10 * 14;
 		sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 36, 48);
-		sprite->Draw(posX-16, 658);
+		sprite->Draw(posX - 16, 658);
 		posX += 16;
 		offX -= (leaf / 10) % 10 * 14;
 	}
@@ -283,9 +405,6 @@ void PlayDisplay::Draw()
 
 
 	//MP表示
-	//sprintf_s<64>(str, "%3d", pl->GetMP());
-	//GameDevice()->m_pFont->Draw(340, WINDOW_HEIGHT - 105, str, 65, RGB(255, 255, 255));
-
 	int mp = pl->GetMP();
 	posX = 370;
 
@@ -295,7 +414,7 @@ void PlayDisplay::Draw()
 		sprite->Draw(posX - 44, 667);
 		posX += 22;
 	}
-	
+
 	if (mp >= 10) {
 		offX = (mp / 10) % 10 * 14;
 		sprite->SetSrc(playUiImage, 275 + offX, 195, 12, 16, 42, 56);
@@ -317,7 +436,7 @@ void PlayDisplay::Draw()
 	sprite->Draw(200 + 172 * 2, WINDOW_HEIGHT - 130 + 80);
 
 	//選択中パワー描画(アイコンと文字)
-	
+
 	int plNum = pl->GetPlayerNum();
 	//次の能力強化が最終強化の時アイコンを変更
 	for (int i = 0; i < 5; i++) {
@@ -496,7 +615,7 @@ void PlayDisplay::Draw()
 	offX = score % 10 * 56;
 	sprite->SetSrc(playUiImage, 270 + offX, 470, 48, 64, 48, 64);
 	sprite->Draw(posX + 48, 20);
-	
+
 
 	//順位表示
 	posY = 590;
@@ -565,9 +684,9 @@ void PlayDisplay::Draw()
 	int _offX[5], _offY[5];
 
 	//能力進捗保存用変数
-	int num=0;
-	float max1 = -1, max2 = -1;
+	int num = 0;
 	int power1 = -1, power2 = -1;
+	float max1 = -1, max2 = -1;
 	bool isAllRounder = false;
 
 	for (int i = 0; i < 5; i++) {
@@ -649,12 +768,12 @@ void PlayDisplay::Draw()
 	}
 	//能力の強化進捗順に二つ
 	if (isAllRounder) { //「オールラウンダー」
-		sprite->DrawRect(posX-10, 268, 300, 40, RGB(255,255,255), 0.5f);
+		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(255, 255, 255), 0.5f);
 		sprite->SetSrc(playUiImage2, 0, 4, 280, 36, 280, 36);
 		sprite->Draw(posX, 270);
 	}
 	else if ((max1 - max2) > 0.4) { //ひとつの能力が突出しているとき
-		sprite->DrawRect(posX-10, 268, 300, 40, RGB(255,255,255), 0.5f);
+		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(255, 255, 255), 0.5f);
 		switch (power1) {
 		case 0: //移動速度
 			sprite->SetSrc(playUiImage2, 0, 44, 280, 36, 280, 36);
@@ -674,12 +793,12 @@ void PlayDisplay::Draw()
 		}
 		sprite->Draw(posX, 270);
 	}
-	else if(max2 > 0.2f){
-		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(255,255,255), 0.5f);
-		switch (min(power1,power2)) {
+	else if (max2 > 0.2f) {
+		sprite->DrawRect(posX - 10, 268, 300, 40, RGB(255, 255, 255), 0.5f);
+		switch (min(power1, power2)) {
 		case 0: //移動速度
-			offY = (max(power1,power2)) * 40;
-			sprite->SetSrc(playUiImage2, 0, 44+offY, 280, 36, 280, 36);
+			offY = (max(power1, power2)) * 40;
+			sprite->SetSrc(playUiImage2, 0, 44 + offY, 280, 36, 280, 36);
 			break;
 		case 1: //ジャンプ回数
 			offY = (max(power1, power2) - 1) * 40;
@@ -717,29 +836,23 @@ void PlayDisplay::Draw()
 			break;
 		}
 	}
-
-	//透明化時、残り時間表示
-	if (pl->GetIsInvisible()) {
-		float time = pl->GetCurInvisibleTime() / 60.0f;
-		float rate = (pl->GetInvisibleTime() - time) / pl->GetInvisibleTime();
-		float width = 150 * rate;
-		sprite->DrawRect(WINDOW_WIDTH/2 - 75, WINDOW_HEIGHT/2 - 60, width,20, RGB(220, 20, 20));
-	}
-
-	//吹っ飛ばされた、UIアニメーションUI再生
-	if (blowPlayerList[plNum] != -1) {
-		//アイコンの設定
-		sprite->SetSrc(playUiImage, 256 + 72 * dc->GetColor(blowPlayerList[plNum]), 624, 68, 64);
-		//アイコンアニメーション
-		DrawBlowPlayer(blowPlayerList[plNum], plNum);
-	}
 }
 
+// ---------------------------------------------------------------------------
+// 吹っ飛ばされたプレイヤーのセット関数
+// 
+// 吹っ飛ばされたプレイヤー番号をblowPlayerListに登録する
+// ---------------------------------------------------------------------------
 void PlayDisplay::SetBlowPlayer(int atkPlayerNum, int blowPlayerNum)
 {
 	blowPlayerList[blowPlayerNum] = atkPlayerNum;
 }
 
+// ---------------------------------------------------------------------------
+// 吹っ飛ばされたプレイヤーのアニメーション描画関数
+// 
+// 吹っ飛ばされたプレイヤーのアイコンのアニメーション描画を行う
+// ---------------------------------------------------------------------------
 void PlayDisplay::DrawBlowPlayer(int atkPlayerNum, int blowPlayerNum)
 {
 	float time = blowAnimFrm[blowPlayerNum] / 60.0f;
@@ -806,7 +919,6 @@ void PlayDisplay::DrawBlowPlayer(int atkPlayerNum, int blowPlayerNum)
 		sprite->Draw(m);
 	}
 	
-
 	blowAnimFrm[blowPlayerNum]++;
 
 	//アニメーション終了後,吹っ飛ばしたプレイヤー情報を初期化
