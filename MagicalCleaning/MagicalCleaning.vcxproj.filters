@@ -141,6 +141,9 @@
     <Filter Include="ソース ファイル\09_PlayScene\0907_CsvPlayDataLoader">
       <UniqueIdentifier>{7457f5cc-6b62-4635-9430-fbc916146dbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader">
+      <UniqueIdentifier>{20b762f0-7a05-4e4f-84a1-83d6b7b9db13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Hlsl\DisplaceSkinMesh.hlsli">
@@ -450,6 +453,9 @@
     <ClInclude Include="Src\CsvPlayDataLoader.h">
       <Filter>ソース ファイル\09_PlayScene\0907_CsvPlayDataLoader</Filter>
     </ClInclude>
+    <ClInclude Include="Src\CsvCameraDataLoader.h">
+      <Filter>ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
@@ -628,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="Src\CsvPlayDataLoader.cpp">
       <Filter>ソース ファイル\09_PlayScene\0907_CsvPlayDataLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CsvCameraDataLoader.cpp">
+      <Filter>ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

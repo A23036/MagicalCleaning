@@ -2,7 +2,6 @@
 
 CsvPlayDataLoader::CsvPlayDataLoader(const std::string& filePath) : CsvLoadBase(filePath)
 {
-
 }
 
 CsvPlayDataLoader::~CsvPlayDataLoader()

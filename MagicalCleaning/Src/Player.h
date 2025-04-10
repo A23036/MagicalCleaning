@@ -1,7 +1,7 @@
 #pragma once
-// Player.h
 #include "Object3D.h"
 
+//プロトタイプ宣言
 class CsvReader;
 class Broom;
 class Animator;
@@ -14,34 +14,41 @@ class PlayDisplay;
 
 using namespace std;
 
-enum State { //プレイヤー状態
-	sStandby = 0,
-	sOnGround,
-	sJump,
-	sAttack1,
-	sAttack2,
-	sAttack3,
-	sCharge,
-	sBlow,
-	sTeleport,
-	sStop,
-	sWait,
+//プレイヤー状態
+enum State {
+	sStandby = 0,	//待機(セレクト画面、リザルト画面専用状態)
+	sOnGround,		//地上
+	sJump,			//ジャンプ
+	sAttack1,		//攻撃1
+	sAttack2,		//攻撃2
+	sAttack3,		//攻撃3
+	sCharge,		//詠唱
+	sBlow,			//吹っ飛ばされ中
+	sTeleport,		//テレポート中
+	sStop,			//ポーズ中
+	sWait,			//開始待機中
 };
 
-enum SelectPowerID { //選択中強化能力
-	pMS = 0,
-	pJN,
-	pAS,
-	pAR,
-	pCW,
+//選択中強化能力
+enum SelectPowerID {
+	pMS = 0,	//移動速度
+	pJN,		//ジャンプ回数
+	pAS,		//攻撃速度
+	pAR,		//攻撃範囲
+	pCW,		//テモチリーフ
 };
 
+// ---------------------------------------------------------------------------
+// プレイヤー処理
+// 
+// セレクト画面、プレイ画面、リザルト画面でのプレイヤー処理を行うクラス
+// ---------------------------------------------------------------------------
 class Player : public Object3D {
 public:
 	Player();
 	Player(VECTOR3 pos, VECTOR3 rot, int num);
 	Player(int num, int color);
-	~Player();
+	virtual ~Player();
 	void Start() override;
 	void Update() override;
 	void Draw() override;
