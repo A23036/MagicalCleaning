@@ -40,8 +40,8 @@ Player::Player(VECTOR3 pos, VECTOR3 rot, int num)
 	mesh->LoadAnimation(aStandBy, (f + "/standby.anmx").c_str(), true);
 	
 
-	animator->SetModel(mesh); // このモデルでアニメーションする
-	animator->Play(aStandBy);
+	animator->SetModel(mesh);	// このモデルでアニメーションする
+	animator->Play(aStandBy);	// 待機アニメーション
 	animator->SetPlaySpeed(1.0f);
 
 	transform.position = pos;
@@ -60,7 +60,11 @@ Player::Player(int num,int color) : playerNum(num),color(color)
 {
 	ObjectManager::SetDrawOrder(this, -100);
 
-	CsvLoad(); // csvからデータの設定
+	//CSVからデータの設定
+	CsvLoad();
+
+	//初期化処理
+	Init();
 
 	// プレイヤーの持つ箒の生成
 	child = new Broom(this,color);
@@ -97,70 +101,6 @@ Player::Player(int num,int color) : playerNum(num),color(color)
 	//プレイヤーに応じた初期回転量の設定
 	transform.rotation = VECTOR3(0, playerNum * 90 * DegToRad, 0);
 
-	deltaTime = 0.0f;
-
-	state = sWait;
-	prevState = sWait;
-
-	speedY = 0;
-	score = 0;
-	leaf = 0;
-	mp = 0;
-	weight = 0;
-	jumpCount = 0;
-	atkNum = 0;
-	chargeSpeed = 1.0f;
-	chargeTime = 0.0f;
-	invisibleTime = 0.0f;
-	teleportPos = VECTOR3(0,0,0);
-	teleportFrm = 0;
-	fastAtkSpeed = 8;
-	damageTime = 0;
-	itemNum = -1;
-
-	isDash = false;
-	isFly = false;
-	isBlow = false;
-	isTeleporting = false;
-
-	canTeleport = false;
-	setTeleport = false;
-	canFly = false;
-	canSpeedAtk = false;
-	canRangeAtk = false;
-	canFastCharge = false;
-
-	finishAtkAnim = false;
-	atkComboFlg = false;
-	isMagicReady = false;
-	isInvisible = false;
-	isDamageCool = false;
-
-	blowVec = VECTOR3(0, 0, 0);
-
-	comboWaitFrm = 20;
-
-	msNum = 0;
-	jnNum = 0;
-	asNum = 0;
-	arNum = 0;
-	cwNum = 0;
-
-	moveSpeed	= MoveSpeedT[msNum];
-	jumpNum		= JumpNumT[jnNum];
-	atkSpeed	= AtkSpeedT[asNum];
-	atkRange	= AtkRangeT[arNum];
-	carWeight	= CarWeightT[cwNum];
-
-	moveDistance = 0.0f;
-	jumpCountAll = 0;
-	knockOutCount = 0;
-	itemCount = 0;
-	cleanReafCount = 0;
-	blowCount = 0;
-
-	selectPower = 0;
-	anmFrame = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -198,6 +138,77 @@ void Player::Start()
 }
 
 // ---------------------------------------------------------------------------
+// 各変数の初期化処理
+// ---------------------------------------------------------------------------
+void Player::Init()
+{
+	deltaTime = 0.0f;
+
+	state = sWait;
+	prevState = sWait;
+
+	speedY = 0;
+	score = 0;
+	leaf = 0;
+	mp = 0;
+	weight = 0;
+	jumpCount = 0;
+	atkNum = 0;
+	chargeSpeed = 1.0f;
+	chargeTime = 0.0f;
+	invisibleTime = 0.0f;
+	teleportPos = VECTOR3(0, 0, 0);
+	teleportFrm = 0;
+	fastAtkSpeed = 8;
+	damageTime = 0;
+	itemNum = -1;
+
+	isDash = false;
+	isFly = false;
+	isBlow = false;
+	isTeleporting = false;
+
+	canTeleport = false;
+	setTeleport = false;
+	canFly		= false;
+	canSpeedAtk = false;
+	canRangeAtk = false;
+	canFastCharge = false;
+
+	finishAtkAnim = false;
+	atkComboFlg = false;
+	isMagicReady = false;
+	isInvisible = false;
+	isDamageCool = false;
+
+	blowVec = VECTOR3(0, 0, 0);
+
+	comboWaitFrm = 20;
+
+	msNum = 0;
+	jnNum = 0;
+	asNum = 0;
+	arNum = 0;
+	cwNum = 0;
+
+	moveSpeed = MoveSpeedT[msNum];
+	jumpNum = JumpNumT[jnNum];
+	atkSpeed = AtkSpeedT[asNum];
+	atkRange = AtkRangeT[arNum];
+	carWeight = CarWeightT[cwNum];
+
+	moveDistance = 0.0f;
+	jumpCountAll = 0;
+	knockOutCount = 0;
+	itemCount = 0;
+	cleanReafCount = 0;
+	blowCount = 0;
+
+	selectPower = 0;
+	anmFrame = 0;
+}
+
+// ---------------------------------------------------------------------------
 // プレイヤーの更新処理
 // 
 // 各プレイヤーの状態に応じた処理を行う
@@ -205,7 +216,7 @@ void Player::Start()
 void Player::Update()
 {
 	deltaTime = 60 * SceneManager::DeltaTime();
-	posOld = transform.position;    // -- 2024.12.2
+	prevPos = transform.position;    // -- 2024.12.2
 
 	// 箒の位置情報更新
 	if (state != sStandby) { //キャラセレクト画面では持たない
@@ -422,7 +433,7 @@ void Player::Update()
 
 	//当たり判定処理 // -- 2024.12.2
 	//ステージ
-	st->MapCol()->IsCollisionMoveGravity(posOld, transform.position);
+	st->MapCol()->IsCollisionMoveGravity(prevPos, transform.position);
 
 	//吹っ飛び
 	transform.position += blowVec;
@@ -477,16 +488,26 @@ void Player::Update()
 	prevState = state;
 }
 	
+// ---------------------------------------------------------------------------
+// プレイヤー描画処理
+// 
+// 画面ごとのプレイヤーの表示非表示を状態によって切り替える
+// ---------------------------------------------------------------------------
 void Player::Draw()
 {
-	if (ObjectManager::DrawCounter() != playerNum) { //透明のプレイヤーを描画しない
-		if (isInvisible) {
+	if (ObjectManager::DrawCounter() != playerNum) {
+		if (isInvisible) { //透明のプレイヤーを描画しない
 			return;
 		}
 	}
 	Object3D::Draw(); // 継承元の関数を呼ぶ
 }
 
+// ---------------------------------------------------------------------------
+// CSV読み込み処理
+// 
+// プレイヤー処理に使用する定数のCSV読み込みを行う
+// ---------------------------------------------------------------------------
 void Player::CsvLoad()
 {
 	// csvからデータ読み込み
@@ -510,87 +531,11 @@ void Player::CsvLoad()
 		CarWeightT[i] = playerParams.CarWeightT[i];
 
 		MoveSpeedC[i] = playerParams.MoveSpeedC[i];
-		JumpNumC[i] = playerParams.JumpNumC[i];
-		AtkSpeedC[i] = playerParams.AtkSpeedC[i];
-		AtkRangeC[i] = playerParams.AtkRangeC[i];
+		JumpNumC[i]   = playerParams.JumpNumC[i];
+		AtkSpeedC[i]  = playerParams.AtkSpeedC[i];
+		AtkRangeC[i]  = playerParams.AtkRangeC[i];
 		CarWeightC[i] = playerParams.CarWeightC[i];
 	}
-	/*
-	csv = new CsvReader("data/csv/Paramater.csv");
-	if (csv->GetLines() < 1) {
-		MessageBox(NULL, "Paramater.csvが読めません", "エラー", MB_OK);
-	}
-
-	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
-		if (csv->GetString(i, 0) == "Player") {
-			if (csv->GetString(i, 1) == "InvisibleTime") {		// 透明化時間
-				InvisibleTime[0] = csv->GetFloat(i, 3);
-				InvisibleTime[1] = csv->GetFloat(i, 4);
-				InvisibleTime[2] = csv->GetFloat(i, 5);
-				InvisibleTime[3] = csv->GetFloat(i, 6);
-			}
-			if (csv->GetString(i, 1) == "DamageCoolTime") {		// 無敵時間
-				DamageCoolTime = csv->GetInt(i, 3);
-			}
-			if (csv->GetString(i, 1) == "TeleportTime") {		// テレポート待機時間
-				TeleportTime = csv->GetInt(i, 3);
-			}
-			if (csv->GetString(i, 1) == "MoveSpeedT") {		// 移動速度テーブル
-				for (int j = 0; j < MsTableNum; j++) {
-					MoveSpeedT[j] = csv->GetFloat(i, 3+j);
-				}
-			}
-			if (csv->GetString(i, 1) == "JumpNumT") {		// ジャンプ回数テーブル
-				for (int j = 0; j < JnTableNum; j++) {
-					JumpNumT[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "AtkSpeedT") {		// 攻撃速度テーブル
-				for (int j = 0; j < AsTableNum; j++) {
-					AtkSpeedT[j] = csv->GetFloat(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "AtkRangeT") {		// 攻撃範囲テーブル
-				for (int j = 0; j < ArTableNum; j++) {
-					AtkRangeT[j] = csv->GetFloat(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "CarWeightT") {		// 運搬可能重量テーブル
-				for (int j = 0; j < CwTableNum; j++) {
-					CarWeightT[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "MoveSpeedC") {		// 移動速度コストテーブル
-				for (int j = 0; j < MsTableNum; j++) {
-					MoveSpeedC[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "JumpNumC") {		// ジャンプ回数コストテーブル
-				for (int j = 0; j < JnTableNum; j++) {
-					JumpNumC[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "AtkSpeedC") {		// 攻撃速度コストテーブル
-				for (int j = 0; j < AsTableNum; j++) {
-					AtkSpeedC[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "AtkRangeC") {		// 攻撃範囲コストテーブル
-				for (int j = 0; j < ArTableNum; j++) {
-					AtkRangeC[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-			if (csv->GetString(i, 1) == "CarWeightC") {		// 運搬可能重量コストテーブル
-				for (int j = 0; j < CwTableNum; j++) {
-					CarWeightC[j] = csv->GetInt(i, 3 + j);
-				}
-			}
-		}
-		if (csv->GetString(i, 0) == "Leaf") {
-			break;
-		}
-	}
-	*/
 }
 
 SphereCollider Player::Collider()
@@ -754,7 +699,7 @@ void Player::UpdateOnGround()
 	int x = di->GetJoyState(playerNum).lX;	// 右:1000 / 左:-1000
 	int y = di->GetJoyState(playerNum).lY;	// 下:1000 / 上:-1000
 	
-	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
+	if (st->MapCol()->IsCollisionMoveGravity(prevPos, transform.position) == clFall) {
 		state = sJump;
 		return;
 	}
@@ -967,7 +912,7 @@ void Player::UpdateJump()
 		
 	}
 
-	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) != clFall) {
+	if (st->MapCol()->IsCollisionMoveGravity(prevPos, transform.position) != clFall) {
 		// ジャンプ終了
 		isFly = false;
 		state = sOnGround;
@@ -1168,7 +1113,7 @@ void Player::UpdateBlow()
 
 	}
 
-	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) != clFall) {
+	if (st->MapCol()->IsCollisionMoveGravity(prevPos, transform.position) != clFall) {
 		// 吹っ飛び終了
 		isFly = false;
 		state = sOnGround;

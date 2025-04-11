@@ -90,12 +90,6 @@
     <Filter Include="ソース ファイル\09_PlayScene\0902_Player">
       <UniqueIdentifier>{f724c8cb-8852-494c-a0c7-4335be8d013a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\Player">
-      <UniqueIdentifier>{c1612be7-70be-4f35-bdc5-342a0b192243}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\Broom">
-      <UniqueIdentifier>{6f015bdd-d8b5-4954-9fb7-b9bf6c62ec91}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\09_PlayScene\0903_Camera">
       <UniqueIdentifier>{eb837fdb-8e52-4f45-8739-054d67353759}</UniqueIdentifier>
     </Filter>
@@ -144,7 +138,13 @@
     <Filter Include="ソース ファイル\09_PlayScene\0908_CsvPlayDataLoader">
       <UniqueIdentifier>{7457f5cc-6b62-4635-9430-fbc916146dbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\CsvPlayerDataLoader">
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\01_Player">
+      <UniqueIdentifier>{c1612be7-70be-4f35-bdc5-342a0b192243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\02_Broom">
+      <UniqueIdentifier>{6f015bdd-d8b5-4954-9fb7-b9bf6c62ec91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\03_CsvPlayerDataLoader">
       <UniqueIdentifier>{ee5e9639-d2c0-4e0a-bf4a-fc9bd3d0bdd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -412,10 +412,10 @@
       <Filter>ソース ファイル\09_PlayScene\0906_Effect\SlashEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\Player.h">
-      <Filter>ソース ファイル\09_PlayScene\0902_Player\Player</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\01_Player</Filter>
     </ClInclude>
     <ClInclude Include="Src\Broom.h">
-      <Filter>ソース ファイル\09_PlayScene\0902_Player\Broom</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\02_Broom</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvTitleDataLoader.h">
       <Filter>ソース ファイル\07_TitleScene\0701_CsvTitleDataLoader</Filter>
@@ -460,7 +460,7 @@
       <Filter>ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvPlayerDataLoader.h">
-      <Filter>ソース ファイル\09_PlayScene\0902_Player\CsvPlayerDataLoader</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\03_CsvPlayerDataLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -597,10 +597,10 @@
       <Filter>ソース ファイル\09_PlayScene\0906_Effect\SlashEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\Player.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0902_Player\Player</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\01_Player</Filter>
     </ClCompile>
     <ClCompile Include="Src\Broom.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0902_Player\Broom</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\02_Broom</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvTitleDataLoader.cpp">
       <Filter>ソース ファイル\07_TitleScene\0701_CsvTitleDataLoader</Filter>
@@ -645,7 +645,7 @@
       <Filter>ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvPlayerDataLoader.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0902_Player\CsvPlayerDataLoader</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\03_CsvPlayerDataLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

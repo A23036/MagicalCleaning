@@ -4,6 +4,28 @@
 #include "PlayScene.h"
 #include "LeafEffect.h"
 
+//定数定義
+namespace {
+	//リーフサイズ
+	static const float SMALL_SIZE  = 0.5f;
+	static const float MIDIUM_SIZE = 1.0f;
+	static const float BIG_SIZE    = 2.0f;
+
+	//リーフHP
+	static const int SMALL_HP  = 1;
+	static const int MIDIUM_HP = 5;
+	static const int BIG_HP    = 10;
+
+	//落下速度
+	static const float FALL_SPEED = 0.2f;
+
+	//アイテムリーフカラー
+	static const VECTOR4 ITEM_COLOR = VECTOR4(2.0f, 0.2f, 0.2f, 1.0);
+}
+
+// ---------------------------------------------------------------------------
+// コンストラクタ
+// ---------------------------------------------------------------------------
 Leaf::Leaf(int number, VECTOR3 pos)
 {
 	SetTag("STAGEOBJ");
@@ -12,75 +34,79 @@ Leaf::Leaf(int number, VECTOR3 pos)
 	mesh->Load("data/Leaf/leaf.mesh");
 	transform.position = pos;
 
-	SmallSize = 0.5f;
-	MidiumSize = 1.0f;
-	BigSize = 2.0f;
-
 	switch (number) { //サイズごとの設定
 	case Small:
-		transform.scale = VECTOR3(SmallSize, SmallSize, SmallSize);
-		size = 0.5f;
-		maxHp = 1;
+		transform.scale = VECTOR3(SMALL_SIZE, SMALL_SIZE, SMALL_SIZE);
+		size = SMALL_SIZE;
+		maxHp = SMALL_HP;
 		break;
 	case Midium:
-		transform.scale = VECTOR3(MidiumSize, MidiumSize, MidiumSize);
-		size = 1.0f;
-		maxHp = 5;
+		transform.scale = VECTOR3(MIDIUM_SIZE, MIDIUM_SIZE, MIDIUM_SIZE);
+		size = MIDIUM_SIZE;
+		maxHp = MIDIUM_HP;
 		break;
 	case Big:
-		transform.scale = VECTOR3(BigSize, BigSize, BigSize);
-		size = 2.0f;
-		maxHp = 10;
+		transform.scale = VECTOR3(BIG_SIZE, BIG_SIZE, BIG_SIZE);
+		size = BIG_SIZE;
+		maxHp = BIG_HP;
 		break;
 	case Item:
-		transform.scale = VECTOR3(SmallSize, SmallSize, SmallSize);
-		size = 0.5f;
-		maxHp = 1;
-		mesh->m_vDiffuse = VECTOR4(2.0f, 0.2f, 0.2f, 1.0);
+		transform.scale = VECTOR3(SMALL_SIZE, SMALL_SIZE, SMALL_SIZE);
+		size = SMALL_SIZE;
+		maxHp = SMALL_HP;
+		mesh->m_vDiffuse = ITEM_COLOR;
 		break;
 	}
 	hp = maxHp;
 	leafNum = number;
-	MaxScale = size;
+	maxScale = size;
 }
 
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
 Leaf::~Leaf()
 {
 }
 
+// ---------------------------------------------------------------------------
+// 開始時に呼ばれる関数
+// 
+// オブジェクトを生成後、最初にUpdate()の前に呼ばれる
+// ---------------------------------------------------------------------------
 void Leaf::Start()
 {
 	st = ObjectManager::FindGameObject<Stage>();
 }
 
+// ---------------------------------------------------------------------------
+// リーフの更新処理
+// 
+// 生成時の落下処理を行う
+// ---------------------------------------------------------------------------
 void Leaf::Update()
 {
-	posOld = transform.position;
+	prevPos = transform.position;
 
-	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
-		transform.position.y -= 0.2f;
+	if (st->MapCol()->IsCollisionMoveGravity(prevPos, transform.position) == clFall) {
+		transform.position.y -= FALL_SPEED;
 	}
 
 }
 
+// ---------------------------------------------------------------------------
+// リーフの描画処理
+// ---------------------------------------------------------------------------
 void Leaf::Draw()
 {
-	/*
-	// 画面ごとにプレイヤー周辺のみマップ描画
-	int num = ObjectManager::DrawCounter() + 1;
-	std::string s = "Player" + std::to_string(num);
-	Player* pl = ObjectManager::FindGameObjectWithTag<Player>(s);
-	VECTOR3 pos = pl->Position();
-
-	VECTOR3 dist = pos - transform.position;
-	if (dist.LengthSquare() < 400) //特定の範囲内だけ描画
-	{
-		mesh->Render(transform.matrix());
-	}*/
 	mesh->Render(transform.matrix());
 }
 
-
+// ---------------------------------------------------------------------------
+// リーフの球体コライダー処理
+// 
+// リーフのコライダーを設定する
+// ---------------------------------------------------------------------------
 SphereCollider Leaf::Collider(int n)
 {
 	SphereCollider col;
@@ -92,6 +118,11 @@ SphereCollider Leaf::Collider(int n)
 	return col;
 }
 
+// ---------------------------------------------------------------------------
+// リーフのダメージ反映処理
+// 
+// リーフが攻撃されたときの処理を行う
+// ---------------------------------------------------------------------------
 void Leaf::AddDamage(Player* player,int damage)
 {
 	//葉っぱの飛び散るエフェクトの再生
@@ -100,6 +131,7 @@ void Leaf::AddDamage(Player* player,int damage)
 	player->AddLeaf(1);
 	hp -= damage;
 
+	//hpがなくなったとき
 	if (hp <= 0)
 	{
 		player->AddCleanReaf();
@@ -107,12 +139,14 @@ void Leaf::AddDamage(Player* player,int damage)
 		PlayScene* play = dynamic_cast<PlayScene*>(scene);
 		play->LeafDestroyed(this); // PlayScene に通知
 		
-		DestroyMe();
+		DestroyMe(); //削除
 
 		VECTOR3 pos = VECTOR3(transform.position.x, transform.position.y + 3, transform.position.z);
 	}
 
-	size -= (MaxScale - 0.5f) / (float)maxHp;
+	//最大hpとの比率でサイズを小さくする
+	size -= (maxScale - 0.5f) / (float)maxHp;
 
+	//サイズを反映
 	transform.scale = VECTOR3(size, size, size);
 }

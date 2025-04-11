@@ -50,6 +50,8 @@ public:
 	Player(int num, int color);
 	virtual ~Player();
 	void Start() override;
+	void Init();
+
 	void Update() override;
 	void Draw() override;
 
@@ -110,7 +112,7 @@ private:
 	TeleportCircleEffect* tpEffect;
 	PlayDisplay* pd;
 
-	//自身の持っている箒のポインタ
+	//自身の持っている箒
 	Broom* child;
 
 	//状態ごとの更新処理
@@ -143,7 +145,7 @@ private:
 	VECTOR3 teleportPos;//テレポート場所
 	bool canFly;		//飛行可能判定
 	bool canSpeedAtk;	//連続攻撃可能判定
-	int fastAtkSpeed;	//連続攻撃の攻撃速度(○fに一回)
+	int  fastAtkSpeed;	//連続攻撃の攻撃速度(○fに一回)
 	bool canRangeAtk;	//範囲攻撃可能判定
 	bool canFastCharge; //高速変換可能判定
 
@@ -156,7 +158,7 @@ private:
 	int  itemNum;		//アイテム番号(-1:未所持,0:ステルス)
 	bool isInvisible;	//透明フラグ
 
-	float invisibleTime;			//透明化経過時間
+	float invisibleTime;//透明化経過時間
 
 	int  damageTime;	//無敵経過時間
 	bool isDamageCool;	//無敵フラグ
@@ -179,7 +181,6 @@ private:
 	int arNum;	//能力レベル:攻撃範囲
 	int cwNum;	//能力レベル:運搬可能重量
 
-	static const int PowerLvNum = 10;	//能力レベル段階数
 	float speedY; // Y方向の速度
 
 	//ボーナス計算用変数
@@ -210,12 +211,11 @@ private:
 	int state;		//プレイヤー状態
 	int prevState;	//直前のプレイヤー状態
 
-	VECTOR3 posOld;	//直前のプレイヤー位置
+	VECTOR3 prevPos; //直前のプレイヤー位置
 
 	int selectPower; //選択中能力
 
 	int anmFrame; // アニメーションのフレームを数える
-
 
 	//CSVファイルから読み込んだデータを格納する構造体
 	PlayerParams playerParams;
@@ -224,6 +224,8 @@ private:
 	float InvisibleTime[MAXPLAYER];	//透明化時間
 	float DamageCoolTime;		//無敵時間
 	float TeleportTime;			//テレポート時間
+
+	static const int PowerLvNum = 10;	//能力レベル段階数
 
 	float MoveSpeedT[PowerLvNum];	//移動速度テーブル
 	int	  JumpNumT[PowerLvNum];		//ジャンプ回数テーブル
