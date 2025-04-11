@@ -1,5 +1,6 @@
 #pragma once
 #include "Object3D.h"
+#include "CsvPlayerDataLoader.h"
 
 //プロトタイプ宣言
 class CsvReader;
@@ -45,7 +46,6 @@ enum SelectPowerID {
 // ---------------------------------------------------------------------------
 class Player : public Object3D {
 public:
-	Player();
 	Player(VECTOR3 pos, VECTOR3 rot, int num);
 	Player(int num, int color);
 	virtual ~Player();
@@ -57,6 +57,7 @@ public:
 
 	SphereCollider Collider() override;
 
+	//アクセス関数
 	int GetColor() { return color; };
 	int GetLeaf() { return leaf; };
 	int GetMP() { return mp; };
@@ -70,7 +71,7 @@ public:
 	int GetPowerLv(int selectPower);
 	int GetMaxPowerLv(int selectPower);
 	bool GetIsSetTeleport() { return setTeleport; };
-	VECTOR2 GetTeleportPos() { return VECTOR2(tereportPos.x, tereportPos.z); };
+	VECTOR2 GetTeleportPos() { return VECTOR2(teleportPos.x, teleportPos.z); };
 	bool GetIsInvisible() { return isInvisible; };
 	float GetCurInvisibleTime() { return  invisibleTime; };
 	float GetInvisibleTime();
@@ -96,9 +97,10 @@ public:
 	void AddScore(int n);
 	void AddCleanReaf();
 	void UseItem(int num);
-	
 
 private:
+	//各種クラスのポインタ
+	Animator* animator;
 	CsvReader* csv;
 	DataCarrier* dc;
 	Stage* st;
@@ -108,19 +110,22 @@ private:
 	TeleportCircleEffect* tpEffect;
 	PlayDisplay* pd;
 
+	//自身の持っている箒のポインタ
+	Broom* child;
+
+	//状態ごとの更新処理
 	void UpdateOnGround();	//地上処理
 	void UpdateJump();		//空中処理
 	void UpdateAttack();	//攻撃中処理
 	void UpdateCharge();	//MP変換中処理
 	void UpdateBlow();		//吹っ飛ばされ中処理
 	void UpdateTeleport();	//テレポート処理
+
 	void CheckAtkCoillision(); //攻撃ヒット判定処理
 
 	float deltaTime;
-	float GRAVITY;		//重力加速度
-	float JUMP_POWER;	//ジャンプ力
-	float MOVE_SPEED;	//基本移動速度
 
+	//プレイヤー基礎変数
 	int playerNum;		//プレイヤー番号
 	int color;			//プレイヤーカラー
 	int score;			//スコア
@@ -135,7 +140,7 @@ private:
 	//各能力最終進化
 	bool canTeleport;	//テレポート可能判定
 	bool setTeleport;	//テレポート場所設置済み判定
-	VECTOR3 tereportPos;//テレポート場所
+	VECTOR3 teleportPos;//テレポート場所
 	bool canFly;		//飛行可能判定
 	bool canSpeedAtk;	//連続攻撃可能判定
 	int fastAtkSpeed;	//連続攻撃の攻撃速度(○fに一回)
@@ -148,22 +153,19 @@ private:
 	float chargeSpeed;	//MP変換スピード
 	float chargeTime;	//MP変換経過時間
 	VECTOR3 blowVec;	//吹っ飛ばしベクトル
-	int itemNum;		//アイテム番号(-1:未所持,0:ステルス)
+	int  itemNum;		//アイテム番号(-1:未所持,0:ステルス)
 	bool isInvisible;	//透明フラグ
 
-	float InvisibleTime[MAXPLAYER];	//透明化時間
 	float invisibleTime;			//透明化経過時間
 
-	int DamageCoolTime;	//無敵時間
-	int damageTime;		//無敵経過時間
+	int  damageTime;	//無敵経過時間
 	bool isDamageCool;	//無敵フラグ
 
 	bool finishAtkAnim;
-	int atkNum;			//現在の攻撃の連続回数
+	int  atkNum;		//現在の攻撃の連続回数
 	
 	bool isTeleporting;	//テレポート中判定
-	float TeleportTime;	//テレポート時間
-	int teleportFrm;	//テレポート経過時間
+	int  teleportFrm;	//テレポート経過時間
 
 	float	moveSpeed;	//移動速度
 	int		jumpNum;	//ジャンプ回数
@@ -177,26 +179,10 @@ private:
 	int arNum;	//能力レベル:攻撃範囲
 	int cwNum;	//能力レベル:運搬可能重量
 
-	static const int MsTableNum = 10;	//移動速度テーブル数
-	static const int JnTableNum = 10;	//ジャンプ回数テーブル数
-	static const int AsTableNum = 10;	//攻撃速度テーブル数
-	static const int ArTableNum = 10;	//攻撃範囲テーブル数
-	static const int CwTableNum = 10;	//運搬可能重量テーブル数
-
-	float MoveSpeedT	[MsTableNum];	//移動速度テーブル
-	int	  JumpNumT		[JnTableNum];	//ジャンプ回数テーブル
-	float AtkSpeedT		[AsTableNum];	//攻撃速度テーブル
-	float AtkRangeT		[ArTableNum];	//攻撃範囲テーブル
-	int   CarWeightT	[CwTableNum];	//運搬可能重量テーブル
-	
-	int MoveSpeedC[MsTableNum];	//移動速度コストテーブル
-	int	JumpNumC[JnTableNum];	//ジャンプ回数コストテーブル
-	int AtkSpeedC[AsTableNum];	//攻撃速度コストテーブル
-	int AtkRangeC[ArTableNum];	//攻撃範囲コストテーブル
-	int CarWeightC[CwTableNum];	//運搬可能重量コストテーブル
-
+	static const int PowerLvNum = 10;	//能力レベル段階数
 	float speedY; // Y方向の速度
 
+	//ボーナス計算用変数
 	float moveDistance;	//移動距離
 	int jumpCountAll;	//累計ジャンプ回数
 	int knockOutCount;	//吹っ飛ばした敵の数
@@ -204,7 +190,6 @@ private:
 	int cleanReafCount;	//リーフを掃除した数
 	int blowCount;		//吹っ飛ばされた回数
 
-	Animator* animator; // 部品のインスタンスをポインター型で準備
 	enum AnimID {
 		aStandBy = 0,
 		aIdle,
@@ -231,5 +216,24 @@ private:
 
 	int anmFrame; // アニメーションのフレームを数える
 
-	Broom* child; //自身の持っている箒のポインタ
+
+	//CSVファイルから読み込んだデータを格納する構造体
+	PlayerParams playerParams;
+
+	//CSVファイルから読み込まれるデータ
+	float InvisibleTime[MAXPLAYER];	//透明化時間
+	float DamageCoolTime;		//無敵時間
+	float TeleportTime;			//テレポート時間
+
+	float MoveSpeedT[PowerLvNum];	//移動速度テーブル
+	int	  JumpNumT[PowerLvNum];		//ジャンプ回数テーブル
+	float AtkSpeedT[PowerLvNum];	//攻撃速度テーブル
+	float AtkRangeT[PowerLvNum];	//攻撃範囲テーブル
+	int   CarWeightT[PowerLvNum];	//運搬可能重量テーブル
+
+	int MoveSpeedC[PowerLvNum];	//移動速度コストテーブル
+	int	JumpNumC[PowerLvNum];	//ジャンプ回数コストテーブル
+	int AtkSpeedC[PowerLvNum];	//攻撃速度コストテーブル
+	int AtkRangeC[PowerLvNum];	//攻撃範囲コストテーブル
+	int CarWeightC[PowerLvNum];	//運搬可能重量コストテーブル
 };

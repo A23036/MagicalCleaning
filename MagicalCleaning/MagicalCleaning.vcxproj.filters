@@ -138,11 +138,14 @@
     <Filter Include="ソース ファイル\11_EditScene\1101_StageEdit">
       <UniqueIdentifier>{1d31e7b8-d6c7-477a-9bde-cf67bcc63f6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\09_PlayScene\0907_CsvPlayDataLoader">
-      <UniqueIdentifier>{7457f5cc-6b62-4635-9430-fbc916146dbd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader">
       <UniqueIdentifier>{20b762f0-7a05-4e4f-84a1-83d6b7b9db13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0908_CsvPlayDataLoader">
+      <UniqueIdentifier>{7457f5cc-6b62-4635-9430-fbc916146dbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\09_PlayScene\0902_Player\CsvPlayerDataLoader">
+      <UniqueIdentifier>{ee5e9639-d2c0-4e0a-bf4a-fc9bd3d0bdd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -451,10 +454,13 @@
       <Filter>ソース ファイル\11_EditScene\1101_StageEdit</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvPlayDataLoader.h">
-      <Filter>ソース ファイル\09_PlayScene\0907_CsvPlayDataLoader</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0908_CsvPlayDataLoader</Filter>
     </ClInclude>
     <ClInclude Include="Src\CsvCameraDataLoader.h">
       <Filter>ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CsvPlayerDataLoader.h">
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\CsvPlayerDataLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -633,10 +639,13 @@
       <Filter>ソース ファイル\11_EditScene\1101_StageEdit</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvPlayDataLoader.cpp">
-      <Filter>ソース ファイル\09_PlayScene\0907_CsvPlayDataLoader</Filter>
+      <Filter>ソース ファイル\09_PlayScene\0908_CsvPlayDataLoader</Filter>
     </ClCompile>
     <ClCompile Include="Src\CsvCameraDataLoader.cpp">
       <Filter>ソース ファイル\09_PlayScene\0903_Camera\CsvCameraDataLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CsvPlayerDataLoader.cpp">
+      <Filter>ソース ファイル\09_PlayScene\0902_Player\CsvPlayerDataLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,11 +16,19 @@
 #include "TeleportCircleEffect.h"
 #include "PlayDisplay.h"
 
-Player::Player()
-{
+//定数定義
+namespace {
+	static const float GRAVITY = 0.005f;	//重力
+	static const float JUMP_POWER = 0.1f;	//ジャンプ力
+	static const float MOVE_SPEED = 0.05f;	//基本移動速度
 }
 
-Player::Player(VECTOR3 pos, VECTOR3 rot, int num)//セレクトシーン/リザルトシーンで使用
+// ---------------------------------------------------------------------------
+// コンストラクタ1
+// 
+// セレクト画面/リザルト画面で使用するプレイヤーの処理
+// ---------------------------------------------------------------------------
+Player::Player(VECTOR3 pos, VECTOR3 rot, int num)
 {
 	animator = new Animator(); // インスタンスを作成
 
@@ -43,8 +51,12 @@ Player::Player(VECTOR3 pos, VECTOR3 rot, int num)//セレクトシーン/リザルトシーン
 	prevState = sStandby;
 }
 
-
-Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで使用
+// ---------------------------------------------------------------------------
+// コンストラクタ2
+// 
+// プレイ画面で使用するプレイヤーの処理
+// ---------------------------------------------------------------------------
+Player::Player(int num,int color) : playerNum(num),color(color)
 {
 	ObjectManager::SetDrawOrder(this, -100);
 
@@ -53,13 +65,14 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	// プレイヤーの持つ箒の生成
 	child = new Broom(this,color);
 
-	animator = new Animator(); // インスタンスを作成
-
+	animator = new Animator();
 	mesh = new CFbxMesh();
 
+	//セレクト画面で設定したプレイヤーカラーのメッシュをロード
 	std::string f = "Data/Player/Color" + std::to_string(color);
 	mesh->Load((f + "/witch.mesh").c_str());
 
+	//アニメーションデータのロード
 	mesh->LoadAnimation(aStandBy, (f + "/standby.anmx").c_str(), true);
 	mesh->LoadAnimation(aIdle, _T("Data/Player/idle.anmx"), true);
 	mesh->LoadAnimation(aRun, _T("Data/Player/run.anmx"), true);
@@ -75,12 +88,15 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	mesh->LoadAnimation(aCharge, _T("Data/Player/charge.anmx"), true);
 	mesh->LoadAnimation(aBlow, _T("Data/Player/blow.anmx"), true);
 
-	animator->SetModel(mesh); // このモデルでアニメーションする
-	animator->Play(aIdle);
-	animator->SetPlaySpeed(1.0f);
+	animator->SetModel(mesh);	// このモデルでアニメーションする
+	animator->Play(aIdle);		// 初期アニメーション
+	animator->SetPlaySpeed(1.0f);	// 初期アニメーションスピード
 
 	transform.position = VECTOR3(0, 0, 0);
+	
+	//プレイヤーに応じた初期回転量の設定
 	transform.rotation = VECTOR3(0, playerNum * 90 * DegToRad, 0);
+
 	deltaTime = 0.0f;
 
 	state = sWait;
@@ -96,7 +112,7 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	chargeSpeed = 1.0f;
 	chargeTime = 0.0f;
 	invisibleTime = 0.0f;
-	tereportPos = VECTOR3(0,0,0);
+	teleportPos = VECTOR3(0,0,0);
 	teleportFrm = 0;
 	fastAtkSpeed = 8;
 	damageTime = 0;
@@ -147,6 +163,9 @@ Player::Player(int num,int color) : playerNum(num),color(color)// プレイシーンで
 	anmFrame = 0;
 }
 
+// ---------------------------------------------------------------------------
+// デストラクタ
+// ---------------------------------------------------------------------------
 Player::~Player()
 {
 	SAFE_DELETE(mesh);
@@ -154,6 +173,11 @@ Player::~Player()
 	SAFE_DELETE(csv);
 }
 
+// ---------------------------------------------------------------------------
+// 開始時に呼ばれる関数
+// 
+// オブジェクトを生成後、最初にUpdate()の前に呼ばれる
+// ---------------------------------------------------------------------------
 void Player::Start()
 {
 	//自身以外のプレイヤーをリストに格納
@@ -173,6 +197,11 @@ void Player::Start()
 	pd = ObjectManager::FindGameObject<PlayDisplay>();
 }
 
+// ---------------------------------------------------------------------------
+// プレイヤーの更新処理
+// 
+// 各プレイヤーの状態に応じた処理を行う
+// ---------------------------------------------------------------------------
 void Player::Update()
 {
 	deltaTime = 60 * SceneManager::DeltaTime();
@@ -191,45 +220,9 @@ void Player::Update()
 		if (isDash || isFly) {
 			bone = mesh->GetFrameMatrices(2);//プレイヤーのルート位置
 		}
-		
 		child->SetPos(bone);
 	}
-	/*
-	if (playerNum == 0) {
-		ImGui::Begin("Rot");
-		ImGui::InputFloat("Y", &transform.rotation.y);
-		ImGui::End();
-	}*/
-	/*
-	ImGui::SetNextWindowPos(ImVec2(0, 50));
-	ImGui::SetNextWindowSize(ImVec2(100, 160));
-	ImGui::Begin("state");
-	switch (state) {
-	case sStandby:
-		ImGui::Text("sStandby");
-		break;
-	case sOnGround:
-		ImGui::Text("sOnGround");
-		break;
-	case sJump:
-		ImGui::Text("sJump");
-		break;
-	case sAttack1:
-		ImGui::Text("sAttack1");
-		break;
-	case sAttack2:
-		ImGui::Text("sAttack2");
-		break;
-	case sAttack3:
-		ImGui::Text("sAttack3");
-		break;
-	case sStop:
-		ImGui::Text("sStop");
-		break;
-	}
-	ImGui::End();
-	*/
-
+	
 	if (dc->GetIsPlay()) {
 		animator->Update();
 		if (state == sWait) {
@@ -278,14 +271,14 @@ void Player::Update()
 	if ((di->CheckKey(KD_TRG, DIK_UP) && playerNum == 0) || di->CheckJoy(KD_TRG, 2, playerNum)) { //能力強化
 		switch (selectPower) {
 		case pMS:
-			if (mp >= MoveSpeedC[msNum] && msNum < MsTableNum - 1)
+			if (mp >= MoveSpeedC[msNum] && msNum < PowerLvNum - 1)
 			{
 				mp -= MoveSpeedC[msNum];
 				msNum++;
 				new PowerUpEffect(this,transform.position,selectPower);
 				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // 振動の再生
 				GameDevice()->powerUpSE->Play();
-				if (msNum == MsTableNum - 1) {
+				if (msNum == PowerLvNum - 1) {
 					canTeleport = true;
 				}
 				else {
@@ -294,14 +287,14 @@ void Player::Update()
 			}
 			break;
 		case pJN:
-			if (mp >= JumpNumC[jnNum] && jnNum < JnTableNum - 1)
+			if (mp >= JumpNumC[jnNum] && jnNum < PowerLvNum - 1)
 			{
 				mp -= JumpNumC[jnNum];
 				jnNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
 				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // 振動の再生
 				GameDevice()->powerUpSE->Play();
-				if (jnNum == JnTableNum - 1) {
+				if (jnNum == PowerLvNum - 1) {
 					canFly = true;
 				}
 				else {
@@ -310,14 +303,14 @@ void Player::Update()
 			}
 			break;
 		case pAS:
-			if (mp >= AtkSpeedC[asNum] && asNum < AsTableNum - 1)
+			if (mp >= AtkSpeedC[asNum] && asNum < PowerLvNum - 1)
 			{
 				mp -= AtkSpeedC[asNum];
 				asNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
 				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // 振動の再生
 				GameDevice()->powerUpSE->Play();
-				if (asNum == AsTableNum - 1) {
+				if (asNum == PowerLvNum - 1) {
 					canSpeedAtk = true;
 				}
 				else {
@@ -326,14 +319,14 @@ void Player::Update()
 			}
 			break;
 		case pAR:
-			if (mp >= AtkRangeC[arNum] && arNum < ArTableNum - 1)
+			if (mp >= AtkRangeC[arNum] && arNum < PowerLvNum - 1)
 			{
 				mp -= AtkRangeC[arNum];
 				arNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
 				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // 振動の再生
 				GameDevice()->powerUpSE->Play();
-				if (arNum == ArTableNum - 1) {
+				if (arNum == PowerLvNum - 1) {
 					canRangeAtk = true;
 				}
 				else {
@@ -342,14 +335,14 @@ void Player::Update()
 			}
 			break;
 		case pCW:
-			if (mp >= CarWeightC[cwNum] && cwNum < CwTableNum - 1)
+			if (mp >= CarWeightC[cwNum] && cwNum < PowerLvNum - 1)
 			{
 				mp -= CarWeightC[cwNum];
 				cwNum++;
 				new PowerUpEffect(this, transform.position, selectPower);
 				GameDevice()->m_pDI->PlayJoyEffect(2, 1, playerNum); // 振動の再生
 				GameDevice()->powerUpSE->Play();
-				if (cwNum == CwTableNum - 1) {
+				if (cwNum == PowerLvNum - 1) {
 					canFastCharge = true;
 				}
 				else {
@@ -445,47 +438,7 @@ void Player::Update()
 		}
 	}
 
-	// ImGuiウィンドウの位置とサイズを設定
-	/*
-	ImGui::SetNextWindowPos(ImVec2(0, 60));
-	ImGui::SetNextWindowSize(ImVec2(120, 400));
-	ImGui::Begin("PlayerPos");
-	ImGui::InputFloat("X", &transform.position.x);
-	ImGui::InputFloat("Y", &transform.position.y);
-	ImGui::InputFloat("Z", &transform.position.z);
-	ImGui::InputFloat("speedY", &speedY);
-	ImGui::End();
-	
-	// 入力ボタン確認
-	ImGui::SetNextWindowPos(ImVec2(0, 220));
-	ImGui::SetNextWindowSize(ImVec2(200, 120));
-	ImGui::Begin("CheckJoy");
-
-	for (int i = 0; i < 32; i++)
-	{
-		// 各ボタンの押下状態を確認
-		if (joyState.rgbButtons[i] & 0x80) // ボタン i が押されている場合
-		{
-			ImGui::Text("%dP : Button %d is pressed", playerNum,i); // ボタン番号を表示
-		}
-	}
-	
-	if (di->IfJoyFF(playerNum)) {
-		ImGui::Text("True");
-	}
-	else {
-		ImGui::Text("False");
-	}
-	float rx = di->GetJoyState().lRx;
-	float ry = di->GetJoyState().lRy;
-	float rz = di->GetJoyState().lRz;
-	ImGui::End();
-	*/
-
 	// Leafにめり込まないようにする
-	// 自分の座標は、transform.position
-	// Leafの座標を知る
-	
 	std::list<Leaf*> leaves = ObjectManager::FindGameObjects<Leaf>();
 	
 	for (Leaf* leaf : leaves) {
@@ -505,9 +458,6 @@ void Player::Update()
 	}
 	
 	// playerにめり込まないようにする
-	// 自分の座標は、transform.position
-	// playerの座標を知る
-	
 	for (Player* player : otherPlayers) {
 		SphereCollider tCol = player->Collider();
 		SphereCollider pCol = Collider();
@@ -540,6 +490,32 @@ void Player::Draw()
 void Player::CsvLoad()
 {
 	// csvからデータ読み込み
+	CsvPlayerDataLoader dataLoader("data/csv/Paramater.csv");
+	dataLoader.Load();
+	playerParams = dataLoader.GetPlayerParams();
+
+	//読み込んだ構造体からデータの代入
+	DamageCoolTime = playerParams.DamageCoolTime;
+	TeleportTime = playerParams.TeleportTime;
+
+	for (int i = 0; i < MAXPLAYER; i++) {
+		InvisibleTime[i] = playerParams.InvisibleTime[i];
+	}
+
+	for (int i = 0; i < PowerLvNum; i++) {
+		MoveSpeedT[i] = playerParams.MoveSpeedT[i];
+		JumpNumT[i]   = playerParams.JumpNumT[i];
+		AtkSpeedT[i]  = playerParams.AtkSpeedT[i];
+		AtkRangeT[i]  = playerParams.AtkRangeT[i];
+		CarWeightT[i] = playerParams.CarWeightT[i];
+
+		MoveSpeedC[i] = playerParams.MoveSpeedC[i];
+		JumpNumC[i] = playerParams.JumpNumC[i];
+		AtkSpeedC[i] = playerParams.AtkSpeedC[i];
+		AtkRangeC[i] = playerParams.AtkRangeC[i];
+		CarWeightC[i] = playerParams.CarWeightC[i];
+	}
+	/*
 	csv = new CsvReader("data/csv/Paramater.csv");
 	if (csv->GetLines() < 1) {
 		MessageBox(NULL, "Paramater.csvが読めません", "エラー", MB_OK);
@@ -547,15 +523,6 @@ void Player::CsvLoad()
 
 	for (int i = 1; i < csv->GetLines(); i++) { //CSVファイルから設定の読み込み
 		if (csv->GetString(i, 0) == "Player") {
-			if (csv->GetString(i, 1) == "Gravity") {		// 重力
-				GRAVITY = csv->GetFloat(i, 3);
-			}
-			if (csv->GetString(i, 1) == "JumpPower") {		// ジャンプ力
-				JUMP_POWER = csv->GetFloat(i, 3);
-			}
-			if (csv->GetString(i, 1) == "MoveSpeed") {		// 移動速度
-				MOVE_SPEED = csv->GetFloat(i, 3);
-			}
 			if (csv->GetString(i, 1) == "InvisibleTime") {		// 透明化時間
 				InvisibleTime[0] = csv->GetFloat(i, 3);
 				InvisibleTime[1] = csv->GetFloat(i, 4);
@@ -623,6 +590,7 @@ void Player::CsvLoad()
 			break;
 		}
 	}
+	*/
 }
 
 SphereCollider Player::Collider()
@@ -672,15 +640,15 @@ int Player::GetMaxPowerLv(int selectPower)
 {
 	switch (selectPower) {
 	case pMS:
-		return MsTableNum;
+		return PowerLvNum;
 	case pJN:
-		return JnTableNum;
+		return PowerLvNum;
 	case pAS:
-		return AsTableNum;
+		return PowerLvNum;
 	case pAR:
-		return ArTableNum;
+		return PowerLvNum;
 	case pCW:
-		return CwTableNum;
+		return PowerLvNum;
 	default:
 		return 0;
 	}
@@ -785,29 +753,11 @@ void Player::UpdateOnGround()
 
 	int x = di->GetJoyState(playerNum).lX;	// 右:1000 / 左:-1000
 	int y = di->GetJoyState(playerNum).lY;	// 下:1000 / 上:-1000
-	/*
-	ImGui::SetNextWindowPos(ImVec2(0, 300));
-	ImGui::SetNextWindowSize(ImVec2(200, 200));
-	ImGui::Begin("Joystick");
-	ImGui::InputInt("IX", &x);
-	ImGui::InputInt("IY", &y);
-	ImGui::End();
-	*/
 	
 	if (st->MapCol()->IsCollisionMoveGravity(posOld, transform.position) == clFall) {
 		state = sJump;
 		return;
 	}
-
-	/*
-	VECTOR3 start = transform.position;
-	start.y += 1.0f;
-	VECTOR3 end = transform.position;
-	if (!HitLineToMesh(start, end)) {
-		state = sJump;
-		return;
-	}
-	*/   
 
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↓
 	
@@ -876,8 +826,8 @@ void Player::UpdateOnGround()
 		animator->MergePlay(aIdle,0);
 		isDash = false;
 	}
+	
 	// 2024.10.26 プレイヤー操作をコントローラーに対応↑
-
 	if ((di->CheckKey(KD_TRG, DIK_SPACE) && playerNum == 0) || di->CheckJoy(KD_TRG, 1, playerNum) ) { //ジャンプ
 		speedY = JUMP_POWER;
 		if (!isDash) {
@@ -915,7 +865,7 @@ void Player::UpdateOnGround()
 	}
 	if (((di->CheckKey(KD_TRG, DIK_R) && playerNum == 0) || di->CheckJoy(KD_TRG, 7, playerNum)) && canTeleport) { //テレポート魔法陣設置
 		setTeleport = true;
-		tereportPos = transform.position;
+		teleportPos = transform.position;
 		if (tpEffect != nullptr) {
 			tpEffect->SetIsFinish();
 		}
@@ -1233,7 +1183,7 @@ void Player::UpdateTeleport()
 {
 	if (teleportFrm * (1.0f / 60.0f) > TeleportTime) {
 		mesh->m_vDiffuse = VECTOR4(1, 1, 1, 1);
-		transform.position = tereportPos;
+		transform.position = teleportPos;
 		state = sOnGround;
 		prevState = sOnGround;
 		teleportFrm = 0;
